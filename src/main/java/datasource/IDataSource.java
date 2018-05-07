@@ -1,6 +1,6 @@
 package datasource;
 
-import dataIterator.ITableIterator;
+import dataIterator.ColumnIterator;
 import dataIterator.TableIterator;
 import memorycache.IMemoryCache;
 import model.IMetaData;
@@ -9,27 +9,14 @@ import query.QueryBuilder;
 
 public interface IDataSource {
 	
-	public boolean isCachable();
-	
-	
-	
 	public IMetaData getMetaData ();
 	
-	public TableIterator loadTable();
+	public TableIterator getTable(String tableID);
 	
+	public TableIterator getTable(String tableID,int offset, int recordCount);
 	
+	public ColumnIterator getColumn(String fieldID);
 	
-	//Valutare se definirle tramite costruttore
+	public ColumnIterator getColumn(String fieldID,int offset, int recordCount);
 	
-	//Connection nel caso di relational DB
-	public void setQueryProvider (IQueryProvider provider);
-	public void SetMemoryCache(IMemoryCache cache);
-	
-	
-	
-	//implementazione di default restituisce tutto
-	//se differenzio dataset/datasource va nel dataset
-	public QueryBuilder query();
-	
-	public 
 }

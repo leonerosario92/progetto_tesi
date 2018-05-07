@@ -1,6 +1,6 @@
 package model;
 
-public class ITable {
+public interface ITable {
 	
 	
 }

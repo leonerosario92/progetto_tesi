@@ -4,5 +4,8 @@ public interface IField {
 
 	public Class getType ();
 	
-	public int getByteSize();
+	public String getName();
+	
+	public boolean isPrimaryKey();
+	
 }
