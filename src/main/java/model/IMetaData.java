@@ -4,13 +4,15 @@ import java.util.Set;
 
 public interface IMetaData {
 
-	public Set<ITable> getTables ();
+	public Iterable<ITable> getTables ();
 	
 	public ITable getTable (String tableId);
 	
-	public Set<IRelation> getRelations();
+	public Iterable<IRelation> getAllRelations();
 	
-	public Set<IRelation> getRelations(String srcTableId, String dstTableId);
+	public Iterable<IRelation> getRelations(String tableId);
+	
+	public Iterable<IRelation> getRelations(String srcTableId, String dstTableId);
 	
 }
 

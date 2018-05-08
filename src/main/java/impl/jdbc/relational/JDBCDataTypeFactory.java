@@ -3,22 +3,15 @@ package impl.jdbc.relational;
 
 import java.sql.Types;
 
-import datatypes.IDataTypeFactory;
 
-public class JDBCDataTypeFactory implements IDataTypeFactory {
+public class JDBCDataTypeFactory {
 
 	
-	public Class<?> toJavaClass(Object nativeType) {
-		
-		if(!(nativeType instanceof Integer)) {
-			//TODO manage exception properly
-		}
-		
-		int typeIndex = (Integer) nativeType;
+	public static Class<?> toJavaClass(int nativeType) {
 		
 		Class<?> result = Object.class;
 		
-		 switch (typeIndex) {
+		 switch (nativeType) {
          case Types.CHAR:
          case Types.VARCHAR:
          case Types.LONGVARCHAR:
@@ -77,9 +70,7 @@ public class JDBCDataTypeFactory implements IDataTypeFactory {
              result = java.sql.Timestamp.class;
              break;
      }
-
      return result;
-		
 	}
 
 }

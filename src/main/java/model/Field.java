@@ -8,11 +8,11 @@ public class Field implements IField{
 	private ITable table;
 
 	
-	public Field(ITable table, String name, Class type) {
+	public Field(ITable table, String name, Class type, boolean isPrimaryKey) {
 		this.table = table;
 		this.name = name;
 		this.type = type;	
-		this.isPrimaryKey = false;
+		this.isPrimaryKey = isPrimaryKey;
 	}
 	
 	public ITable getTable() {

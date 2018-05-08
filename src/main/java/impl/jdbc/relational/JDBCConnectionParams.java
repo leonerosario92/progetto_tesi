@@ -4,9 +4,9 @@ import datasource.IConnectionParams;
 
 public class JDBCConnectionParams implements IConnectionParams {
 	
-	String url;
-	String username;
-	String password;
+	private String url;
+	private String username;
+	private String password;
 	
 	public JDBCConnectionParams() { }
 	
