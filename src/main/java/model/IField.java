@@ -8,4 +8,6 @@ public interface IField {
 	
 	public boolean isPrimaryKey();
 	
+	public ITable getTable();
+	
 }

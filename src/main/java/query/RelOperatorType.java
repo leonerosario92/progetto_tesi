@@ -1,6 +1,6 @@
 package query;
 
-public enum RelationalOperatorType {
+public enum RelOperatorType {
 
 	SELECT,
 	

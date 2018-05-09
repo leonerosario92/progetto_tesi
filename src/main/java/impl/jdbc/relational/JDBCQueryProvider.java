@@ -5,20 +5,18 @@ import java.util.concurrent.Callable;
 
 import dataIterator.IDataIterator;
 import query.IQueryProvider;
-import query.RelationalOperatorType;
+import query.IRelOperator;
+import query.RelOperatorType;
 
 public abstract class JDBCQueryProvider implements IQueryProvider{
 	
 	//Implemented by subclasses depending on specific query language 
-	private HashMap<RelationalOperatorType, Callable<?>> queryImplementations; 
+	private HashMap<RelOperatorType, Callable<?>> queryImplementations; 
 
-	public void setOperatorImplementation(RelationalOperator implementation) {
+	public void setOperatorImplementation(IRelOperator implementation) {
 		queryImplementations.put(key, value)
 	}
 
-	public IDataIterator exec(RelationalOperatorType operator, Object... params) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 	
 }

@@ -1,11 +1,12 @@
 package datasource;
 
 import dataIterator.ColumnIterator;
+import dataIterator.IDataIterator;
 import dataIterator.TableIterator;
 import memorycache.IMemoryCache;
 import model.IMetaData;
 import query.IQueryProvider;
-import query.QueryBuilder;
+import query.IQueryBuilder;
 
 public interface IDataSource {
 	
@@ -18,5 +19,7 @@ public interface IDataSource {
 	public ColumnIterator getColumn(String fieldID);
 	
 	public ColumnIterator getColumn(String fieldID,int offset, int recordCount);
+	
+	public IDataIterator delegateQuery();
 	
 }
