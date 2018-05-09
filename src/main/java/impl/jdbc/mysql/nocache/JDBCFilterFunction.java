@@ -1,14 +1,13 @@
-package impl.jdbc.relational;
+package impl.jdbc.mysql.nocache;
 
 import java.util.function.Predicate;
 
 import dataIterator.IDataIterator;
 import datacontext.IDataContext;
 import model.IField;
+import query.filter.IFilterFunction;
 
-import query.function.FilterFunction;
-
-public class JDBCFilterFunction implements FilterFunction {
+public class JDBCFilterFunction implements IFilterFunction {
 
 	public IDataIterator apply(IDataContext a, IField b, Predicate<?> c) {
 		// TODO Auto-generated method stub

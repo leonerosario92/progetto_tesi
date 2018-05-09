@@ -1,11 +1,12 @@
 package query;
 
 import dataIterator.IDataIterator;
+import datacontext.IDataContext;
 
 public interface IRelOperator {
 	
 	public RelOperatorType getType();
 	
-	public IDataIterator exec(Object...args);
+	public <T extends IQueryParams> IDataIterator exec(IDataContext context,T params);
 	
 }

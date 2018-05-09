@@ -1,16 +1,13 @@
 package query;
 
-import java.util.concurrent.Callable;
-import java.util.function.Predicate;
-
 import dataIterator.IDataIterator;
-import datacontext.DataContext;
-import model.IField;
+import datacontext.IDataContext;
+import query.filter.IFilterQueryParams;
 
 public interface IQueryProvider {
 	
 	public void setOperator (IRelOperator operator);
 	
-	public IDataIterator filter (DataContext context, IField field, Predicate condition );
-	
+	public IDataIterator exec (IDataContext context, IQueryNode node);
+
 }

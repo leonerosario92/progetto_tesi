@@ -1,30 +1,33 @@
 package query;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Set;
-import java.util.function.Predicate;
 
-import datacontext.DataContext;
+import dataIterator.IDataIterator;
+import datacontext.IDataContext;
 import model.IField;
 import model.ITable;
+import query.filter.FilterQueryNode;
+import query.filter.IFilterQueryParams;
 
 public class QueryBuilder implements IQueryBuilder{
 	
-	private DataContext context;
+	private IDataContext context;
 	private ArrayList<IQueryNode> nodes;
 	private boolean finalized;
 	
 	
-	public QueryBuilder(DataContext context) {
+	public QueryBuilder(IDataContext context) {
 		//TODO forzare garbage collection
 		this.finalized = false;
 		this.context = context;
 	}
 
 
-	public void filter(ITable table, IField field, Predicate<?> condition) {
+	public void filter(IFilterQueryParams params) {
 		checkFinalized();
-		FilterQueryNode node = new FilterQueryNode();
+		FilterQueryNode node = new FilterQueryNode(params);
 		nodes.add(node);
 	}
 
@@ -44,6 +47,20 @@ public class QueryBuilder implements IQueryBuilder{
 	private void checkFinalized() {
 		if(finalized) {
 			throw new IllegalStateException();
+		}
+	}
+
+
+	public IDataIterator execute() {
+		
+		finalized = true;
+		IQueryProvider qp = context.getQueryProvider();
+		
+		//TODO interporre generazione del piano di esecuzione
+		Iterator<IQueryNode> it = nodes.iterator();
+		while(it.hasNext()) {
+			IQueryNode node = it.next();
+			qp.exec(context, node);
 		}
 	}
 

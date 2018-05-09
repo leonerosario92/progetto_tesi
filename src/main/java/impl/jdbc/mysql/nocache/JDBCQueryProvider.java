@@ -1,4 +1,4 @@
-package impl.jdbc.relational;
+package impl.jdbc.mysql.nocache;
 
 import java.util.HashMap;
 import java.util.concurrent.Callable;
