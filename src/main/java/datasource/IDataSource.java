@@ -1,9 +1,9 @@
 package datasource;
 
-import dataIterator.ColumnIterator;
-import dataIterator.IDataIterator;
-import dataIterator.TableIterator;
-import memorycache.IMemoryCache;
+import cache.IMemoryCache;
+import dataset.ColumnIterator;
+import dataset.IDataIterator;
+import dataset.TableIterator;
 import model.IMetaData;
 import query.IQueryProvider;
 import query.IQueryBuilder;

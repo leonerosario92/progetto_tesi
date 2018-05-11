@@ -4,21 +4,23 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
-import dataIterator.IDataIterator;
-import datacontext.IDataContext;
-import model.IField;
-import model.ITable;
-import query.filter.FilterQueryNode;
-import query.filter.IFilterQueryParams;
+import context.IContext;
+import dataset.IDataIterator;
+import dataset.IEntity;
+import model.IFieldDescriptor;
+import model.ITableDescriptor;
+import query.operator.IQueryNode;
+import query.operator.filter.FilterQueryNode;
+import query.operator.filter.IFilterQueryParams;
 
 public class QueryBuilder implements IQueryBuilder{
 	
-	private IDataContext context;
+	private IContext context;
 	private ArrayList<IQueryNode> nodes;
 	private boolean finalized;
 	
 	
-	public QueryBuilder(IDataContext context) {
+	public QueryBuilder(IContext context) {
 		//TODO forzare garbage collection
 		this.finalized = false;
 		this.context = context;
@@ -32,7 +34,7 @@ public class QueryBuilder implements IQueryBuilder{
 	}
 
 
-	public void project(ITable table, IField field) {
+	public void project(ITableDescriptor table, IFieldDescriptor field) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -51,17 +53,19 @@ public class QueryBuilder implements IQueryBuilder{
 	}
 
 
-	public IDataIterator execute() {
-		
+	public IEntity exec() {
 		finalized = true;
-		IQueryProvider qp = context.getQueryProvider();
-		
+		//IQueryProvider qp = context.getQueryProvider();
+		IQuery query = buildQuery();
+		IEntity result = context.execQuery(query);
+		return result;
 		//TODO interporre generazione del piano di esecuzione
-		Iterator<IQueryNode> it = nodes.iterator();
-		while(it.hasNext()) {
-			IQueryNode node = it.next();
-			qp.exec(context, node);
-		}
+	}
+
+
+	private IQuery buildQuery() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

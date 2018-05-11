@@ -2,21 +2,24 @@ package query;
 
 import java.util.HashMap;
 
-import dataIterator.IDataIterator;
-import datacontext.IDataContext;
-import query.filter.IFilterQueryParams;
+import context.IContext;
+import dataset.IDataIterator;
+import query.operator.IQueryNode;
+import query.operator.IRelOperator;
+import query.operator.RelOperatorType;
+import query.operator.filter.IFilterQueryParams;
 
 public class QueryProvider implements IQueryProvider {
 	
-	private IDataContext context;
+	private IContext context;
 	private HashMap<RelOperatorType,IRelOperator> implementations;
 	
-	public QueryProvider(IDataContext context) {
+	public QueryProvider(IContext context) {
 		this.context = context;
 		implementations = new HashMap<RelOperatorType, IRelOperator>();
 	}
 	
-	public QueryProvider(IDataContext context, Iterable<IRelOperator> implementations) {
+	public QueryProvider(IContext context, Iterable<IRelOperator> implementations) {
 		this(context);
 		for(IRelOperator operator : implementations){
 			setOperator(operator);
@@ -27,7 +30,7 @@ public class QueryProvider implements IQueryProvider {
 		implementations.put(operator.getType(),operator);
 	}
 
-	public IDataIterator exec(IDataContext context, IQueryNode node) {
+	public IDataIterator execQuery(IContext context, IQueryNode node) {
 		RelOperatorType operatorType = node.getOperatorType();
 		checkImplementation(operatorType);
 		return implementations.get(operatorType)

@@ -1,13 +1,18 @@
 package query;
 
-import dataIterator.IDataIterator;
-import datacontext.IDataContext;
-import query.filter.IFilterQueryParams;
+import context.IContext;
+import dataset.IDataIterator;
+import query.operator.IQueryNode;
+import query.operator.IRelOperator;
+import query.operator.filter.IFilterQueryParams;
+
 
 public interface IQueryProvider {
 	
 	public void setOperator (IRelOperator operator);
 	
-	public IDataIterator exec (IDataContext context, IQueryNode node);
+	public IDataIterator execQuery (IContext context, IQueryNode node);
+	
+	public IDataIterator execBlock (IContext context, IExecutionBlock block);
 
 }
