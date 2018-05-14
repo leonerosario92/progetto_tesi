@@ -8,8 +8,8 @@ import query.operator.IQueryParams;
 
 public interface IFilterQueryParams extends IQueryParams {
 	
-	public ITableDescriptor getTable();
 	public IFieldDescriptor getField();
-	public Predicate<?> getPredicate();
+	
+	public Predicate<?>[] getPredicates();
 	
 }

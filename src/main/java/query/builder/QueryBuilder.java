@@ -1,36 +1,38 @@
-package query;
+package query.builder;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.function.Predicate;
 
+import context.Context;
 import context.IContext;
 import dataset.IDataIterator;
 import dataset.IEntity;
+import model.FieldDescriptor;
 import model.IFieldDescriptor;
 import model.ITableDescriptor;
 import query.operator.IQueryNode;
 import query.operator.filter.FilterQueryNode;
 import query.operator.filter.IFilterQueryParams;
 
-public class QueryBuilder implements IQueryBuilder{
+public class QueryBuilder {
 	
-	private IContext context;
-	private ArrayList<IQueryNode> nodes;
+	private Context context;
+	private Query query;
 	private boolean finalized;
 	
 	
-	public QueryBuilder(IContext context) {
+	public QueryBuilder(Context context) {
 		//TODO forzare garbage collection
 		this.finalized = false;
 		this.context = context;
+		this.query = new Query();
 	}
 
 
-	public void filter(IFilterQueryParams params) {
-		checkFinalized();
-		FilterQueryNode node = new FilterQueryNode(params);
-		nodes.add(node);
+	public void filter(FieldDescriptor field, IFilterPredicate predicate) {
+		
 	}
 
 
@@ -56,14 +58,14 @@ public class QueryBuilder implements IQueryBuilder{
 	public IEntity exec() {
 		finalized = true;
 		//IQueryProvider qp = context.getQueryProvider();
-		IQuery query = buildQuery();
+		Query query = buildQuery();
 		IEntity result = context.execQuery(query);
 		return result;
 		//TODO interporre generazione del piano di esecuzione
 	}
 
 
-	private IQuery buildQuery() {
+	private Query buildQuery() {
 		// TODO Auto-generated method stub
 		return null;
 	}

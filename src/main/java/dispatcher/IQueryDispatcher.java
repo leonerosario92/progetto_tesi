@@ -1,9 +1,10 @@
 package dispatcher;
 
 import dataset.IEntity;
+import query.builder.Query;
 
 public interface IQueryDispatcher {
 	
-	public IEntity execQuery(IQuery query);
+	public IEntity execQuery(Query query);
 	
 }

@@ -2,13 +2,13 @@ package model;
 
 public class FieldDescriptor implements IFieldDescriptor{
 	
-	private Class type;
+	private Class<?> type;
 	private String name;
 	private boolean isPrimaryKey;
 	private ITableDescriptor table;
 
 	
-	public FieldDescriptor(ITableDescriptor table, String name, Class type, boolean isPrimaryKey) {
+	public FieldDescriptor(ITableDescriptor table, String name, Class<?> type, boolean isPrimaryKey) {
 		this.table = table;
 		this.name = name;
 		this.type = type;	
@@ -19,7 +19,7 @@ public class FieldDescriptor implements IFieldDescriptor{
 		return table;
 	}
 
-	public Class getType() {
+	public Class<?> getType() {
 		return type;
 	}
 

@@ -2,40 +2,35 @@ package query;
 
 import java.util.HashMap;
 
-import context.IContext;
-import dataset.IDataIterator;
-import query.operator.IQueryNode;
+import query.function.IQueryFunction;
 import query.operator.IRelOperator;
 import query.operator.RelOperatorType;
-import query.operator.filter.IFilterQueryParams;
 
-public class QueryProvider implements IQueryProvider {
+public class QueryProvider  {
 	
-	private IContext context;
 	private HashMap<RelOperatorType,IRelOperator> implementations;
 	
-	public QueryProvider(IContext context) {
-		this.context = context;
-		implementations = new HashMap<RelOperatorType, IRelOperator>();
+	public QueryProvider() {
+		implementations = new HashMap<>();
 	}
 	
-	public QueryProvider(IContext context, Iterable<IRelOperator> implementations) {
-		this(context);
-		for(IRelOperator operator : implementations){
-			setOperator(operator);
+	public QueryProvider(Iterable<IRelOperator> operators) {
+		this();
+		for(IRelOperator operator : operators){
+			setImplementation(operator);
 		}
 	}
 	
-	public void setOperator(IRelOperator operator) {
-		implementations.put(operator.getType(),operator);
+	public void setImplementation(IRelOperator operator) {
+		implementations.put(operator.getType(), operator);
 	}
 
-	public IDataIterator execQuery(IContext context, IQueryNode node) {
-		RelOperatorType operatorType = node.getOperatorType();
-		checkImplementation(operatorType);
-		return implementations.get(operatorType)
-				.exec(context, node.getParams());
+	
+	public IExecutableQuery getQuery(RelOperatorType type) {
+		checkImplementation(type);
+		return implementations.get(type).getQuery();
 	}
+	
 
 	private void checkImplementation(RelOperatorType operatorType) {
 		if(!(implementations.containsKey(operatorType))) {
@@ -43,7 +38,6 @@ public class QueryProvider implements IQueryProvider {
 			throw new UnsupportedOperationException();
 		}
 	}
-
 	
-
+	
 }

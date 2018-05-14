@@ -2,7 +2,7 @@ package model;
 
 public interface IFieldDescriptor {
 
-	public Class getType ();
+	public Class<?> getType ();
 	
 	public String getName();
 	

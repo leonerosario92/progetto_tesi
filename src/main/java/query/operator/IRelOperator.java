@@ -1,13 +1,13 @@
 package query.operator;
 
-import context.IContext;
-import dataset.IDataIterator;
-import dataset.IEntity;
+import query.IExecutableQuery;
+import query.function.IQueryFunction;
 
-public interface IRelOperator <I,P> {
+public interface IRelOperator {
 	
 	public RelOperatorType getType();
 	
-	public IEntity exec(I input, P params);
+	public IQueryFunction<?> getFunction();
 	
+	public IExecutableQuery getQuery();
 }
