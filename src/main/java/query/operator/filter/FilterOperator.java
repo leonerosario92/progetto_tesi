@@ -2,7 +2,7 @@ package query.operator.filter;
 
 import dataset.IDataSet;
 import query.IExecutableQuery;
-import query.function.IQueryFunction;
+import query.operator.IQueryFunction;
 import query.operator.IQueryParams;
 import query.operator.IRelOperator;
 import query.operator.RelOperatorType;

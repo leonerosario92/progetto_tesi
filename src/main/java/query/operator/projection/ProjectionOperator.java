@@ -1,6 +1,6 @@
 package query.operator.projection;
 
-import query.function.IQueryFunction;
+import query.operator.IQueryFunction;
 import query.operator.IRelOperator;
 import query.operator.RelOperatorType;
 import query.operator.filter.FilterFunction;

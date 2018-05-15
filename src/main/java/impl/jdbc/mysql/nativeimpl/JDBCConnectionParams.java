@@ -8,14 +8,15 @@ public class JDBCConnectionParams implements IConnectionParams {
 	private String username;
 	private String password;
 	
+	private String portNumber;
+	
 	public JDBCConnectionParams() { }
 	
 	public String getUrl() {
+		
 		return url;
 	}
-	public void setUrl(String url) {
-		this.url = url;
-	}
+	
 	public String getUsername() {
 		return username;
 	}
@@ -28,5 +29,11 @@ public class JDBCConnectionParams implements IConnectionParams {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	
+	public String getPortNumber() {
+		return portNumber;
+	}
+	
+	public void setPortNumber()
 
 }

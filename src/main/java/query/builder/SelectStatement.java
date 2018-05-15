@@ -1,5 +1,16 @@
 package query.builder;
 
-public class SelectStatement {
+import model.TableDescriptor;
 
+public class SelectStatement {
+	
+	private TableDescriptor table;
+	
+	public SelectStatement(TableDescriptor table) {
+		this.table = table;
+	}
+	
+	public TableDescriptor getTable() {
+		return table;
+	}
 }

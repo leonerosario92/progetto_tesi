@@ -5,19 +5,17 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import dataset.ColumnIterator;
-import dataset.IDataIterator;
-import dataset.TableIterator;
+import dataset.IRecordIterator;
 import datasource.AbstractRemoteDataSource;
-import datasource.IConnectionParams;
 import model.IMetaData;
 
 public class JDBCDataSource extends AbstractRemoteDataSource{
 
 	private Connection connection;
 	private JDBCMetaData metaData;
-	private JDBCQueryProvider queryProvider;
+
 	
-	protected JDBCDataSource(JDBCConnectionParams cp) {
+	public JDBCDataSource(JDBCConnectionParams cp) {
 		super(cp);
 		this.connection = connect(cp);
 		this.metaData = new JDBCMetaData(connection);
@@ -43,12 +41,12 @@ public class JDBCDataSource extends AbstractRemoteDataSource{
 		}
 	}
 
-	public TableIterator getTable(String tableID) {
+	public IRecordIterator getTable(String tableID) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public TableIterator getTable(String tableID, int offset, int recordCount) {
+	public IRecordIterator getTable(String tableID, int offset, int recordCount) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -64,15 +62,8 @@ public class JDBCDataSource extends AbstractRemoteDataSource{
 	}
 	
 	
-
-	
 	public Connection getConnection () {
 		return connection;
-	}
-
-	public IDataIterator delegateQuery() {
-		return null;
-		
 	}
 
 }

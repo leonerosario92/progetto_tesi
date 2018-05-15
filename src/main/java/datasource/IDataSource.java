@@ -1,25 +1,19 @@
 package datasource;
 
-import cache.IMemoryCache;
 import dataset.ColumnIterator;
-import dataset.IDataIterator;
-import dataset.TableIterator;
+import dataset.IRecordIterator;
 import model.IMetaData;
-import query.IQueryProvider;
-import query.IQueryBuilder;
 
 public interface IDataSource {
 	
 	public IMetaData getMetaData ();
 	
-	public TableIterator getTable(String tableID);
+	public IRecordIterator getTable(String tableID);
 	
-	public TableIterator getTable(String tableID,int offset, int recordCount);
+	public IRecordIterator getTable(String tableID,int offset, int recordCount);
 	
 	public ColumnIterator getColumn(String fieldID);
 	
 	public ColumnIterator getColumn(String fieldID,int offset, int recordCount);
-	
-	public IDataIterator delegateQuery();
 	
 }

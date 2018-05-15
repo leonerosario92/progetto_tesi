@@ -1,7 +1,6 @@
 package query.operator;
 
 import query.IExecutableQuery;
-import query.function.IQueryFunction;
 
 public interface IRelOperator {
 	

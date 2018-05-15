@@ -1,17 +1,14 @@
 package context;
 
 import cache.ICachableEntity;
-import dataset.IEntity;
 import datasource.IDataSource;
 import model.IMetaData;
-import query.IExecutableQuery;
-import query.IQuery;
-import query.IQueryBuilder;
-import query.IQueryProvider;
+import query.QueryProvider;
+import query.builder.QueryBuilder;
 
 public class Context {
 
-	public IQueryBuilder query() {
+	public QueryBuilder query() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -31,10 +28,9 @@ public class Context {
 		return null;
 	}
 
-	public IQueryProvider getQueryProvider() {
+	public QueryProvider getQueryProvider() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public IExecutableQuery 
 }

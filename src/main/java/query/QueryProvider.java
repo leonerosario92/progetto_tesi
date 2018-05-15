@@ -2,7 +2,7 @@ package query;
 
 import java.util.HashMap;
 
-import query.function.IQueryFunction;
+import query.operator.IQueryFunction;
 import query.operator.IRelOperator;
 import query.operator.RelOperatorType;
 

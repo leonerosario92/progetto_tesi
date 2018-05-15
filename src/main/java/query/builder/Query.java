@@ -7,45 +7,34 @@ import model.TableDescriptor;
 
 public class Query {
 
-	private ArrayList<SelectStatement> selectStatements;
-	private ArrayList<ProjectStatement> projectStatements;
-	private ArrayList <FilterStatement> filterStatements;
+	private SelectClause selectClause;
+	private FromClause fromClause;
+	private FilterClause whereClause;
 	
 	
-	private Query() {
-		selectStatements = new ArrayList<>();
-		projectStatements = new ArrayList<>();
-		filterStatements = new ArrayList<>();
+	public Query() {
+		this.selectClause = new SelectClause();
+		this.fromClause = new FromClause();
+		this.whereClause = new FilterClause();
 	}
 	
 	
-	public void select (TableDescriptor table ) {
+	public void select (SelectStatement statement) {
 		
 	}
 	
 	
-	public void project (FieldDescriptor field) {
+	public void project (ProjectionStatement statement) {
 		
 	}
 	
 	
-	public void filter (FieldDescriptor field, IFilterPredicate<?> predicate) {
+	public void filter (IFilterStatement statement) {
 		
 	}
 	
 	
-	public ArrayList<SelectStatement> getSelectStatements(){
-		return selectStatements;
+	public String writeSql() {
 		
-	}
-	
-	
-	public ArrayList<ProjectStatement> getProjectStatements(){
-		return projectStatements;
-	}
-	
-	
-	public ArrayList<FilterStatement> getFilterStatements(){
-		return filterStatements;
 	}
 }
