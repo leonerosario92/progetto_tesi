@@ -1,13 +1,12 @@
 package query.builder;
 
 import java.util.ArrayList;
-import java.util.List;
-
+import java.util.Iterator;
 
 
 public class FilterClause  {
 	
-	private ArrayList<IFilterStatement> filterStatements;
+	private ArrayList<FilterStatement> filterStatements;
 	
 	
 	public FilterClause() {
@@ -15,19 +14,27 @@ public class FilterClause  {
 	}
 	
 	
-	public void addStatement (IFilterStatement statement) {
+	public void addStatement (FilterStatement statement) {
 		filterStatements.add(statement);
 	}
 	
 	
 	public String writeSql() {
 		StringBuilder sb = new StringBuilder();
+		sb.append(QueryConstants.FILTER_CLAUSE);
 		
-		for(IFilterStatement statement : filterStatements) {
+		Iterator<FilterStatement> it = filterStatements.iterator();
+		FilterStatement statement;
+		while(it.hasNext()) {
+			statement = it.next();
 			sb.append(QueryConstants.WHITESPACE_CHAR);
 			sb.append(statement.writeSql());
+			if(it.hasNext()) {
+				sb.append(QueryConstants.WHITESPACE_CHAR);
+				sb.append(QueryConstants.AND);
+				sb.append(QueryConstants.WHITESPACE_CHAR);
+			}
 		}
-		
 		return sb.toString();
 	}	
 	

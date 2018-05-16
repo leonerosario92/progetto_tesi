@@ -1,5 +1,6 @@
 package query.operator.projection;
 
+import query.IExecutableQuery;
 import query.operator.IQueryFunction;
 import query.operator.IRelOperator;
 import query.operator.RelOperatorType;
@@ -22,6 +23,12 @@ public class ProjectionOperator implements IRelOperator {
 	@Override
 	public IQueryFunction<?> getFunction() {
 		return function;
+	}
+
+	@Override
+	public IExecutableQuery getQuery() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

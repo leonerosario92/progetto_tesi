@@ -2,42 +2,42 @@ package query.builder;
 
 import model.FieldDescriptor;
 
-public abstract class ComparisonFilterStatement implements IFilterStatement /*<T>*/{
+public abstract class FilterStatement {
 	
 	
-	private final PredicateType TYPE;
+	private final FilterStatementType TYPE;
 	private final String SQL_REPRESENTATION;
 	private FieldDescriptor field; 
-	private Object /*T*/ rightOperand;
+	private Object rightOperand;
 	
 	
-	public ComparisonFilterStatement(PredicateType type, FieldDescriptor field, Object operand) {
+	public FilterStatement(FilterStatementType type) {
 		this.TYPE = type;
 		this.SQL_REPRESENTATION = type.representation;
-		this.field = field;
-		this.rightOperand =  operand;
 	}
+
 	
-	
-	@Override
-	public PredicateType getPredicateType() {
+	public FilterStatementType getFilterType() {
 		return TYPE;
 	}
 
-
-	@Override
+	public void setField(FieldDescriptor field) {
+		this.field = field;
+	}
+	
 	public FieldDescriptor getField() {
 		return field;
 	}
 
-
-	@Override
-	public Object /*T*/ getRightOperand() {
+	public void setOperand(Object operand) {
+		this.rightOperand = operand;
+	}
+	
+	public Object getRightOperand() {
 		return rightOperand;
 	}
 
 
-	@Override
 	public String writeSql() {
 		String tableName = field.getTable().getName();
 		String fieldName = field.getName();

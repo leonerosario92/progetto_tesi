@@ -2,11 +2,11 @@ package query.builder;
 
 import model.TableDescriptor;
 
-public class SelectStatement {
+public class SelectionStatement {
 	
 	private TableDescriptor table;
 	
-	public SelectStatement(TableDescriptor table) {
+	public SelectionStatement(TableDescriptor table) {
 		this.table = table;
 	}
 	

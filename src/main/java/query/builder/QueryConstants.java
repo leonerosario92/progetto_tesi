@@ -12,4 +12,13 @@ public class QueryConstants {
 	public static final String DOT_CHAR = ".";
 	public static final String COMMA_CHAR = ",";
 	public static final String SEMICOLON_CHAR = ";";
+	public static final String NEWLINE = System.getProperty("line.separator");
+	
+	public static final String SELECTION_CLAUSE = "FROM";
+	public static final String PROJECTION_CLAUSE = "SELECT";
+	public static final String FILTER_CLAUSE = "WHERE";
+	public static final String JOIN = "JOIN";
+	public static final String ON = "ON";
+
+	public static final String AND = "AND";
 }

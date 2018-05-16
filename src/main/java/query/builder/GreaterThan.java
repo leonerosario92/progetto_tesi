@@ -3,28 +3,27 @@ package query.builder;
 
 import java.util.function.Predicate;
 
-import model.FieldDescriptor;
 
+public  class GreaterThan/*<T extends Number & Comparable<T>>*/ extends FilterStatement/*<T>*/{
 
-public  class GreaterThan/*<T extends Number & Comparable<T>>*/ extends ComparisonFilterStatement/*<T>*/{
-
-	private static PredicateType type = PredicateType.GREATER_THAN;
+	private static FilterStatementType type = FilterStatementType.GREATER_THAN;
 	
-	
-	public  GreaterThan( FieldDescriptor field, Object operand) {
-		super(type, field, operand);
+	public   GreaterThan( ) {
+		super(type);
 	}
 
-	/*
-	@Override
-	public Predicate<T> getPredicate() {
-		return new Predicate<T>() {
+	
+//	@Override
+//	public <T> Predicate<T> getPredicate() {
+//		
+//		return new Predicate<T>() {
+//
+//			@Override
+//			public boolean test(T leftOperand) {
+//				return leftOperand.compareTo(getRightOperand()) > 0;
+//			}
+//		};
+//	}
+	
 
-			@Override
-			public boolean test(T leftOperand) {
-				return leftOperand.compareTo(getRightOperand()) > 0;
-			}
-		};
-	}
-*/
 }

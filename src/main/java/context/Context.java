@@ -3,12 +3,13 @@ package context;
 import cache.ICachableEntity;
 import datasource.IDataSource;
 import model.IMetaData;
+import model.TableDescriptor;
 import query.QueryProvider;
-import query.builder.QueryBuilder;
+import query.builder.InitialBuilder;
 
 public class Context {
 
-	public QueryBuilder query() {
+	public InitialBuilder query() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -32,5 +33,8 @@ public class Context {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+
+
 
 }

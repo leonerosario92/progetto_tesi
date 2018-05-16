@@ -1,11 +1,12 @@
 package dataset;
 
-import model.ITableDescriptor;
+import model.FieldDescriptor;
+import model.TableDescriptor;
 
 public interface ILayoutManager {
 	
-	public TableEntity  loadTable(ITableDescriptor table);
+	public ITableEntity  loadTable(TableDescriptor table);
 	
-	public ColumnEntity  loadColumn(IColumnDescriptor column);
+	public IColumnEntity  loadColumn(FieldDescriptor column);
 	
 }
