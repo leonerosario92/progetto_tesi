@@ -2,9 +2,10 @@ package query;
 
 import java.util.HashMap;
 
-import query.operator.IQueryFunction;
-import query.operator.IRelOperator;
-import query.operator.RelOperatorType;
+import query.execution.IExecutableQuery;
+import query.execution.operator.IQueryFunction;
+import query.execution.operator.IRelOperator;
+import query.execution.operator.RelOperatorType;
 
 public class QueryProvider  {
 	

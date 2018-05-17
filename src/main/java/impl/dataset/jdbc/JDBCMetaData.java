@@ -1,0 +1,91 @@
+package impl.dataset.jdbc;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+import datasource.IDataSource;
+import model.FieldDescriptor;
+import model.IMetaData;
+import model.IRelationDescriptor;
+import model.ITableDescriptor;
+import model.TableDescriptor;
+
+public class JDBCMetaData implements IMetaData {
+	
+	private ArrayList<ITableDescriptor> tables;
+	private ArrayList<IRelationDescriptor> relations;
+	private Connection connection;
+	
+	public JDBCMetaData(Connection connection) {
+		
+		this.connection = connection;
+		
+		tables= new ArrayList<ITableDescriptor>();
+		
+		try {
+			DatabaseMetaData metadata = connection.getMetaData();
+			
+			ResultSet tablesMetaData = metadata.getTables(null, null, null, null);
+			
+			while(tablesMetaData.next()) {
+				String tableName = tablesMetaData.getString("TABLE_NAME");
+				TableDescriptor newTable = new TableDescriptor(tableName);
+				Set<String> primaryKeys = new HashSet<String>();
+				ResultSet pKeys = metadata.getPrimaryKeys(null, null, tableName);
+				
+				while(pKeys.next()) {
+					primaryKeys.add(pKeys.getString("COLUMN_NAME"));
+				}
+				ArrayList<FieldDescriptor> fields = new ArrayList<FieldDescriptor>();
+				ResultSet columns = metadata.getColumns(null, null, tableName, null);
+				while (columns.next()) {
+					String columnName = columns.getString("COLUMN_NAME");
+					int columnTypeIndex = columns.getInt("DATA_TYPE ");
+					Class <?> columnType = JDBCDataTypeFactory.toJavaClass(columnTypeIndex);
+					boolean isKey = primaryKeys.contains(columnName);
+					FieldDescriptor newField = new FieldDescriptor(newTable, columnName, columnType,isKey);
+				}
+				newTable.addFields(fields);
+			}
+		//TODO Add relations to neewTable
+		} catch (SQLException e) {
+			//TODO  manage exception properly
+		}
+	}
+
+	public Iterable<ITableDescriptor> getTables() {
+		return tables;
+	}
+
+	public ITableDescriptor getTable(String tableId) {
+		for(ITableDescriptor table : tables) {
+			if(table.getName().equals(tableId)) {
+				return table;
+			}
+		}
+		return null;
+	}
+
+	public Iterable<IRelationDescriptor> getAllRelations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Iterable<IRelationDescriptor> getRelations(String tableId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Iterable<IRelationDescriptor> getRelations(String srcTableId, String dstTableId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	
+}

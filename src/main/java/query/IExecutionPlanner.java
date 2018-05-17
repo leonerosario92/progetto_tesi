@@ -1,9 +1,10 @@
 package query;
 
-import query.operator.IQueryNode;
+import query.builder.Query;
+import query.execution.IExecutableSet;
 
 public interface IExecutionPlanner {
 	
-	public  Collection<IExecutionBlock> generateExecutionPlan(Iterable<IQueryNode> queryNodes);
+	public IExecutableSet planExecution (Query query);
 	
 }

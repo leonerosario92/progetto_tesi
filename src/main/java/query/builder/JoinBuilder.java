@@ -3,6 +3,7 @@ package query.builder;
 import context.Context;
 import model.FieldDescriptor;
 import model.TableDescriptor;
+import query.builder.statement.ProjectionStatement;
 
 public class JoinBuilder {
 

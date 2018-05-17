@@ -2,6 +2,8 @@ package query.builder;
 
 import context.Context;
 import model.FieldDescriptor;
+import query.builder.predicate.FilterStatementType;
+import query.builder.statement.FilterStatement;
 
 public class ProjectionBuilder {
 

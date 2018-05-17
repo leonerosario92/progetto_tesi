@@ -1,5 +1,9 @@
 package dataset;
 
-public class IRecordIterator {
-
+public interface IRecordIterator {
+	
+	public IRecord getNextRecord();
+	
+	public boolean hasNext();
+	
 }

@@ -1,7 +1,12 @@
 package dataset;
 
 
-//Contiene risultati dell'iterazione. Diverso da field 
 public interface IRecord {
-
+	
+	public Integer getInteger (int columnIndex);
+	
+	public Float getFloat(int columnIndex);
+	
+	public String getString(int columnIndex);
+	
 }

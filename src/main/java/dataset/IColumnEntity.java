@@ -1,5 +1,11 @@
 package dataset;
 
-public interface IColumnEntity extends IEntity{
+import model.FieldDescriptor;
 
+public interface IColumnEntity extends IEntity{
+	
+	public FieldDescriptor getDescriptor();
+	
+	public IColumnIterator getIterator();
+	
 }

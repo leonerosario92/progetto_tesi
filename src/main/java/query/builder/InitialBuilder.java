@@ -14,6 +14,7 @@ import model.FieldDescriptor;
 import model.IFieldDescriptor;
 import model.ITableDescriptor;
 import model.TableDescriptor;
+import query.builder.statement.SelectionStatement;
 
 public class InitialBuilder {
 	

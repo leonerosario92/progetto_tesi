@@ -5,8 +5,7 @@ import model.TableDescriptor;
 
 public interface ILayoutManager {
 	
-	public ITableEntity  loadTable(TableDescriptor table);
+	public IDataSet loadTable(TableDescriptor table, IRecordIterator tableIterator);
 	
-	public IColumnEntity  loadColumn(FieldDescriptor column);
-	
+	public IDataSet loadColumn (FieldDescriptor field, IColumnIterator columnIterator);
 }

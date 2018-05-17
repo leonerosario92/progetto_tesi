@@ -6,6 +6,12 @@ import java.util.HashSet;
 import model.FieldDescriptor;
 import model.ITableDescriptor;
 import model.TableDescriptor;
+import query.builder.clause.FilterClause;
+import query.builder.clause.ProjectionClause;
+import query.builder.clause.SelectionClause;
+import query.builder.statement.FilterStatement;
+import query.builder.statement.ProjectionStatement;
+import query.builder.statement.SelectionStatement;
 
 public class Query {
 

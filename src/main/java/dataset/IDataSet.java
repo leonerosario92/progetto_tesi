@@ -1,12 +1,17 @@
 package dataset;
 
-import model.ITableDescriptor;
+import model.FieldDescriptor;
+import model.TableDescriptor;
 
 public interface IDataSet {
 	
-	public IRecordIterator getRecordIterator();
+	public boolean containsTable (TableDescriptor table);
+
+	public ITableEntity getTable(TableDescriptor table);
 	
-	public IColumnIterator getColumnIterator();
 	
-	public boolean containsField(String fieldName);
+	public boolean containsColumn (FieldDescriptor field);
+	
+	public IColumnEntity getColumn(FieldDescriptor field);
+	
 }
