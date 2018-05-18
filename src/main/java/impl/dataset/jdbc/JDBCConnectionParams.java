@@ -7,10 +7,11 @@ public class JDBCConnectionParams implements IConnectionParams {
 	private String username;
 	private String password;
 	private String portNumber;
-	private String url;
+	private String host;
+	private String dbName;
 	
 	public JDBCConnectionParams() {
-		username = password = portNumber = url = "";
+		username = password = portNumber = host = dbName = "";
 	}
 
 	public String getUsername() {
@@ -37,16 +38,25 @@ public class JDBCConnectionParams implements IConnectionParams {
 		this.portNumber = portNumber;
 	}
 
-	public String getUrl() {
-		return url;
+	public String getHost() {
+		return host;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setUrl(String hostName) {
+		this.host = hostName;
 	}
 
-	
-	
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	public void setDbName(String dbName) {
+		this.dbName = dbName;
+	}
+
+	public String getDbName() {
+		return dbName;
+	}
 	
 
 }

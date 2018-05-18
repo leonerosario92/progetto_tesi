@@ -11,8 +11,6 @@ import context.Context;
 import dataset.IDataIterator;
 import dataset.IEntity;
 import model.FieldDescriptor;
-import model.IFieldDescriptor;
-import model.ITableDescriptor;
 import model.TableDescriptor;
 import query.builder.statement.SelectionStatement;
 

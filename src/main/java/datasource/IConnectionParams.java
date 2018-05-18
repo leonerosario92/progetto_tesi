@@ -10,6 +10,6 @@ public interface IConnectionParams {
 	
 	public String getPassword();
 	
-	public String getUrl();
+	public String getHost();
 	
 }

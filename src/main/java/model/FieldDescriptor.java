@@ -1,6 +1,6 @@
 package model;
 
-public class FieldDescriptor implements IFieldDescriptor{
+public class FieldDescriptor {
 	
 	private Class<?> type;
 	private String name;

@@ -4,6 +4,7 @@ import context.Context;
 import model.FieldDescriptor;
 import query.builder.predicate.FilterStatementType;
 import query.builder.statement.FilterStatement;
+import query.builder.statement.ProjectionStatement;
 
 public class ProjectionBuilder {
 
@@ -33,6 +34,11 @@ public class ProjectionBuilder {
 
 	private boolean checkField(FieldDescriptor field){
 		return query.referField(field);
+	}
+
+	public ProjectionBuilder project(FieldDescriptor field) {
+		query.project(new ProjectionStatement(field));
+		return this;
 	}
 	
 }

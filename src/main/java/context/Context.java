@@ -14,7 +14,6 @@ import query.IQueryPlanner;
 import query.QueryProvider;
 import query.builder.InitialBuilder;
 import query.builder.Query;
-import query.execution.ExecutionPlan;
 import query.execution.IExecutableSet;
 import query.execution.IQueryExecutor;
 
@@ -42,7 +41,7 @@ public class Context {
 		this.layoutManager = layoutmanager;
 		this.cachingManager = cachingManager;
 		this.queryExecutor = queryExecutor;
-		this.queryProvider = queryProvider;
+		queryExecutor.setQueryProvider(queryProvider);
 		this.queryPlanner = queryOptimizer;
 		this.queryDispatcher = queryDispatcher;
 	}
@@ -74,8 +73,7 @@ public class Context {
 	
 	
 	public IDataSet executePlan (IExecutableSet plan) {
-		
-		
+		return plan.execute(this.queryExecutor);
 	}
 
 }

@@ -14,7 +14,7 @@ import impl.dataset.jdbc.JDBCRecordIterator;
 import query.IQueryDispatcher;
 import query.builder.Query;
 
-public class DatabaseQueryDispatcher implements IQueryDispatcher {
+public class NativeQueryDispatcher implements IQueryDispatcher {
 
 	@Override
 	public IRecordIterator dispatchQuery(Query query, Context context) {

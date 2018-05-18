@@ -1,10 +1,10 @@
 package query.execution.operator.projection;
 
-import model.IFieldDescriptor;
+import model.FieldDescriptor;
 import query.execution.operator.IQueryParams;
 
 public interface IProjectionQueryParams extends IQueryParams {
 	
-	public IFieldDescriptor[] getFileds ();
+	public FieldDescriptor[] getFileds ();
 		
 }

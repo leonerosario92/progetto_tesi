@@ -4,7 +4,6 @@ package query.builder;
 import java.util.HashSet;
 
 import model.FieldDescriptor;
-import model.ITableDescriptor;
 import model.TableDescriptor;
 import query.builder.clause.FilterClause;
 import query.builder.clause.ProjectionClause;

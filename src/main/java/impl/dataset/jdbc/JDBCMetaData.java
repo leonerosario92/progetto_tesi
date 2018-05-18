@@ -8,24 +8,22 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import datasource.IDataSource;
 import model.FieldDescriptor;
 import model.IMetaData;
-import model.IRelationDescriptor;
-import model.ITableDescriptor;
+import model.RelationDescriptor;
 import model.TableDescriptor;
 
 public class JDBCMetaData implements IMetaData {
 	
-	private ArrayList<ITableDescriptor> tables;
-	private ArrayList<IRelationDescriptor> relations;
+	private ArrayList<TableDescriptor> tables;
+	private ArrayList<RelationDescriptor> relations;
 	private Connection connection;
 	
 	public JDBCMetaData(Connection connection) {
 		
 		this.connection = connection;
 		
-		tables= new ArrayList<ITableDescriptor>();
+		tables= new ArrayList<TableDescriptor>();
 		
 		try {
 			DatabaseMetaData metadata = connection.getMetaData();
@@ -58,12 +56,12 @@ public class JDBCMetaData implements IMetaData {
 		}
 	}
 
-	public Iterable<ITableDescriptor> getTables() {
+	public Iterable<TableDescriptor> getTables() {
 		return tables;
 	}
 
-	public ITableDescriptor getTable(String tableId) {
-		for(ITableDescriptor table : tables) {
+	public TableDescriptor getTable(String tableId) {
+		for(TableDescriptor table : tables) {
 			if(table.getName().equals(tableId)) {
 				return table;
 			}
@@ -71,17 +69,17 @@ public class JDBCMetaData implements IMetaData {
 		return null;
 	}
 
-	public Iterable<IRelationDescriptor> getAllRelations() {
+	public Iterable<RelationDescriptor> getAllRelations() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Iterable<IRelationDescriptor> getRelations(String tableId) {
+	public Iterable<RelationDescriptor> getRelations(String tableId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Iterable<IRelationDescriptor> getRelations(String srcTableId, String dstTableId) {
+	public Iterable<RelationDescriptor> getRelations(String srcTableId, String dstTableId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

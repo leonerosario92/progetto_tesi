@@ -59,7 +59,9 @@ public abstract class JDBCDataSource implements IRemoteDataSource{
     	connectionString.append(":");
     	connectionString.append(params.getPortNumber());
     	connectionString.append("//");
-    	connectionString.append(params.getUrl());
+    	connectionString.append(params.getHost());
+    	connectionString.append("/");
+    	connectionString.append(params.getDbName());
     	connectionString.append("?");
     	connectionString.append("user=").append(params.getUsername());
     	connectionString.append("&");
