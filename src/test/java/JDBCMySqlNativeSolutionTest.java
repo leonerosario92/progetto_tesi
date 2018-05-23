@@ -1,5 +1,5 @@
 import context.ContextFactory;
-import impl.dispatcher.JDBC.NativeQueryDispatcher;
+import impl.dispatcher.jdbc.NativeQueryDispatcher;
 
 public class JDBCMySqlNativeSolutionTest extends JDBCMySqlSolutionTest{
 

@@ -55,5 +55,12 @@ public class ProjectionClause  {
 		String key = field.getName()+"_"+field.getTable().getName();
 		return referencedFields.contains(key);
 	}
+
+	public ArrayList<ProjectionStatement> getStatements() {
+		return statements;
+	}
+	
+	
+	
 	
 }

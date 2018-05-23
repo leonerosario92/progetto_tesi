@@ -15,18 +15,22 @@ public class FieldDescriptor {
 		this.isPrimaryKey = isPrimaryKey;
 	}
 	
+	
 	public TableDescriptor getTable() {
 		return table;
 	}
 
+	
 	public Class<?> getType() {
 		return type;
 	}
 
+	
 	public String getName() {
 		return name;
 	}
 
+	
 	public boolean isPrimaryKey() {
 		return isPrimaryKey;
 	}

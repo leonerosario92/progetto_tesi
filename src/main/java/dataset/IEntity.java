@@ -2,6 +2,6 @@ package dataset;
 
 public interface IEntity {
 
-	public String getCachingKey();
+	public String getAssociateKey();
 	
 }

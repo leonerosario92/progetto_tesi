@@ -1,8 +1,12 @@
 package query.builder.clause;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
+import model.FieldDescriptor;
 import query.builder.QueryConstants;
 import query.builder.statement.FilterStatement;
 
@@ -10,7 +14,6 @@ import query.builder.statement.FilterStatement;
 public class FilterClause  {
 	
 	private ArrayList<FilterStatement> filterStatements;
-	
 	
 	public FilterClause() {
 		filterStatements = new ArrayList<>();
@@ -39,6 +42,12 @@ public class FilterClause  {
 			}
 		}
 		return sb.toString();
-	}	
+	}
+	
+	
+	public List<FilterStatement> getStatements(){
+		return filterStatements;
+	}
+	
 	
 }

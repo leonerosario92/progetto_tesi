@@ -1,6 +1,6 @@
 package context;
 
-import cache.CachingManager;
+import cache.IDataProvisioner;
 import dataset.IDataSet;
 import dataset.ILayoutManager;
 import dataset.IRecordIterator;
@@ -14,14 +14,14 @@ import query.IQueryPlanner;
 import query.QueryProvider;
 import query.builder.InitialBuilder;
 import query.builder.Query;
-import query.execution.IExecutableSet;
+import query.execution.ExecutionPlanBlock;
 import query.execution.IQueryExecutor;
 
 public class Context {
 		
 	private IDataSource dataSource;
 	private ILayoutManager layoutManager;
-	private CachingManager cachingManager;
+	private IDataProvisioner cachingManager;
 	private IQueryExecutor queryExecutor;
 	private QueryProvider queryProvider;
 	private IQueryPlanner queryPlanner;
@@ -31,7 +31,7 @@ public class Context {
 	protected Context (
 			IDataSource dataSource, 
 			ILayoutManager layoutmanager, 
-			CachingManager cachingManager,
+			IDataProvisioner cachingManager,
 			IQueryExecutor queryExecutor,
 			QueryProvider queryProvider,
 			IQueryPlanner queryOptimizer,
@@ -41,7 +41,6 @@ public class Context {
 		this.layoutManager = layoutmanager;
 		this.cachingManager = cachingManager;
 		this.queryExecutor = queryExecutor;
-		queryExecutor.setQueryProvider(queryProvider);
 		this.queryPlanner = queryOptimizer;
 		this.queryDispatcher = queryDispatcher;
 	}
@@ -70,10 +69,20 @@ public class Context {
 	public IDataSet loadTable(TableDescriptor table) throws DataSourceException {
 		return cachingManager.loadEntity(table,dataSource,layoutManager);
 	}
-	
-	
-	public IDataSet executePlan (IExecutableSet plan) {
-		return plan.execute(this.queryExecutor);
+
+
+	public ILayoutManager getLayoutmanager() {
+		return layoutManager;
+	}
+
+
+	public IQueryPlanner getQueryPlanner() {
+		return queryPlanner;
+	}
+
+
+	public QueryProvider getQueryProvider() {
+		return queryProvider;
 	}
 
 }

@@ -1,27 +1,27 @@
 import static org.junit.Assert.fail;
 
 import datasource.IDataSource;
-import impl.dataset.jdbc.JDBCConnectionParams;
-import impl.dataset.jdbc.JDBCDataSourceException;
-import impl.dataset.jdbc.mysql.MySqlJDBCDataSource;
+import impl.datasource.jdbc.JDBCConnectionParams;
+import impl.datasource.jdbc.JDBCDataSourceException;
+import impl.datasource.jdbc.mysql.MySqlJDBCDataSource;
 
 public abstract class JDBCMySqlSolutionTest extends AbstractSolutionTest{
 	
-	public  IDataSource getDataSourceImpl() {
+	public  IDataSource getDataSourceImpl() throws JDBCDataSourceException {
 		
 		JDBCConnectionParams connParams =  new JDBCConnectionParams();
 		connParams.setUsername("root");
 		connParams.setPassword("root");
-		connParams.setUrl("localhost");
 		connParams.setHost("localhost");
+		connParams.setPortNumber("3306");
 		connParams.setDbName("foodmart");
 		
 		try {
 			return new MySqlJDBCDataSource(connParams);
 		} catch (JDBCDataSourceException e) {
-			fail();
+			e.printStackTrace();
+			throw e;
 		}
-		return null;
 	}
 
 }

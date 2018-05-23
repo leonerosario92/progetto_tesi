@@ -55,6 +55,21 @@ public class Query {
 		return sb.toString();
 	}
 	
+	
+	public SelectionClause getSelectionClause() {
+		return selectionClause;
+	}
+
+
+	public ProjectionClause getProjectionClause() {
+		return projectionClause;
+	}
+
+
+	public FilterClause getFilterClause() {
+		return filterClause;
+	}
+
 
 	public boolean referTable(TableDescriptor table) {
 		return selectionClause.referTable(table);

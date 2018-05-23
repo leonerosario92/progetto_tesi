@@ -2,35 +2,36 @@ package query;
 
 import java.util.HashMap;
 
-import query.execution.IExecutableQuery;
-import query.execution.operator.IQueryFunction;
+import query.execution.ExecutionPlanItem;
+import query.execution.operator.IOperatorFunction;
 import query.execution.operator.IRelOperator;
 import query.execution.operator.RelOperatorType;
+import query.execution.operator.filterscan.FilterScanFunction;
 
 public class QueryProvider  {
 	
-	private HashMap<RelOperatorType,IRelOperator> implementations;
+	private HashMap<RelOperatorType,Class<?>> implementations;
 	
 	public QueryProvider() {
 		implementations = new HashMap<>();
 	}
 	
-	public QueryProvider(Iterable<IRelOperator> operators) {
-		this();
-		for(IRelOperator operator : operators){
-			setImplementation(operator);
-		}
-	}
-	
-	public void setImplementation(IRelOperator operator) {
-		implementations.put(operator.getType(), operator);
+//	public QueryProvider(Iterable<IRelOperator> operators) {
+//		this();
+//		for(IRelOperator operator : operators){
+//			setImplementation(operator);
+//		}
+//	}
+//	
+	private void setImplementation(RelOperatorType type, Class<?> clazz) {
+		implementations.put(type, clazz);
 	}
 
 	
-	public IExecutableQuery getQuery(RelOperatorType type) {
-		checkImplementation(type);
-		return implementations.get(type).getQuery();
-	}
+//	public IExecutionPlanItem getQuery(RelOperatorType type) {
+//		checkImplementation(type);
+//		return implementations.get(type).getQuery();
+//	}
 	
 
 	private void checkImplementation(RelOperatorType operatorType) {
@@ -40,5 +41,20 @@ public class QueryProvider  {
 		}
 	}
 	
+	public FilterScanFunction getFilterScanImpl () {
+		checkImplementation(RelOperatorType.FILTER_SCAN);
+		Class<?> clazz = implementations.get(RelOperatorType.FILTER_SCAN);
+		try {
+			return (FilterScanFunction) clazz.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			//TODO: Manage exception properly
+			throw new IllegalArgumentException();
+		}
+		
+	}
+	
+	public void setFilterScanImpl(Class<FilterScanFunction> functionClass) {
+		setImplementation(RelOperatorType.FILTER_SCAN, functionClass);
+	}	
 	
 }

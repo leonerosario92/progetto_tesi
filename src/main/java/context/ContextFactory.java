@@ -1,14 +1,14 @@
 package context;
 
-import cache.CachingManager;
+import cache.IDataProvisioner;
 import dataset.ILayoutManager;
 import datasource.IDataSource;
-import impl.base.BaseCachingManager;
-import impl.base.BaseQueryDisapatcher;
+import impl.base.BaseDataProvisioner;
+import impl.base.BaseQueryDispatcher;
 import impl.base.BaseQueryExecutor;
 import impl.base.BaseQueryPlanner;
 import impl.base.BaseQueryProvider;
-import impl.base.BaselayoutManager;
+import impl.base.BaseLayoutManager;
 import query.IQueryDispatcher;
 import query.IQueryPlanner;
 import query.QueryProvider;
@@ -18,7 +18,7 @@ public class ContextFactory {
 	
 	private IDataSource dataSource;
 	private ILayoutManager layoutManager;
-	private CachingManager cachingManager;
+	private IDataProvisioner dataProvisioner;
 	private IQueryExecutor queryExecutor;
 	private QueryProvider queryProvider;
 	private IQueryPlanner queryPlanner;
@@ -28,12 +28,12 @@ public class ContextFactory {
 		
 		this.dataSource = dataSource;
 		
-		layoutManager = new BaselayoutManager();
-		cachingManager = new BaseCachingManager();
+		layoutManager = new BaseLayoutManager();
+		dataProvisioner = new BaseDataProvisioner();
 		queryExecutor = new BaseQueryExecutor();
 		queryPlanner = new BaseQueryPlanner();
 		queryProvider = new BaseQueryProvider();
-		queryDispatcher = new BaseQueryDisapatcher();
+		queryDispatcher = new BaseQueryDispatcher();
 	}
 	
 	public static ContextFactory getInstance(IDataSource dataSource) {
@@ -41,16 +41,16 @@ public class ContextFactory {
 	}
 	
 	
-	public Context getContext() throws FactoryException {
+	public Context getContext() throws ContextFactoryException {
 		
 		if((dataSource == null) || (queryDispatcher == null)) {
-			throw new FactoryException ("Error : mandatory fields of contextFactory not set");
+			throw new ContextFactoryException ("Error : mandatory fields of contextFactory not set");
 		}
 		
 		return new Context(
 				dataSource,
 				layoutManager,
-				cachingManager,
+				dataProvisioner,
 				queryExecutor,
 				queryProvider,
 				queryPlanner,
@@ -63,8 +63,8 @@ public class ContextFactory {
 		this.layoutManager = layoutManager;
 	}
 
-	public void setCachingManager(CachingManager cachingManager) {
-		this.cachingManager = cachingManager;
+	public void setCachingManager(IDataProvisioner dataProvisioner) {
+		this.dataProvisioner = dataProvisioner;
 	}
 
 	public void setQueryExecutor(IQueryExecutor queryExecutor) {

@@ -6,6 +6,5 @@ public interface IColumnEntity extends IEntity{
 	
 	public FieldDescriptor getDescriptor();
 	
-	public IColumnIterator getIterator();
 	
 }

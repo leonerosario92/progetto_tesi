@@ -3,6 +3,7 @@ package query.builder.clause;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import model.FieldDescriptor;
@@ -115,4 +116,16 @@ public class SelectionClause {
 	}
 	
 	
+	public List<TableDescriptor> getReferencedtables (){
+		List<TableDescriptor> referencedTables 	= new ArrayList<>();	
+		for(SelectionStatement statement : selectionStatements) {
+			referencedTables.add(statement.getTable());
+		}
+		return referencedTables;
+	}
+	
+	
+	public List<SelectionStatement> getStatements(){
+		return selectionStatements;
+	}
 }

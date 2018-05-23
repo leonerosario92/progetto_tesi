@@ -3,7 +3,7 @@ package datasource;
 import dataset.IColumnIterator;
 import dataset.IDataSet;
 import dataset.IRecordIterator;
-import impl.dataset.jdbc.JDBCDataSourceException;
+import impl.datasource.jdbc.JDBCDataSourceException;
 import model.FieldDescriptor;
 import model.IMetaData;
 import model.TableDescriptor;
@@ -16,8 +16,10 @@ public interface IDataSource extends AutoCloseable {
 	
 	//public IRecordIterator getTablePartition(TableDescriptor table,int offset, int recordCount);
 	
-	public IColumnIterator getColumn(FieldDescriptor field) throws DataSourceException;
+	IRecordIterator getTableProjection(TableDescriptor table, FieldDescriptor...args) throws DataSourceException;
 	
 	//public ColumnIterator getColumnPartition(FieldDescriptor field,int offset, int recordCount);
+	
+	
 	
 }
