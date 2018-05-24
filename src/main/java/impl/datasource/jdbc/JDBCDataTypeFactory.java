@@ -2,11 +2,14 @@ package impl.datasource.jdbc;
 
 
 import java.sql.Types;
+import java.util.Map;
+
+import context.DataType;
 
 
 public class JDBCDataTypeFactory {
 
-	
+
 	public static Class<?> toJavaClass(int nativeType) {
 		
 		Class<?> result = Object.class;
@@ -71,6 +74,43 @@ public class JDBCDataTypeFactory {
              break;
      }
      return result;
+	}
+	
+	
+	public static DataType toDataType(int natveType) {
+		
+		DataType result = null;
+		
+		switch(natveType) {
+		case Types.CHAR:
+        case Types.VARCHAR:
+        case Types.LONGVARCHAR:
+            result = DataType.STRING;
+            break;
+            
+        case Types.INTEGER:
+            result = DataType.INTEGER;
+            break;
+            
+        case Types.BIGINT:
+            result = DataType.LONG;
+            break;
+
+        case Types.REAL:
+        case Types.FLOAT:
+            result = DataType.FLOAT;
+            break;
+
+        case Types.DOUBLE:
+            result = DataType.DOUBLE;
+            break;
+            
+        case Types.NUMERIC:
+        case Types.DECIMAL:
+            result = DataType.BIG_DECIMAL;
+            break;
+		}
+		return result;
 	}
 
 }

@@ -19,5 +19,7 @@ public interface IDataSet {
 	public boolean containsColumn (FieldDescriptor field);
 	
 	public IDataSet getSubset(FieldDescriptor...field);
+
+	public IRecordIterator tableIterator();
 	
 }

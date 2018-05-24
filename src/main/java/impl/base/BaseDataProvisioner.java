@@ -1,9 +1,8 @@
 package impl.base;
 
-import java.util.List;
+import java.util.Set;
 
-import cache.IDataProvisioner;
-import context.Context;
+import dataprovisioner.AbstractDataProvisioner;
 import dataset.IDataSet;
 import dataset.ILayoutManager;
 import dataset.IRecordIterator;
@@ -12,14 +11,10 @@ import datasource.IDataSource;
 import model.FieldDescriptor;
 import model.TableDescriptor;
 
-public class BaseDataProvisioner implements IDataProvisioner {
+public class BaseDataProvisioner extends AbstractDataProvisioner  {
 	
-	private IDataSource dataSource;
-	private ILayoutManager layoutManager;
-	
-	public BaseDataProvisioner(Context context) {
-		this.dataSource = context.getDataSource();
-		this.layoutManager = context.getLayoutmanager();
+	public BaseDataProvisioner(IDataSource dataSource, ILayoutManager layoutManager) {
+		super (dataSource,layoutManager);
 	}
 
 	@Override
@@ -35,14 +30,14 @@ public class BaseDataProvisioner implements IDataProvisioner {
 	}
 
 	@Override
-	public IDataSet loadDataSet(TableDescriptor table, List<FieldDescriptor> fields) throws DataSourceException {
+	public IDataSet loadDataSet(TableDescriptor table, Set<FieldDescriptor> fields) throws DataSourceException {
 		
 		//Ricerca nella cache
 		
 		FieldDescriptor [] arr = new FieldDescriptor[fields.size()];
 		IRecordIterator it = 
 				dataSource.getTableProjection(table, fields.toArray(arr));
-		IDataSet result = layoutManager.newDataSet(it);
+		IDataSet result = layoutManager.buildDataSet(it);
 				
 		//Merge con i dati nella cache 
 		

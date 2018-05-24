@@ -2,13 +2,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import context.Context;
 import context.ContextFactory;
 import context.ContextFactoryException;
-import dataset.IRecord;
 import dataset.IRecordIterator;
 import datasource.IDataSource;
 import impl.datasource.jdbc.JDBCDataSourceException;
@@ -61,14 +59,10 @@ public abstract class AbstractSolutionTest {
 				.filter(productNetWeight, FilterStatementType.GREATER_THAN,new Integer(18))
 				.getQuery();
 			
-			String querySql = query.writeSql();
-			
 			IRecordIterator result = context.executeQuery(query);
 			
 			int count = 0;
-			IRecord currentRecord;
 			while(result.hasNext()) {
-				currentRecord = result.getNextRecord();
 				count ++;
 			}
 			

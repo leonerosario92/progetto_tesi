@@ -1,15 +1,19 @@
+
 package context;
 
-import cache.IDataProvisioner;
+
+import dataprovisioner.IDataProvisioner;
 import dataset.ILayoutManager;
 import datasource.IDataSource;
+import dispatcher.AbstractQueryDispatcher;
+import dispatcher.IQueryDispatcher;
 import impl.base.BaseDataProvisioner;
 import impl.base.BaseQueryDispatcher;
 import impl.base.BaseQueryExecutor;
 import impl.base.BaseQueryPlanner;
-import impl.base.BaseQueryProvider;
+import impl.query.execution.operator.filterscan.StreamFilterScan;
 import impl.base.BaseLayoutManager;
-import query.IQueryDispatcher;
+
 import query.IQueryPlanner;
 import query.QueryProvider;
 import query.execution.IQueryExecutor;
@@ -22,18 +26,23 @@ public class ContextFactory {
 	private IQueryExecutor queryExecutor;
 	private QueryProvider queryProvider;
 	private IQueryPlanner queryPlanner;
-	private IQueryDispatcher queryDispatcher;
+//	private IQueryDispatcher queryDispatcher;
+	
+	private Class<? extends AbstractQueryDispatcher> queryDispatcherImpl;
 	
 	private ContextFactory(IDataSource dataSource) {
 		
 		this.dataSource = dataSource;
+//		layoutManager = new BaseLayoutManager();
+//		
+//		dataProvisioner = new BaseDataProvisioner(dataSource,layoutManager);
+//		queryExecutor = new BaseQueryExecutor(dataProvisioner,layoutManager);
+//		
+//		queryProvider = new QueryProvider();
+//		queryProvider.setFilterScanImpl(new StreamFilterScan().getClass());
+//		queryPlanner = new BaseQueryPlanner(queryProvider);
+//		
 		
-		layoutManager = new BaseLayoutManager();
-		dataProvisioner = new BaseDataProvisioner();
-		queryExecutor = new BaseQueryExecutor();
-		queryPlanner = new BaseQueryPlanner();
-		queryProvider = new BaseQueryProvider();
-		queryDispatcher = new BaseQueryDispatcher();
 	}
 	
 	public static ContextFactory getInstance(IDataSource dataSource) {
@@ -43,9 +52,15 @@ public class ContextFactory {
 	
 	public Context getContext() throws ContextFactoryException {
 		
-		if((dataSource == null) || (queryDispatcher == null)) {
+		if((dataSource == null)) {
 			throw new ContextFactoryException ("Error : mandatory fields of contextFactory not set");
 		}
+				
+		IQueryDispatcher queryDispatcher;
+		if(queryDispatcherImpl == null) {
+			queryDispatcherImpl = BaseQueryDispatcher.class;
+		}
+		queryDispatcher = queryDispatcherImpl.newInstance().
 		
 		return new Context(
 				dataSource,
@@ -79,8 +94,8 @@ public class ContextFactory {
 		this.queryPlanner = queryPlanner;
 	}
 
-	public void setQueryDispatcher(IQueryDispatcher queryDispatcher) {
-		this.queryDispatcher = queryDispatcher;
+	public void setQueryDispatcher(Class<? extends AbstractQueryDispatcher> queryDispatcherImpl) {
+		this.queryDispatcherImpl = queryDispatcherImpl;
 	}
 	
 }

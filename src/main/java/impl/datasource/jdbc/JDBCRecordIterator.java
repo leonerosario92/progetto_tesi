@@ -4,45 +4,33 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-
-import dataset.IRecord;
+import context.DataType;
 import dataset.IRecordIterator;
 
 public class JDBCRecordIterator implements IRecordIterator {
 
 	private ResultSet resultSet;
 	private ResultSetMetaData metadata;
+
 	
 	public JDBCRecordIterator(ResultSet resultSet) throws JDBCDataSourceException {
 		this.resultSet = resultSet;
 		try {
 			this.metadata = resultSet.getMetaData();
 		} catch (SQLException e) {
-			// TODO Manage exception properly
-			throw new JDBCDataSourceException();
+			manageSqlException();
 		}
 	}
 
-	
-	@Override
-	public IRecord getNextRecord()  {
-		try {
-			return new JDBCRecord(resultSet.next());
-		} catch (SQLException e) {
-			// TODO Manage exception properly
-			throw new RuntimeException("An error occurred while retrieving data from data source");
-		}
-	}
 
-	
 	@Override
 	public boolean hasNext() {
 		try {
 			return (!resultSet.isLast());
 		} catch (SQLException e) {
-			// TODO Manage exception properly
-			throw new RuntimeException("An error occurred while retrieving data from data source");
+			manageSqlException();
 		}
+		return false;
 	}
 
 
@@ -51,22 +39,22 @@ public class JDBCRecordIterator implements IRecordIterator {
 		try {
 			return metadata.getColumnCount();
 		} catch (SQLException e) {
-			// TODO Manage exception properly
-			throw new RuntimeException("An error occurred while retrieving data from data source");
+			manageSqlException();
 		}
+		return 0;
 	}
 
 
 	@Override
-	public Class<?> getColumnType(int index) {
+	public DataType getColumnType(int index) {
 		int columntype;
 		try {
 			columntype = metadata.getColumnType(index);
+			return JDBCDataTypeFactory.toDataType(columntype);
 		} catch (SQLException e) {
-			// TODO Manage exception properly
-			throw new RuntimeException("An error occurred while retrieving data from data source");
+			manageSqlException();
 		}
-		return JDBCDataTypeFactory.toJavaClass(columntype);
+		return null;
 	}
 
 
@@ -75,10 +63,42 @@ public class JDBCRecordIterator implements IRecordIterator {
 		try {
 			return metadata.getColumnName(index);
 		} catch (SQLException e) {
-			// TODO Manage exception properly
-			throw new RuntimeException("An error occurred while retrieving data from data source");
+			manageSqlException();
 		}
+		return null;
+	}
+
+
+	@Override
+	public String getTableName(int index) {
+		try {
+			return metadata.getColumnName(index);
+		} catch (SQLException e) {
+			manageSqlException();
+		}
+		return null;
 	}
 	
+	
+	@Override
+	public Object getValueAt(int index) {
+		try {
+			return resultSet.getObject(index);
+		} catch (SQLException e) {
+			manageSqlException();
+		}
+		return null;
+	}
+	
+	
+	private void manageSqlException() {
+		// TODO Manage exception properly
+		throw new RuntimeException("An error occurred while retrieving data from data source");
+	}
 
+
+	
+	
+	
+	
 }

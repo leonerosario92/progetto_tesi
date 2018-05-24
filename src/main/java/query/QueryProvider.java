@@ -2,9 +2,9 @@ package query;
 
 import java.util.HashMap;
 
+import impl.query.execution.operator.filterscan.StreamFilterScan;
 import query.execution.ExecutionPlanItem;
 import query.execution.operator.IOperatorFunction;
-import query.execution.operator.IRelOperator;
 import query.execution.operator.RelOperatorType;
 import query.execution.operator.filterscan.FilterScanFunction;
 
@@ -53,8 +53,8 @@ public class QueryProvider  {
 		
 	}
 	
-	public void setFilterScanImpl(Class<FilterScanFunction> functionClass) {
-		setImplementation(RelOperatorType.FILTER_SCAN, functionClass);
+	public void setFilterScanImpl(Class<? extends StreamFilterScan> class1) {
+		setImplementation(RelOperatorType.FILTER_SCAN, class1);
 	}	
 	
 }

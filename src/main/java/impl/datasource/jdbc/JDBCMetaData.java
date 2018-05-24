@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import context.DataType;
 import model.FieldDescriptor;
 import model.IMetaData;
 import model.RelationDescriptor;
@@ -43,7 +44,7 @@ public class JDBCMetaData implements IMetaData {
 				while (columns.next()) {
 					String columnName = columns.getString("COLUMN_NAME");
 					int columnTypeIndex = columns.getInt("DATA_TYPE");
-					Class <?> columnType = JDBCDataTypeFactory.toJavaClass(columnTypeIndex);
+					DataType columnType = JDBCDataTypeFactory.toDataType(columnTypeIndex);
 					boolean isKey = primaryKeys.contains(columnName);
 					FieldDescriptor newField = new FieldDescriptor(newTable, columnName, columnType,isKey);
 					fields.add(newField);

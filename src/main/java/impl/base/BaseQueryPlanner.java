@@ -5,10 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import context.Context;
 import model.FieldDescriptor;
 import query.AbstractQueryPlanner;
-import query.IQueryPlanner;
 import query.QueryProvider;
 import query.builder.Query;
 import query.builder.clause.FilterClause;
@@ -19,14 +17,13 @@ import query.builder.statement.ProjectionStatement;
 import query.builder.statement.SelectionStatement;
 import query.execution.ExecutionPlanBlock;
 import query.execution.ExecutionPlanItem;
-import query.execution.ExecutionSequence;
 import query.execution.operator.filterscan.FilterScanArgs;
 import query.execution.operator.filterscan.FilterScanFunction;
 
 public class BaseQueryPlanner extends AbstractQueryPlanner {
 	
-	public BaseQueryPlanner(Context context) {
-		super(context);
+	public BaseQueryPlanner(QueryProvider queryProvider) {
+		super(queryProvider);
 	}
 
 	/*Base implementation of a queryPlanner. Generate an execution plan where 

@@ -1,7 +1,6 @@
 package query.execution;
 
-import cache.IDataProvisioner;
-import context.Context;
+import dataprovisioner.IDataProvisioner;
 import dataset.ILayoutManager;
 
 public abstract class AbstractQueryExecutor implements IQueryExecutor {
@@ -9,11 +8,10 @@ public abstract class AbstractQueryExecutor implements IQueryExecutor {
 	protected IDataProvisioner dataProvisioner;
 	protected ILayoutManager layoutManager;
 	
-	public AbstractQueryExecutor(Context context) {
-		this.layoutManager = context.getLayoutmanager();
-		this.dataProvisioner = Context.getDataProvisioner();
+	public AbstractQueryExecutor(IDataProvisioner dataProvisioner, ILayoutManager layoutManager) {
+		this.layoutManager = layoutManager;
+		this.dataProvisioner = dataProvisioner;
 	}
-	
 	
 
 }

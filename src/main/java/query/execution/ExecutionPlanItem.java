@@ -40,6 +40,7 @@ public class ExecutionPlanItem implements Callable<IDataSet> {
 			//TODO Manage exception properly
 			throw new IllegalStateException();
 		}
+		args.setInputDataSet(inputDataSet);
 		return (IDataSet) function.apply(args);
 	}
 	

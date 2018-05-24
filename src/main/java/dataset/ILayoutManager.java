@@ -1,5 +1,6 @@
 package dataset;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -16,8 +17,8 @@ public interface ILayoutManager {
 	
 //	public IDataSet loadColumn (FieldDescriptor field);
 
-	public IDataSet mergeDatasets(Set<IDataSet> partialResults);
+	public IDataSet mergeDatasets(Set<IDataSet> dataSets);
 
-	public IDataSet newDataSet(IRecordIterator it);
+	public IDataSet buildDataSet(IRecordIterator it);
 	
 }

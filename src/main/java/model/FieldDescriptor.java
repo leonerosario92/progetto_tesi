@@ -1,14 +1,16 @@
 package model;
 
+import context.DataType;
+
 public class FieldDescriptor {
 	
-	private Class<?> type;
+	private DataType type;
 	private String name;
 	private boolean isPrimaryKey;
 	private TableDescriptor table;
 
 	
-	public FieldDescriptor(TableDescriptor table, String name, Class<?> type, boolean isPrimaryKey) {
+	public FieldDescriptor(TableDescriptor table, String name, DataType type, boolean isPrimaryKey) {
 		this.table = table;
 		this.name = name;
 		this.type = type;	
@@ -21,7 +23,7 @@ public class FieldDescriptor {
 	}
 
 	
-	public Class<?> getType() {
+	public DataType getType() {
 		return type;
 	}
 

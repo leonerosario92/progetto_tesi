@@ -11,21 +11,12 @@ public class FilterScanArgs implements IOperatorArgs {
 	
 		private List<FilterStatement> statements;
 		private FieldDescriptor field;
+		private IDataSet inputDataSet;
 		
 		public FilterScanArgs() {
 			statements = new ArrayList<>();
 		}
 
-		
-/*========== INPUT SET E' UN'INFO RIDONDANTE SE SI HANNO I FIELDDESCRIPTOR */
-		
-//		public void setInputSet(IDataSet inputSet) {
-//			this.inputSet = inputSet;
-//		}
-		
-//		public IDataSet getInputSet() {
-//		return inputSet;
-//	}
 
 		public void setStatements(List<FilterStatement> statements) {
 			statements.addAll(statements);
@@ -44,14 +35,17 @@ public class FilterScanArgs implements IOperatorArgs {
 		public void setField(FieldDescriptor field) {
 			this.field = field;
 		}
-		
-		 
 
 
+		@Override
+		public void setInputDataSet(IDataSet inputSet) {
+			this.inputDataSet = inputSet;
+		}
 
-		
-		
-		
-		
+
+		@Override
+		public IDataSet getInputDataSet() {
+			return inputDataSet;
+		}
 		
 	}

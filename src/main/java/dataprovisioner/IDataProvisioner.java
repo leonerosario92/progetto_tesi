@@ -1,6 +1,6 @@
-package cache;
+package dataprovisioner;
 
-import java.util.List;
+import java.util.Set;
 
 import dataset.IDataSet;
 import dataset.ILayoutManager;
@@ -15,7 +15,7 @@ public interface IDataProvisioner {
 
 	public IDataSet loadEntity(FieldDescriptor field, IDataSource dataSource, ILayoutManager layoutManager);
 
-	public IDataSet loadDataSet(TableDescriptor table, List<FieldDescriptor> fields) throws DataSourceException;
+	public IDataSet loadDataSet(TableDescriptor table, Set<FieldDescriptor> fields) throws DataSourceException;
 
 }
 

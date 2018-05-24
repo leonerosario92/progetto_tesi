@@ -1,15 +1,19 @@
 package dataset;
 
+import context.DataType;
+
 public interface IRecordIterator {
-	
-	public IRecord getNextRecord();
-	
+		
 	public boolean hasNext();
 		
 	public int getFieldsCount();
 	
-	public Class<?> getColumnType(int index);
+	public DataType getColumnType(int index);
 	
 	public String getColumnName(int index);
+	
+	public String getTableName(int index);
+
+	public Object getValueAt (int index);
 	
 }

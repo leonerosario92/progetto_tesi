@@ -5,22 +5,26 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import context.Context;
 import dataset.IRecordIterator;
 import datasource.IDataSource;
 import datasource.IRemoteDataSource;
+import dispatcher.AbstractQueryDispatcher;
 import impl.datasource.jdbc.JDBCDataSource;
 import impl.datasource.jdbc.JDBCDataSourceException;
 import impl.datasource.jdbc.JDBCRecordIterator;
-import query.IQueryDispatcher;
+import query.IQueryPlanner;
 import query.builder.Query;
+import query.execution.IQueryExecutor;
 
-public class NativeQueryDispatcher implements IQueryDispatcher {
+public class NativeQueryDispatcher extends AbstractQueryDispatcher {
+
+	public NativeQueryDispatcher(IDataSource dataSource, IQueryPlanner planner, IQueryExecutor executor) {
+		super(dataSource, planner, executor);
+	}
 
 	@Override
-	public IRecordIterator dispatchQuery(Query query, Context context) {
+	public IRecordIterator dispatchQuery(Query query) {
 		String sqlStatement = query.writeSql();
-		IDataSource dataSource = context.getDataSource();
 		if(!(dataSource instanceof JDBCDataSource)) {
 			//TODO: Manage exception properly
 			throw new IllegalStateException();

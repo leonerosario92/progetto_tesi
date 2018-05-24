@@ -5,27 +5,24 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import cache.IDataProvisioner;
-import context.Context;
+import dataprovisioner.IDataProvisioner;
 import dataset.IDataSet;
-import dataset.IEntity;
 import dataset.ILayoutManager;
+import datasource.DataSourceException;
 import model.FieldDescriptor;
-import query.QueryProvider;
+import model.TableDescriptor;
 import query.execution.AbstractQueryExecutor;
 import query.execution.ExecutionPlanBlock;
 import query.execution.ExecutionPlanItem;
-import query.execution.IQueryExecutor;
 
 public class BaseQueryExecutor extends AbstractQueryExecutor {
 	
 	private ExecutorService executor;
 	
-	public BaseQueryExecutor(Context context) {
-		super(context);
+	public BaseQueryExecutor(IDataProvisioner dataProvisioner, ILayoutManager layoutManager) {
+		super(dataProvisioner,layoutManager);
 		executor = new ForkJoinPool();
 	}
 
@@ -34,7 +31,11 @@ public class BaseQueryExecutor extends AbstractQueryExecutor {
 	public IDataSet executePlan(ExecutionPlanBlock plan) {
 		
 		List<ExecutionPlanItem> itemList = plan.getItemList();
-		IDataSet inputDataSet = loadInputDataSet(plan.getReferencedFields());
+		
+		
+		//TODO : fix this if selectStatements will accept more than one table
+		TableDescriptor table =(TableDescriptor) plan.getReferencedTables().toArray()[0];
+		IDataSet inputDataSet = loadInputDataSet(table, plan.getReferencedFields());
 		
 		for(ExecutionPlanItem item : itemList) {
 			IDataSet itemInputSet = inputDataSet.getSubset(item.getReferencedField());
@@ -70,8 +71,13 @@ public class BaseQueryExecutor extends AbstractQueryExecutor {
 	}
 
 
-	private IDataSet loadInputDataSet(List<FieldDescriptor> inputFields) {
-		return dataProvisioner.loadDataSet(inputFields);
+	private IDataSet loadInputDataSet(TableDescriptor table , Set<FieldDescriptor> inputFields) {
+		try {
+			return dataProvisioner.loadDataSet(table , inputFields);
+		} catch (DataSourceException e) {
+			// TODO Manage exception properly
+			throw new RuntimeException(e);
+		}
 	}
 
 }
