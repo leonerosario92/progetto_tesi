@@ -8,13 +8,15 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import context.DataType;
+import dataset.AbstractLayoutManager;
 import dataset.IDataSet;
 import dataset.ILayoutManager;
 import dataset.IRecordIterator;
 import model.FieldDescriptor;
 
-public class BaseLayoutManager implements ILayoutManager {
+public class BaseLayoutManager extends AbstractLayoutManager {
 
+	/*======INNER CLASSES THAT IMPLEMENTS DATASET=====*/
 	private class ColumnImpl<T>{
 		
 		private ArrayList<T> column;
@@ -42,6 +44,7 @@ public class BaseLayoutManager implements ILayoutManager {
 		public BaseDataSet(){
 			columns = new HashMap<>();
 		}
+
 
 		@Override
 		public Iterator<?> getColumnIterator(FieldDescriptor field) {
@@ -94,6 +97,13 @@ public class BaseLayoutManager implements ILayoutManager {
 	}
 	
 	
+	
+	public BaseLayoutManager() {
+		super();
+	}
+	
+	
+	/*======METHODS INHERITED FROM ILayoutManager=====*/
 	@Override
 	public IDataSet buildDataSet(IRecordIterator iterator) {
 		
@@ -124,13 +134,12 @@ public class BaseLayoutManager implements ILayoutManager {
 		return dataSet;
 	}
 
-
+	
 	@Override
 	public IDataSet mergeDatasets(Set<IDataSet> partialResults) {
 		
 	}
 
-	
 	
 	private ColumnImpl<?> createColumn(DataType fieldsType) {
 		ColumnImpl<?> newColumn = null;

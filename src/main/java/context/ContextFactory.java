@@ -2,7 +2,9 @@
 package context;
 
 
+import dataprovisioner.AbstractDataProvisioner;
 import dataprovisioner.IDataProvisioner;
+import dataset.AbstractLayoutManager;
 import dataset.ILayoutManager;
 import datasource.IDataSource;
 import dispatcher.AbstractQueryDispatcher;
@@ -13,26 +15,35 @@ import impl.base.BaseQueryExecutor;
 import impl.base.BaseQueryPlanner;
 import impl.query.execution.operator.filterscan.StreamFilterScan;
 import impl.base.BaseLayoutManager;
-
+import query.AbstractQueryPlanner;
 import query.IQueryPlanner;
 import query.QueryProvider;
+import query.execution.AbstractQueryExecutor;
 import query.execution.IQueryExecutor;
 
 public class ContextFactory {
 	
 	private IDataSource dataSource;
-	private ILayoutManager layoutManager;
-	private IDataProvisioner dataProvisioner;
-	private IQueryExecutor queryExecutor;
 	private QueryProvider queryProvider;
-	private IQueryPlanner queryPlanner;
-//	private IQueryDispatcher queryDispatcher;
-	
+
+	private Class<? extends AbstractLayoutManager> layoutManagerImpl;
+	private Class<? extends AbstractDataProvisioner> dataProvisionerImpl;
+	private Class<? extends AbstractQueryExecutor> queryExecutorImpl;
+	private Class<? extends AbstractQueryPlanner> queryPlannerImpl;
 	private Class<? extends AbstractQueryDispatcher> queryDispatcherImpl;
 	
 	private ContextFactory(IDataSource dataSource) {
 		
 		this.dataSource = dataSource;
+		this.queryProvider = new QueryProvider();
+		this.queryProvider.setFilterScanImpl(new StreamFilterScan().getClass());
+		
+		this.layoutManagerImpl = BaseLayoutManager.class;
+		this.dataProvisionerImpl = BaseDataProvisioner.class;
+		this.queryExecutorImpl = BaseQueryExecutor.class;
+		this.queryPlannerImpl = BaseQueryPlanner.class;
+		this.queryDispatcherImpl = BaseQueryDispatcher.class;
+		
 //		layoutManager = new BaseLayoutManager();
 //		
 //		dataProvisioner = new BaseDataProvisioner(dataSource,layoutManager);
@@ -45,6 +56,7 @@ public class ContextFactory {
 		
 	}
 	
+	
 	public static ContextFactory getInstance(IDataSource dataSource) {
 		return new ContextFactory(dataSource);
 	}
@@ -55,12 +67,24 @@ public class ContextFactory {
 		if((dataSource == null)) {
 			throw new ContextFactoryException ("Error : mandatory fields of contextFactory not set");
 		}
-				
-		IQueryDispatcher queryDispatcher;
-		if(queryDispatcherImpl == null) {
-			queryDispatcherImpl = BaseQueryDispatcher.class;
-		}
-		queryDispatcher = queryDispatcherImpl.newInstance().
+		
+		ILayoutManager  layoutManager = layoutManagerImpl.newInstance();
+		IDataProvisioner dataProvisioner = dataProvisionerImpl.newInstance();
+		IQueryExecutor queryExecutor = queryExecutorImpl.newInstance();
+		IQueryPlanner queryPlanner = queryPlannerImpl.newInstance();
+		IQueryDispatcher queryDispatcher = queryDispatcherImpl.newInstance();
+		
+		dataProvisioner.setDataSource(dataSource);
+		dataProvisioner.setLayoutManager(layoutManager);
+		
+		queryExecutor.setDataProvisioner(dataProvisioner);
+		queryExecutor.setLayoutManager(layoutManager);
+		
+		queryPlanner.setQueryProvider(queryProvider);
+		
+		queryDispatcher.setDataSource(dataSource);
+		queryDispatcher.setQueryPlanner(queryPlanner);
+		queryDispatcher.setQueryExecutor(queryExecutor);
 		
 		return new Context(
 				dataSource,
@@ -74,24 +98,24 @@ public class ContextFactory {
 	}
 
 	
-	public void setLayoutManager(ILayoutManager layoutManager) {
-		this.layoutManager = layoutManager;
+	public void setLayoutManager(Class<? extends AbstractLayoutManager> layoutManagerImpl) {
+		this.layoutManagerImpl = layoutManagerImpl;
 	}
 
-	public void setCachingManager(IDataProvisioner dataProvisioner) {
-		this.dataProvisioner = dataProvisioner;
+	public void setDataProvisioner(Class<? extends AbstractDataProvisioner> dataProvisionerImpl) {
+		this.dataProvisionerImpl = dataProvisionerImpl;
 	}
 
-	public void setQueryExecutor(IQueryExecutor queryExecutor) {
-		this.queryExecutor = queryExecutor;
+	public void setQueryExecutor(Class<? extends AbstractQueryExecutor> queryExecutorImpl) {
+		this.queryExecutorImpl = queryExecutorImpl;
 	}
 
-	public void setQueryProvider(QueryProvider queryProvider) {
-		this.queryProvider = queryProvider;
-	}
+//	public void setQueryProvider(QueryProvider queryProviderImpl) {
+//		this.queryProviderImpl = queryProviderImpl;
+//	}
 
-	public void setQueryPlanner(IQueryPlanner queryPlanner) {
-		this.queryPlanner = queryPlanner;
+	public void setQueryPlanner(Class<? extends AbstractQueryPlanner> queryPlannerImpl) {
+		this.queryPlannerImpl = queryPlannerImpl;
 	}
 
 	public void setQueryDispatcher(Class<? extends AbstractQueryDispatcher> queryDispatcherImpl) {

@@ -1,6 +1,7 @@
 package query.builder;
 
 
+import java.util.Date;
 import java.util.HashSet;
 
 import model.FieldDescriptor;
@@ -17,6 +18,9 @@ public class Query {
 	private SelectionClause selectionClause;
 	private ProjectionClause projectionClause;
 	private FilterClause filterClause;
+	
+	private Date executionStartTime;
+	private Date executionEndTime;
 	
 	Query() {
 		this.selectionClause = new SelectionClause();
@@ -79,4 +83,17 @@ public class Query {
 	public boolean referField(FieldDescriptor field) {
 		return projectionClause.referField(field);
 	}
+
+
+	public void setExecutionStartTime(Date executionStartTime) {
+		this.executionStartTime = executionStartTime;
+	}
+
+
+	public void setExecutionEndTime(Date executionEndTime) {
+		this.executionEndTime = executionEndTime;
+	}
+	
 }
+	
+	

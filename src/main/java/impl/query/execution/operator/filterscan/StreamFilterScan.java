@@ -1,5 +1,6 @@
 package impl.query.execution.operator.filterscan;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -26,16 +27,28 @@ public class StreamFilterScan extends FilterScanFunction {
 		}
 	}
 
+	
 	private void filterOut(Stream<?> inputStream, FilterStatementType type, Object operand ) {
 		
 		switch(type) {
 		case GREATER_THAN:
 			applyGreaterThanStream(inputStream,operand);
+			break;
+		case LESS_THAN:
+			applyLessThanStream(inputStream,operand);
+			break;
 		}
+		
 	}
 
-	private void applyGreaterThanStream(Stream<?> inputStream, Object operand) {
-		inputStream.map((element) -> element > operand ? element : null);
+	
+	private void applyGreaterThanStream(Stream<Integer> inputStream, Object op) {
+		inputStream.map((element) -> (element.compareTo(operand) < 0) ? element : null);
+	}
+	
+	
+	private void applyLessThanStream(Stream<Integer> inputStream, Object operand) {
+		inputStream.map((element) -> (element.compareTo(operand) < 0) ? element : null);
 	}
 
 }
