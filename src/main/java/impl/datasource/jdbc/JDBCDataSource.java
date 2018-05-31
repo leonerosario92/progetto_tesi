@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.MessageFormat;
 
 import dataset.IColumnIterator;
 import dataset.IRecordIterator;
@@ -90,19 +92,23 @@ public abstract class JDBCDataSource implements IRemoteDataSource{
 //	}
 	
 	
-	private PreparedStatement getColumnStatement(int columnCount) throws SQLException{
+//	private PreparedStatement getColumnStatement(int columnCount) throws SQLException{
+	private String getColumnStatement(int columnCount) throws SQLException{
 		StringBuilder sb = new StringBuilder();
 		sb.append("select ");
 		for(int i=0; i < columnCount; i++) {
-			sb.append("column").append(i).append("=?");
+//			sb.append("column").append(i).append("=?");
+			sb.append("{").append(i).append("}").append(" ");
 			if(i != columnCount-1) {
 				sb.append(", ");
 			}else {
 				sb.append(" ");
 			}
 		}
-		sb.append("from table=?");
-		return getPreparedStatement(sb.toString());
+//		sb.append("from table0=?");
+		sb.append("from ").append("{").append(columnCount).append("}").append(" ");
+//		return getPreparedStatement(sb.toString());
+		return sb.toString();
 	}
 	
 	
@@ -158,14 +164,24 @@ public abstract class JDBCDataSource implements IRemoteDataSource{
 	public IRecordIterator getTableProjection(TableDescriptor table, FieldDescriptor... args) throws DataSourceException {
 		int length = args.length;
 		try {
-			PreparedStatement statement = getColumnStatement (length);
-			for(int i=1; i<=length; i++) {
-				FieldDescriptor field = args[i];
+//			PreparedStatement statement = getColumnStatement (length);
+			String query = getColumnStatement(length);
+			String[] values = new String[length+1];
+//			for(int i=1; i<=length; i++) {
+			for(int i=0; i<length; i++) {
+				FieldDescriptor field = args[1];
 				String fieldName = field.getTable().getName()+"."+field.getName();
-				statement.setString(i,fieldName);
+//				statement.setString(i,fieldName);
+				values[i] = fieldName;
 			}
-			statement.setString(length+1,table.getName());
-			ResultSet result = statement.executeQuery();
+//			statement.setString(length+1,table.getName());
+			values[length] = table.getName();
+			
+//			String s = query.toString();
+			String formattedQuery = MessageFormat.format(query, values);
+			Statement statement = connection.createStatement();
+			
+			ResultSet result = statement.executeQuery(formattedQuery);
 			return new JDBCRecordIterator(result);
 		} catch (SQLException e) {
 			throw new DataSourceException("An error occour while trying to retrieve a set of column from remote data surce");

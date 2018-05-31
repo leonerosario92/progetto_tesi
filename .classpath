@@ -33,14 +33,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/admin/Downloads/mysql-connector-java-5.1.33.jar"/>
-	<classpathentry kind="lib" path="C:/Users/admin/.m2/repository/com/google/guava/guava/11.0.2/guava-11.0.2.jar">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="com.google.guava"/>
-			<attribute name="maven.artifactId" value="guava"/>
-			<attribute name="maven.version" value="11.0.2"/>
-			<attribute name="maven.scope" value="compile"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -4,7 +4,7 @@ import java.util.List;
 
 import dataset.IDataSet;
 
-public class ExecutionSequence {
+public class ExecutionPlanSequence {
 
 
 }

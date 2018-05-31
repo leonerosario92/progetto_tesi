@@ -85,9 +85,20 @@ public class JDBCRecordIterator implements IRecordIterator {
 		try {
 			return resultSet.getObject(index);
 		} catch (SQLException e) {
+			e.printStackTrace();
 			manageSqlException();
 		}
 		return null;
+	}
+	
+	
+	@Override
+	public void next() {
+		try {
+			resultSet.next();
+		} catch (SQLException e) {
+			manageSqlException();
+		}
 	}
 	
 	
@@ -95,6 +106,9 @@ public class JDBCRecordIterator implements IRecordIterator {
 		// TODO Manage exception properly
 		throw new RuntimeException("An error occurred while retrieving data from data source");
 	}
+
+
+
 
 
 	

@@ -8,7 +8,7 @@ import java.sql.Statement;
 import dataset.IRecordIterator;
 import datasource.IDataSource;
 import datasource.IRemoteDataSource;
-import dispatcher.AbstractQueryDispatcher;
+import dispatcher.QueryDispatcher;
 import impl.datasource.jdbc.JDBCDataSource;
 import impl.datasource.jdbc.JDBCDataSourceException;
 import impl.datasource.jdbc.JDBCRecordIterator;
@@ -16,10 +16,10 @@ import query.IQueryPlanner;
 import query.builder.Query;
 import query.execution.IQueryExecutor;
 
-public class NativeQueryDispatcher extends AbstractQueryDispatcher {
+public class NativeQueryDispatcher extends QueryDispatcher {
 
-	public NativeQueryDispatcher(IDataSource dataSource, IQueryPlanner planner, IQueryExecutor executor) {
-		super(dataSource, planner, executor);
+	public NativeQueryDispatcher() {
+		super();
 	}
 
 	@Override

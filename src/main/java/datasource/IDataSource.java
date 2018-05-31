@@ -16,7 +16,7 @@ public interface IDataSource extends AutoCloseable {
 	
 	//public IRecordIterator getTablePartition(TableDescriptor table,int offset, int recordCount);
 	
-	IRecordIterator getTableProjection(TableDescriptor table, FieldDescriptor...args) throws DataSourceException;
+	public IRecordIterator getTableProjection(TableDescriptor table, FieldDescriptor...args) throws DataSourceException;
 	
 	//public ColumnIterator getColumnPartition(FieldDescriptor field,int offset, int recordCount);
 	

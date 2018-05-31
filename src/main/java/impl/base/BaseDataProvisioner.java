@@ -2,7 +2,7 @@ package impl.base;
 
 import java.util.Set;
 
-import dataprovisioner.AbstractDataProvisioner;
+import dataprovisioner.DataProvisioner;
 import dataset.IDataSet;
 import dataset.ILayoutManager;
 import dataset.IRecordIterator;
@@ -11,10 +11,10 @@ import datasource.IDataSource;
 import model.FieldDescriptor;
 import model.TableDescriptor;
 
-public class BaseDataProvisioner extends AbstractDataProvisioner  {
+public class BaseDataProvisioner extends DataProvisioner  {
 	
-	public BaseDataProvisioner(IDataSource dataSource, ILayoutManager layoutManager) {
-		super (dataSource,layoutManager);
+	public BaseDataProvisioner() {
+		super();
 	}
 
 	@Override

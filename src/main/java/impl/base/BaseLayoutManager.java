@@ -8,22 +8,26 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import context.DataType;
-import dataset.AbstractLayoutManager;
+import dataset.LayoutManager;
 import dataset.IDataSet;
-import dataset.ILayoutManager;
 import dataset.IRecordIterator;
 import model.FieldDescriptor;
 
-public class BaseLayoutManager extends AbstractLayoutManager {
+public class BaseLayoutManager extends LayoutManager {
+	
 
 	/*======INNER CLASSES THAT IMPLEMENTS DATASET=====*/
 	private class ColumnImpl<T>{
 		
 		private ArrayList<T> column;
 		
+		public ColumnImpl() {
+			this.column = new ArrayList<>();
+		}
+		
 		public void storeValueAt(int index, Object val) {
 			T value = (T) val;
-			column.set(index,value);
+			column.add(index,value);
 		}
 		
 		public Iterator<T> getIterator(){
@@ -73,8 +77,8 @@ public class BaseLayoutManager extends AbstractLayoutManager {
 		}
 
 		@Override
-		public IDataSet getSubset(FieldDescriptor... field) {
-		
+		public IDataSet getSubset(FieldDescriptor... fields) {
+			for(FieldDescriptor)
 		}
 		
 		private String getFieldKey (FieldDescriptor field) {
@@ -110,7 +114,7 @@ public class BaseLayoutManager extends AbstractLayoutManager {
 		BaseDataSet dataSet = new BaseDataSet();
 		
 		int fieldsCount = iterator.getFieldsCount();
-		ColumnImpl<?>[] columns = new ColumnImpl<?>[fieldsCount];
+		ColumnImpl<?>[] columns = new ColumnImpl<?>[fieldsCount+1];
 		for(int index = 1; index <= fieldsCount; index++) {
 			DataType fieldType = iterator.getColumnType(index);
 			columns[index] = createColumn (fieldType);
@@ -119,6 +123,7 @@ public class BaseLayoutManager extends AbstractLayoutManager {
 		Object value;
 		int columnIndex = 0;
 		while(iterator.hasNext()) {
+			iterator.next();
 			for(int index = 1; index <= fieldsCount; index++) {
 				value = iterator.getValueAt(index);
 				columns[index].storeValueAt(columnIndex, value);

@@ -13,22 +13,22 @@ import dataset.ILayoutManager;
 import datasource.DataSourceException;
 import model.FieldDescriptor;
 import model.TableDescriptor;
-import query.execution.AbstractQueryExecutor;
-import query.execution.ExecutionPlanBlock;
+import query.execution.QueryExecutor;
+import query.execution.ExecutionPlan;
 import query.execution.ExecutionPlanItem;
 
-public class BaseQueryExecutor extends AbstractQueryExecutor {
+public class BaseQueryExecutor extends QueryExecutor {
 	
 	private ExecutorService executor;
 	
-	public BaseQueryExecutor(IDataProvisioner dataProvisioner, ILayoutManager layoutManager) {
-		super(dataProvisioner,layoutManager);
+	public BaseQueryExecutor() {
+		super();
 		executor = new ForkJoinPool();
 	}
 
 	
 	@Override
-	public IDataSet executePlan(ExecutionPlanBlock plan) {
+	public IDataSet executePlan(ExecutionPlan plan) {
 		
 		List<ExecutionPlanItem> itemList = plan.getItemList();
 		

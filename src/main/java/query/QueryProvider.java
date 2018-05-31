@@ -16,23 +16,6 @@ public class QueryProvider  {
 		implementations = new HashMap<>();
 	}
 	
-//	public QueryProvider(Iterable<IRelOperator> operators) {
-//		this();
-//		for(IRelOperator operator : operators){
-//			setImplementation(operator);
-//		}
-//	}
-//	
-	private void setImplementation(RelOperatorType type, Class<?> clazz) {
-		implementations.put(type, clazz);
-	}
-
-	
-//	public IExecutionPlanItem getQuery(RelOperatorType type) {
-//		checkImplementation(type);
-//		return implementations.get(type).getQuery();
-//	}
-	
 
 	private void checkImplementation(RelOperatorType operatorType) {
 		if(!(implementations.containsKey(operatorType))) {
@@ -40,6 +23,7 @@ public class QueryProvider  {
 			throw new UnsupportedOperationException();
 		}
 	}
+	
 	
 	public FilterScanFunction getFilterScanImpl () {
 		checkImplementation(RelOperatorType.FILTER_SCAN);
@@ -53,8 +37,15 @@ public class QueryProvider  {
 		
 	}
 	
+	
 	public void setFilterScanImpl(Class<? extends StreamFilterScan> class1) {
 		setImplementation(RelOperatorType.FILTER_SCAN, class1);
 	}	
+	
+	
+	private void setImplementation(RelOperatorType type, Class<?> clazz) {
+		implementations.put(type, clazz);
+	}
+
 	
 }

@@ -1,20 +1,15 @@
 package context;
 
 import dataprovisioner.IDataProvisioner;
-import dataset.IDataSet;
 import dataset.ILayoutManager;
 import dataset.IRecordIterator;
-import datasource.DataSourceException;
 import datasource.IDataSource;
 import dispatcher.IQueryDispatcher;
-import model.FieldDescriptor;
 import model.IMetaData;
-import model.TableDescriptor;
 import query.IQueryPlanner;
 import query.QueryProvider;
 import query.builder.InitialBuilder;
 import query.builder.Query;
-import query.execution.ExecutionPlanBlock;
 import query.execution.IQueryExecutor;
 
 public class Context {

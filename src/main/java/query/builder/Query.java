@@ -19,8 +19,8 @@ public class Query {
 	private ProjectionClause projectionClause;
 	private FilterClause filterClause;
 	
-	private Date executionStartTime;
-	private Date executionEndTime;
+	private Long executionStartTime;
+	private Long executionEndTime;
 	
 	Query() {
 		this.selectionClause = new SelectionClause();
@@ -85,13 +85,20 @@ public class Query {
 	}
 
 
-	public void setExecutionStartTime(Date executionStartTime) {
-		this.executionStartTime = executionStartTime;
-	}
+	public void setExecutionStartTime() {
+		this.executionStartTime = new Long (new Date().getTime());	
+		}
 
 
-	public void setExecutionEndTime(Date executionEndTime) {
-		this.executionEndTime = executionEndTime;
+	public void setExecutionEndTime() {
+		this.executionEndTime = new Long (new Date().getTime());
+		}
+	
+	public long getExecutionTimeMillisecond() {
+		if((executionStartTime == null) || (executionEndTime == null)) {
+			throw new IllegalStateException("Execution time cannot be read if execution's start and end time are not explictly set");
+		}
+		return executionEndTime - executionStartTime;
 	}
 	
 }

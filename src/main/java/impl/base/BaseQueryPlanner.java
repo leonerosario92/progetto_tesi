@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import model.FieldDescriptor;
-import query.AbstractQueryPlanner;
+import query.QueryPlanner;
 import query.QueryProvider;
 import query.builder.Query;
 import query.builder.clause.FilterClause;
@@ -15,15 +15,15 @@ import query.builder.clause.SelectionClause;
 import query.builder.statement.FilterStatement;
 import query.builder.statement.ProjectionStatement;
 import query.builder.statement.SelectionStatement;
-import query.execution.ExecutionPlanBlock;
+import query.execution.ExecutionPlan;
 import query.execution.ExecutionPlanItem;
 import query.execution.operator.filterscan.FilterScanArgs;
 import query.execution.operator.filterscan.FilterScanFunction;
 
-public class BaseQueryPlanner extends AbstractQueryPlanner {
+public class BaseQueryPlanner extends QueryPlanner {
 	
-	public BaseQueryPlanner(QueryProvider queryProvider) {
-		super(queryProvider);
+	public BaseQueryPlanner() {
+		super();
 	}
 
 	/*Base implementation of a queryPlanner. Generate an execution plan where 
@@ -32,13 +32,13 @@ public class BaseQueryPlanner extends AbstractQueryPlanner {
 	 */
 	
 	@Override
-	public ExecutionPlanBlock getExecutionPlan(Query query) {
+	public ExecutionPlan getExecutionPlan(Query query) {
 		
 		SelectionClause selectionClause = query.getSelectionClause();
 		ProjectionClause projectionClause = query.getProjectionClause();
 		FilterClause filterClause = query.getFilterClause();
 		
-		ExecutionPlanBlock result = new ExecutionPlanBlock();
+		ExecutionPlan result = new ExecutionPlan();
 		
 		setReferencedTables(result,selectionClause);
 		setReferencedFields(result,projectionClause);
@@ -49,21 +49,21 @@ public class BaseQueryPlanner extends AbstractQueryPlanner {
 	}
 	
 	
-	private void setReferencedTables(ExecutionPlanBlock result, SelectionClause selectionClause) {
+	private void setReferencedTables(ExecutionPlan result, SelectionClause selectionClause) {
 		for(SelectionStatement statement : selectionClause.getStatements()) {
 			result.setReferencedTable(statement.getTable());
 		}
 	}
 
 	
-	private void setReferencedFields(ExecutionPlanBlock result, ProjectionClause projectionClause) {
+	private void setReferencedFields(ExecutionPlan result, ProjectionClause projectionClause) {
 		for(ProjectionStatement statement : projectionClause.getStatements()) {
 			result.setReferencedField(statement.getField());
 		}
 	}
 
 	
-	private void setFilterStatements(ExecutionPlanBlock result, FilterClause filterClause) {
+	private void setFilterStatements(ExecutionPlan result, FilterClause filterClause) {
 		Map<FieldDescriptor, List<FilterStatement>> groupedStatements =
 				statementsByField(filterClause.getStatements());
 		

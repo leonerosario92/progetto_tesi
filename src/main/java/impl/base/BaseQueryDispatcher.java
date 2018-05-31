@@ -3,25 +3,25 @@ package impl.base;
 import dataset.IDataSet;
 import dataset.IRecordIterator;
 import datasource.IDataSource;
-import dispatcher.AbstractQueryDispatcher;
+import dispatcher.QueryDispatcher;
 import query.IQueryPlanner;
 import query.builder.Query;
-import query.execution.ExecutionPlanBlock;
+import query.execution.ExecutionPlan;
 import query.execution.IQueryExecutor;
 
-public class BaseQueryDispatcher extends AbstractQueryDispatcher {
+public class BaseQueryDispatcher extends QueryDispatcher {
 	
-	private BaseQueryDispatcher (IDataSource datasource, IQueryPlanner planner, IQueryExecutor executor) {
-		super (datasource,planner,executor);
+	public BaseQueryDispatcher () {
+		super ();
 	}
 	
-	public BaseQueryDispatcher getInstance(IDataSource datasource, IQueryPlanner planner, IQueryExecutor executor) {
-		return new BaseQueryDispatcher(datasource, planner, executor);
+	public BaseQueryDispatcher getInstance() {
+		return new BaseQueryDispatcher();
 	}
 
 	@Override
 	public IRecordIterator dispatchQuery(Query query) {
-		ExecutionPlanBlock queryPlan = planner.getExecutionPlan(query);
+		ExecutionPlan queryPlan = planner.getExecutionPlan(query);
 		IDataSet result = executor.executePlan(queryPlan);
 		return result.tableIterator();
 	}

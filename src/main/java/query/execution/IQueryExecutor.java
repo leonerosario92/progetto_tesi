@@ -6,7 +6,7 @@ import query.QueryProvider;
 
 public interface IQueryExecutor {
 	 
-	public IDataSet executePlan(ExecutionPlanBlock plan);
+	public IDataSet executePlan(ExecutionPlan plan);
 
 }
 

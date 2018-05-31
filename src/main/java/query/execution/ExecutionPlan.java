@@ -10,13 +10,13 @@ import model.FieldDescriptor;
 import model.TableDescriptor;
 
 
-public class ExecutionPlanBlock {
+public class ExecutionPlan {
 	
 	private List<ExecutionPlanItem> itemList;
 	private HashSet<FieldDescriptor> referencedFields;
 	private HashSet<TableDescriptor> referencedTables;
 	
-	public ExecutionPlanBlock() {
+	public ExecutionPlan() {
 		itemList = new ArrayList<>();
 		this.referencedFields = new HashSet<>();
 		this.referencedTables = new HashSet<>();

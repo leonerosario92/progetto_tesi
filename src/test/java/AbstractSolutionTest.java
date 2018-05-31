@@ -45,30 +45,40 @@ public abstract class AbstractSolutionTest {
 			Context context = factory.getContext();
 
 			IMetaData metaData = context.getMetadata();
-			TableDescriptor productTable = metaData.getTable("product");
-			FieldDescriptor productName = productTable.getField("product_name");
-			FieldDescriptor productSKU = productTable.getField("SKU");
-			FieldDescriptor productNetWeight = productTable.getField("net_weight");
+			TableDescriptor salesTable = metaData.getTable("sales_fact_1998");
+			FieldDescriptor storeSales = salesTable.getField("store_sales");
+			FieldDescriptor unitSales = salesTable.getField("unit_sales");
+			FieldDescriptor storeCost = salesTable.getField("store_cost");
 			
 			Query query =
 			context.query()
-				.selection(productTable)
-				.project(productName)
-				.project(productSKU)
-				.project(productNetWeight)
-				.filter(productNetWeight, FilterStatementType.GREATER_THAN,new Integer(18))
+				.selection(salesTable)
+				.project(storeSales)
+				.project(unitSales)
+				.project(storeCost)
+				.filter(storeCost, FilterStatementType.GREATER_THAN,new Integer(2))
 				.getQuery();
 			
-			IRecordIterator result = context.executeQuery(query);
+			String sql = query.writeSql();
+			
+			
+			query.setExecutionStartTime();
+			IRecordIterator result = context.executeQuery(query);	
+			query.setExecutionEndTime();
+			
+			System.out.println("Query execution took " + query.getExecutionTimeMillisecond() + " ms");
 			
 			int count = 0;
 			while(result.hasNext()) {
+				result.next();
 				count ++;
 			}
 			
-			assertEquals(190, count);
+			
+			assertEquals(100926, count);
 			
 		} catch (ContextFactoryException e) {
+			e.printStackTrace();
 			fail(e.getMessage());
 		}
 		

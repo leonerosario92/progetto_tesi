@@ -15,5 +15,7 @@ public interface IRecordIterator {
 	public String getTableName(int index);
 
 	public Object getValueAt (int index);
+
+	public void next();
 	
 }
