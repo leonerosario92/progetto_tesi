@@ -164,20 +164,16 @@ public abstract class JDBCDataSource implements IRemoteDataSource{
 	public IRecordIterator getTableProjection(TableDescriptor table, FieldDescriptor... args) throws DataSourceException {
 		int length = args.length;
 		try {
-//			PreparedStatement statement = getColumnStatement (length);
 			String query = getColumnStatement(length);
 			String[] values = new String[length+1];
 //			for(int i=1; i<=length; i++) {
 			for(int i=0; i<length; i++) {
 				FieldDescriptor field = args[1];
 				String fieldName = field.getTable().getName()+"."+field.getName();
-//				statement.setString(i,fieldName);
 				values[i] = fieldName;
 			}
-//			statement.setString(length+1,table.getName());
 			values[length] = table.getName();
 			
-//			String s = query.toString();
 			String formattedQuery = MessageFormat.format(query, values);
 			Statement statement = connection.createStatement();
 			

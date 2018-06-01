@@ -4,6 +4,7 @@ import dataset.IDataSet;
 import dataset.IRecordIterator;
 import datasource.IDataSource;
 import dispatcher.QueryDispatcher;
+import impl.query.execution.ExecutionException;
 import query.IQueryPlanner;
 import query.builder.Query;
 import query.execution.ExecutionPlan;
@@ -21,9 +22,20 @@ public class BaseQueryDispatcher extends QueryDispatcher {
 
 	@Override
 	public IRecordIterator dispatchQuery(Query query) {
+		
 		ExecutionPlan queryPlan = planner.getExecutionPlan(query);
-		IDataSet result = executor.executePlan(queryPlan);
-		return result.tableIterator();
+		IDataSet result;
+		query.setExecutionStartTime();
+		try {
+			result = executor.executePlan(queryPlan);
+			return result.tableIterator();
+		} catch (ExecutionException e) {
+			
+		}
+		finally {
+			query.setExecutionEndTime();
+		}
+		return null;	
 	}
 }
 

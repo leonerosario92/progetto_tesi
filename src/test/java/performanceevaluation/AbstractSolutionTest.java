@@ -1,7 +1,12 @@
+package performanceevaluation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import context.Context;
@@ -13,17 +18,40 @@ import impl.datasource.jdbc.JDBCDataSourceException;
 import model.FieldDescriptor;
 import model.IMetaData;
 import model.TableDescriptor;
+import objectexplorer.MemoryMeasurer;
 import query.builder.Query;
 import query.builder.predicate.FilterStatementType;
 
 public abstract class AbstractSolutionTest {
 	
+	
+	public static final String LOG_FILE_PATH = "log4j.xml";
+	public static Logger LOGGER;
+	public static StringBuilder testReport;
 	protected ContextFactory factory;
 	protected IDataSource dataSource;
 	
 	public  abstract IDataSource getDataSourceImpl() throws JDBCDataSourceException;
 	
 	public  abstract ContextFactory getContextFactoryImpl();
+	
+	
+	@BeforeClass
+	public static void setupBeforeClass() {
+		
+		testReport = new StringBuilder();
+		
+		String logFilePath =
+				LOG_FILE_PATH;
+				 DOMConfigurator.configure(logFilePath);
+				 LOGGER = Logger.getLogger("SolutionTest");
+	}
+	
+	
+	@AfterClass
+	public static void tearDownAfterClass() {
+		LOGGER.info(testReport.toString());
+	}
 	
 	
 	@Before
@@ -41,6 +69,9 @@ public abstract class AbstractSolutionTest {
 	@Test
 	public void TestScanBigDataSet(){
 		
+		final int EXPECTED_RESULTSET_SIZE = 100926;
+		
+		Query query = null;
 		try {
 			Context context = factory.getContext();
 
@@ -50,7 +81,7 @@ public abstract class AbstractSolutionTest {
 			FieldDescriptor unitSales = salesTable.getField("unit_sales");
 			FieldDescriptor storeCost = salesTable.getField("store_cost");
 			
-			Query query =
+			query =
 			context.query()
 				.selection(salesTable)
 				.project(storeSales)
@@ -61,12 +92,8 @@ public abstract class AbstractSolutionTest {
 			
 			String sql = query.writeSql();
 			
-			
-			query.setExecutionStartTime();
 			IRecordIterator result = context.executeQuery(query);	
-			query.setExecutionEndTime();
-			
-			System.out.println("Query execution took " + query.getExecutionTimeMillisecond() + " ms");
+			MemoryMeasurer.measureBytes(result);
 			
 			int count = 0;
 			while(result.hasNext()) {
@@ -74,12 +101,16 @@ public abstract class AbstractSolutionTest {
 				count ++;
 			}
 			
-			
-			assertEquals(100926, count);
+			assertEquals(EXPECTED_RESULTSET_SIZE , count);
 			
 		} catch (ContextFactoryException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
+		} finally {
+			if(query != null) {
+				testReport.append("Query execution took " + query.getExecutionTimeMillisecond() + " ms");
+			}
+			
 		}
 		
 	}

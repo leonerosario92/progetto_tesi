@@ -8,28 +8,70 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
     </properties>
+    
+    <build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-surefire-plugin</artifactId>
+			    <version>2.9</version>
+			    <configuration>
+			   		 <argLine>-javaagent:${project.basedir}/ext-lib/object-explorer.jar</argLine>
+  				</configuration>
+			</plugin>
+		</plugins>
+	</build>
   
   <dependencies>
-  	<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
-  	
-	<dependency>
+    	<dependency>
 	    <groupId>mysql</groupId>
 	    <artifactId>mysql-connector-java</artifactId>
 	    <version>5.1.46</version>
+	    <scope>compile</scope>
 	</dependency>
 	
 	<dependency>
 		  <groupId>junit</groupId>
 		  <artifactId>junit</artifactId>
+		  <scope>test</scope>
 		  <version>4.12</version>
 	</dependency>
 	
+	<!-- https://mvnrepository.com/artifact/javax.ws.rs/jsr311-api -->
 	<dependency>
-    <groupId>com.google.guava</groupId>
-    <artifactId>guava</artifactId>
-    <version>23.5-jre</version> 
-    
-</dependency>
+	    <groupId>javax.ws.rs</groupId>
+	    <artifactId>jsr311-api</artifactId>
+	    <version>1.1.1</version>
+	</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+	<dependency>
+	    <groupId>com.google.guava</groupId>
+	    <artifactId>guava</artifactId>
+	    <version>r09</version>
+	</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/log4j/log4j -->
+	<dependency>
+	    <groupId>log4j</groupId>
+	    <artifactId>log4j</artifactId>
+	    <version>1.2.17</version>
+	</dependency>
+		
+	<dependency>
+	    <groupId>com.memory-measurer</groupId>
+	    <artifactId>object-explorer</artifactId>
+	    <version>1.0</version>
+	</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
+	<dependency>
+	    <groupId>org.mockito</groupId>
+	    <artifactId>mockito-all</artifactId>
+	    <version>1.9.5</version>
+	    <scope>test</scope>
+	</dependency>
+	
 	
   </dependencies>
 

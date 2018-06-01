@@ -76,9 +76,11 @@ public class BaseLayoutManager extends LayoutManager {
 			return columns.containsKey(key);
 		}
 
+		
+		//TODO
 		@Override
 		public IDataSet getSubset(FieldDescriptor... fields) {
-			for(FieldDescriptor)
+			return null;
 		}
 		
 		private String getFieldKey (FieldDescriptor field) {
@@ -94,8 +96,10 @@ public class BaseLayoutManager extends LayoutManager {
 			columns.put(key, newColumn);
 		}
 
+		//TODO
 		@Override
 		public IRecordIterator tableIterator() {
+			return null;
 			
 		}
 	}
@@ -139,10 +143,10 @@ public class BaseLayoutManager extends LayoutManager {
 		return dataSet;
 	}
 
-	
+	//TODO
 	@Override
 	public IDataSet mergeDatasets(Set<IDataSet> partialResults) {
-		
+		return null;
 	}
 
 	

@@ -1,0 +1,5 @@
+INFO    2018-06-01 14:19:19,972 [main] SolutionTest  - Query execution took 109 ms
+INFO    2018-06-01 14:28:11,071 [main] SolutionTest  - Query execution took 125 ms
+INFO    2018-06-01 14:28:37,635 [main] SolutionTest  - Query execution took 111 ms
+INFO    2018-06-01 15:01:42,708 [main] SolutionTest  - Query execution took 9375 ms
+INFO    2018-06-01 15:01:44,162 [main] SolutionTest  - Query execution took 109 ms

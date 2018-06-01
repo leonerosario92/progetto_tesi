@@ -33,7 +33,14 @@ public class NativeQueryDispatcher extends QueryDispatcher {
 		Statement statement;
 		try {
 			statement = connection.createStatement();
+			
+			query.setExecutionStartTime();
+			
 			ResultSet rs = statement.executeQuery(sqlStatement);
+			
+			query.setExecutionEndTime();
+			
+			
 			IRecordIterator result = new JDBCRecordIterator(rs);
 			return result;
 		} catch (SQLException | JDBCDataSourceException e) {

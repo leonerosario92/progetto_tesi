@@ -1,8 +1,6 @@
 package query.builder;
 
 
-import java.util.HashSet;
-
 import context.Context;
 import model.TableDescriptor;
 import query.builder.statement.SelectionStatement;

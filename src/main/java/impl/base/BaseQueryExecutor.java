@@ -11,6 +11,7 @@ import dataprovisioner.IDataProvisioner;
 import dataset.IDataSet;
 import dataset.ILayoutManager;
 import datasource.DataSourceException;
+import impl.query.execution.ExecutionException;
 import model.FieldDescriptor;
 import model.TableDescriptor;
 import query.execution.QueryExecutor;
@@ -28,23 +29,29 @@ public class BaseQueryExecutor extends QueryExecutor {
 
 	
 	@Override
-	public IDataSet executePlan(ExecutionPlan plan) {
+	public IDataSet executePlan(ExecutionPlan plan) throws ExecutionException {
 		
 		List<ExecutionPlanItem> itemList = plan.getItemList();
 		
 		
 		//TODO : fix this if selectStatements will accept more than one table
 		TableDescriptor table =(TableDescriptor) plan.getReferencedTables().toArray()[0];
-		IDataSet inputDataSet = loadInputDataSet(table, plan.getReferencedFields());
-		
-		for(ExecutionPlanItem item : itemList) {
-			IDataSet itemInputSet = inputDataSet.getSubset(item.getReferencedField());
-			item.setInputDataSet(itemInputSet);
+		IDataSet inputDataSet;
+		try {
+			inputDataSet = loadInputDataSet(table, plan.getReferencedFields());
+			for(ExecutionPlanItem item : itemList) {
+				IDataSet itemInputSet = inputDataSet.getSubset(item.getReferencedField());
+				item.setInputDataSet(itemInputSet);
+			}
+			
+			Set<IDataSet> partialResults = executeItems(itemList);
+			IDataSet result = layoutManager.mergeDatasets(partialResults);
+			return result;
+		} catch (DataSourceException e) {
+			throw new ExecutionException("An error occurred while executing query caused by : "+e.getMessage());
 		}
 		
-		Set<IDataSet> partialResults = executeItems(itemList);
-		IDataSet result = layoutManager.mergeDatasets(partialResults);
-		return result;
+		
 	}
 	
 	
@@ -71,13 +78,8 @@ public class BaseQueryExecutor extends QueryExecutor {
 	}
 
 
-	private IDataSet loadInputDataSet(TableDescriptor table , Set<FieldDescriptor> inputFields) {
-		try {
+	private IDataSet loadInputDataSet(TableDescriptor table , Set<FieldDescriptor> inputFields) throws DataSourceException {
 			return dataProvisioner.loadDataSet(table , inputFields);
-		} catch (DataSourceException e) {
-			// TODO Manage exception properly
-			throw new RuntimeException(e);
-		}
 	}
 
 }
