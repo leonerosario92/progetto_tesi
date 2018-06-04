@@ -5,6 +5,8 @@ import dataset.ILayoutManager;
 import dataset.IRecordIterator;
 import datasource.IDataSource;
 import dispatcher.IQueryDispatcher;
+import dispatcher.MeasurementType;
+import impl.query.execution.ExecutionException;
 import model.IMetaData;
 import query.IQueryPlanner;
 import query.QueryProvider;
@@ -49,6 +51,10 @@ public class Context {
 	
 	public IRecordIterator executeQuery(Query query) {
 		return queryDispatcher.dispatchQuery(query);
+	}
+	
+	public IRecordIterator executeQuery(Query query, MeasurementType measurememtType) throws ExecutionException {
+		return queryDispatcher.dispatchQuery(query, measurememtType);
 	}
 	
 }

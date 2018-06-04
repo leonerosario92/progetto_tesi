@@ -22,6 +22,8 @@ public class Query {
 	private Long executionStartTime;
 	private Long executionEndTime;
 	
+	private Long resultSetByteSize;
+	
 	Query() {
 		this.selectionClause = new SelectionClause();
 		this.projectionClause = new ProjectionClause();
@@ -100,7 +102,20 @@ public class Query {
 		}
 		return executionEndTime - executionStartTime;
 	}
+
+
+	public void setResultSetByteSize(Long resultSetByteSize) {
+		this.resultSetByteSize = resultSetByteSize;
+	}
 	
+	
+	public Long getResultSetByteSize() {
+		if(resultSetByteSize == null) {
+			throw new IllegalStateException("Result set size cannot be retrieved since has not been explictly set");
+		}
+		return resultSetByteSize;
+	}
+
 }
 	
 	
