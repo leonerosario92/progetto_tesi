@@ -1,7 +1,5 @@
 package query.execution.operator.filterscan;
 
-import java.util.function.Function;
-
 import dataset.IDataSet;
 import query.execution.operator.IOperatorFunction;
 

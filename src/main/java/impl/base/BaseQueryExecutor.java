@@ -33,9 +33,8 @@ public class BaseQueryExecutor extends QueryExecutor {
 		
 		List<ExecutionPlanItem> itemList = plan.getItemList();
 		
-		
 		//TODO : fix this if selectStatements will accept more than one table
-		TableDescriptor table =(TableDescriptor) plan.getReferencedTables().toArray()[0];
+		TableDescriptor table = (TableDescriptor) plan.getReferencedTables().toArray()[0];
 		IDataSet inputDataSet;
 		try {
 			inputDataSet = loadInputDataSet(table, plan.getReferencedFields());
@@ -50,8 +49,6 @@ public class BaseQueryExecutor extends QueryExecutor {
 		} catch (DataSourceException e) {
 			throw new ExecutionException("An error occurred while executing query caused by : "+e.getMessage());
 		}
-		
-		
 	}
 	
 	
