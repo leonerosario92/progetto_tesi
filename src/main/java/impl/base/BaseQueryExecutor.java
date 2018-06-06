@@ -26,32 +26,48 @@ public class BaseQueryExecutor extends QueryExecutor {
 		super();
 		executor = new ForkJoinPool();
 	}
-
+	
 	
 	@Override
 	public IDataSet executePlan(ExecutionPlan plan) throws ExecutionException {
-		
 		List<ExecutionPlanItem> itemList = plan.getItemList();
 		
-		//TODO : fix this if selectStatements will accept more than one table
-		TableDescriptor table = (TableDescriptor) plan.getReferencedTables().toArray()[0];
-		IDataSet inputDataSet;
-		try {
-			inputDataSet = loadInputDataSet(table, plan.getReferencedFields());
-			for(ExecutionPlanItem item : itemList) {
-				IDataSet itemInputSet = inputDataSet.getSubset(item.getReferencedField());
-				item.setInputDataSet(itemInputSet);
+		initializeItems(itemList);
+		
+		Set<IDataSet> partialResults = executeItems(itemList);
+		IDataSet result = layoutManager.mergeDatasets(partialResults);
+		return result;
+	}
+
+
+	private void initializeItems(List<ExecutionPlanItem> itemList) throws ExecutionException {
+		/*
+		 * For every execution item, load input DataSet
+		 */
+		for(ExecutionPlanItem item : itemList) {
+			List<FieldDescriptor> fields = item.getReferencedFields();
+			
+			if(fields.size() > 1) {
+				//TODO Manage case when dataSet is made by more than one column
+				throw new IllegalStateException();
 			}
 			
-			Set<IDataSet> partialResults = executeItems(itemList);
-			IDataSet result = layoutManager.mergeDatasets(partialResults);
-			return result;
-		} catch (DataSourceException e) {
-			throw new ExecutionException("An error occurred while executing query caused by : "+e.getMessage());
-		}
+			FieldDescriptor field = fields.get(0);
+			try {
+				IDataSet inputSet = dataProvisioner.loadEntity(field);
+				item.setInputDataSet(inputSet);
+			} catch (DataSourceException e) {
+				throw new ExecutionException(
+						"Execution failed due to an error in loading input data" +
+						System.getProperty("line.separator") +
+						"caused by : "+
+						e.getMessage()
+						);
+			}
+		}		
 	}
-	
-	
+
+
 	private Set<IDataSet> executeItems(List<ExecutionPlanItem> itemList) {
 		Set<IDataSet> partialResults = new HashSet<>();	
 		try {
@@ -72,11 +88,6 @@ public class BaseQueryExecutor extends QueryExecutor {
 			throw new RuntimeException(e);
 		}
 		return partialResults;
-	}
-
-
-	private IDataSet loadInputDataSet(TableDescriptor table , Set<FieldDescriptor> inputFields) throws DataSourceException {
-			return dataProvisioner.loadDataSet(table , inputFields);
 	}
 
 }

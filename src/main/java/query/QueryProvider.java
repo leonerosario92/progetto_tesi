@@ -2,11 +2,10 @@ package query;
 
 import java.util.HashMap;
 
-import impl.query.execution.operator.filterscan.StreamFilterScan;
 import query.execution.ExecutionPlanItem;
 import query.execution.operator.IOperatorFunction;
 import query.execution.operator.RelOperatorType;
-import query.execution.operator.filterscan.FilterScanFunction;
+import query.execution.operator.filterscan.FilterOnColumnFunction;
 
 public class QueryProvider  {
 	
@@ -25,11 +24,11 @@ public class QueryProvider  {
 	}
 	
 	
-	public FilterScanFunction getFilterScanImpl () {
-		checkImplementation(RelOperatorType.FILTER_SCAN);
-		Class<?> clazz = implementations.get(RelOperatorType.FILTER_SCAN);
+	public FilterOnColumnFunction getFilterOnColumnImpl () {
+		checkImplementation(RelOperatorType.FILTER_ON_COLUMN);
+		Class<?> clazz = implementations.get(RelOperatorType.FILTER_ON_COLUMN);
 		try {
-			return (FilterScanFunction) clazz.newInstance();
+			return (FilterOnColumnFunction) clazz.newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
 			//TODO: Manage exception properly
 			throw new IllegalArgumentException();
@@ -38,8 +37,8 @@ public class QueryProvider  {
 	}
 	
 	
-	public void setFilterScanImpl(Class<? extends StreamFilterScan> class1) {
-		setImplementation(RelOperatorType.FILTER_SCAN, class1);
+	public void setFilterScanImpl(Class<? extends FilterOnColumnFunction> function) {
+		setImplementation(RelOperatorType.FILTER_ON_COLUMN, function);
 	}	
 	
 	

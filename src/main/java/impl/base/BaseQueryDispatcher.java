@@ -34,7 +34,7 @@ public class BaseQueryDispatcher extends QueryDispatcher {
 			long memoryOccupation = MemoryMeasurer.measureBytes(result);
 			query.setResultSetByteSize(memoryOccupation);
 			
-			return result.tableIterator();				
+			return result.getRecordIterator();				
 		} catch (ExecutionException e) {
 			
 		}
@@ -56,7 +56,7 @@ public class BaseQueryDispatcher extends QueryDispatcher {
 			result = executeWithMemoryEvaluation(query);
 			break;
 		}
-		return result.tableIterator();
+		return result.getRecordIterator();
 	}
 
 	

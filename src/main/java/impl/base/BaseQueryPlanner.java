@@ -17,8 +17,8 @@ import query.builder.statement.ProjectionStatement;
 import query.builder.statement.SelectionStatement;
 import query.execution.ExecutionPlan;
 import query.execution.ExecutionPlanItem;
-import query.execution.operator.filterscan.FilterScanArgs;
-import query.execution.operator.filterscan.FilterScanFunction;
+import query.execution.operator.filterscan.FilterOnColumnArgs;
+import query.execution.operator.filterscan.FilterOnColumnFunction;
 
 public class BaseQueryPlanner extends QueryPlanner {
 	
@@ -26,9 +26,11 @@ public class BaseQueryPlanner extends QueryPlanner {
 		super();
 	}
 
-	/*Base implementation of a queryPlanner. Generate an execution plan where 
-	 * there is an execution item for every specific field that execute all 
-	 * filter statements that refer to that field.
+	/*
+	 * Base implementation of a queryPlanner. Groups all filter statements 
+	 * contained in the query by the field to which they will be applied
+	 * and generates a query plan where every execution item is represented by 
+	 * all filter operation on a specific field.
 	 */
 	
 	@Override
@@ -40,8 +42,8 @@ public class BaseQueryPlanner extends QueryPlanner {
 		
 		ExecutionPlan result = new ExecutionPlan();
 		
-		setReferencedTables(result,selectionClause);
-		setReferencedFields(result,projectionClause);
+		//setReferencedTables(result,selectionClause);
+		//setReferencedFields(result,projectionClause);
 		setFilterStatements(result,filterClause);
 		
 		return result;
@@ -49,31 +51,30 @@ public class BaseQueryPlanner extends QueryPlanner {
 	}
 	
 	
-	private void setReferencedTables(ExecutionPlan result, SelectionClause selectionClause) {
-		for(SelectionStatement statement : selectionClause.getStatements()) {
-			result.setReferencedTable(statement.getTable());
-		}
-	}
-
-	
-	private void setReferencedFields(ExecutionPlan result, ProjectionClause projectionClause) {
-		for(ProjectionStatement statement : projectionClause.getStatements()) {
-			result.setReferencedField(statement.getField());
-		}
-	}
+//	private void setReferencedTables(ExecutionPlan result, SelectionClause selectionClause) {
+//		for(SelectionStatement statement : selectionClause.getStatements()) {
+//			result.setReferencedTable(statement.getTable());
+//		}
+//	}
+//
+//	
+//	private void setReferencedFields(ExecutionPlan result, ProjectionClause projectionClause) {
+//		for(ProjectionStatement statement : projectionClause.getStatements()) {
+//			result.setReferencedField(statement.getField());
+//		}
+//	}
 
 	
 	private void setFilterStatements(ExecutionPlan result, FilterClause filterClause) {
 		Map<FieldDescriptor, List<FilterStatement>> groupedStatements =
 				statementsByField(filterClause.getStatements());
 		
+		FilterOnColumnFunction function = queryProvider.getFilterOnColumnImpl();
 		groupedStatements.entrySet().forEach(
 				(pair)->{
 					ExecutionPlanItem item = new ExecutionPlanItem();
-					FilterScanFunction function = queryProvider.getFilterScanImpl();
 					item.setFunction(function);
-					
-					FilterScanArgs args = new FilterScanArgs();
+					FilterOnColumnArgs args = new FilterOnColumnArgs();
 					FieldDescriptor referencedField = pair.getKey();
 					args.setField(referencedField);
 					item.setReferencedField(referencedField);

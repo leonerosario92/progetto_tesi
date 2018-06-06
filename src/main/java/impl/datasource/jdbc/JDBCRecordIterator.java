@@ -11,9 +11,11 @@ public class JDBCRecordIterator implements IRecordIterator {
 
 	private ResultSet resultSet;
 	private ResultSetMetaData metadata;
+	private int recordCount;
 
 	
-	public JDBCRecordIterator(ResultSet resultSet) throws JDBCDataSourceException {
+	public JDBCRecordIterator(ResultSet resultSet, int recordCount) throws JDBCDataSourceException {
+		this.recordCount = recordCount;
 		this.resultSet = resultSet;
 		try {
 			this.metadata = resultSet.getMetaData();
@@ -81,7 +83,7 @@ public class JDBCRecordIterator implements IRecordIterator {
 	
 	
 	@Override
-	public Object getValueAt(int index) {
+	public Object getValueByIndex(int index) {
 		try {
 			return resultSet.getObject(index);
 		} catch (SQLException e) {
@@ -102,17 +104,15 @@ public class JDBCRecordIterator implements IRecordIterator {
 	}
 	
 	
+	@Override
+	public int getRecordCount() {
+		return recordCount;
+	}
+	
+	
 	private void manageSqlException() {
 		// TODO Manage exception properly
 		throw new RuntimeException("An error occurred while retrieving data from data source");
 	}
 
-
-
-
-
-	
-	
-	
-	
 }

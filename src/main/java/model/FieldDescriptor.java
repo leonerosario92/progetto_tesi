@@ -37,4 +37,27 @@ public class FieldDescriptor {
 		return isPrimaryKey;
 	}
 	
+	
+	public String getKey () {
+		return getTable()+"_"+getName();
+	}
+	
+	
+	@Override
+	public boolean equals(Object other) {
+		if (other == null) return false;
+	    if (other == this) return true;
+	    if (!(other instanceof FieldDescriptor))return false;
+	    FieldDescriptor otherFieldDescriptor = (FieldDescriptor)other;
+		String otherKey = otherFieldDescriptor.getKey();
+		String thisKey = getKey();	
+		return thisKey.equals(otherKey);
+	}
+	
+	
+	@Override
+	public int hashCode() {
+		return getKey().hashCode();
+	}
+	
 }

@@ -1,5 +1,9 @@
 package query.execution;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import dataset.IDataSet;
@@ -11,8 +15,12 @@ public class ExecutionPlanItem implements Callable<IDataSet> {
 	
 	private IOperatorFunction function;
 	private IDataSet inputDataSet;
-	private FieldDescriptor referencedField;
+	private List<FieldDescriptor> referencedFields;
 	private IOperatorArgs args;
+	
+	public ExecutionPlanItem() {
+		referencedFields = new ArrayList<>();
+	}
 	
 	public void setInputDataSet(IDataSet inputDataSet) {
 		this.inputDataSet = inputDataSet;
@@ -26,12 +34,12 @@ public class ExecutionPlanItem implements Callable<IDataSet> {
 		this.function = function;
 	}
 	
-	public FieldDescriptor getReferencedField() {
-		return referencedField;
+	public List<FieldDescriptor> getReferencedFields() {
+		return referencedFields;
 	}
 
-	public void setReferencedField(FieldDescriptor referencedField) {
-		this.referencedField = referencedField;
+	public void setReferencedField(FieldDescriptor field) {
+		referencedFields.add(field);
 	}
 
 	@Override

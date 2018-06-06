@@ -14,8 +14,10 @@ public interface IRecordIterator {
 	
 	public String getTableName(int index);
 
-	public Object getValueAt (int index);
+	public Object getValueByIndex (int index);
 
 	public void next();
+	
+	public int getRecordCount(); 
 	
 }

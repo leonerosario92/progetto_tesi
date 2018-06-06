@@ -12,7 +12,7 @@ public interface IDataSource extends AutoCloseable {
 	
 	public IMetaData getMetaData ();
 	
-	public IRecordIterator getTable(TableDescriptor table) throws DataSourceException;
+	//public IRecordIterator getTable(TableDescriptor table) throws DataSourceException;
 	
 	//public IRecordIterator getTablePartition(TableDescriptor table,int offset, int recordCount);
 	
