@@ -13,7 +13,7 @@ public interface IDataSet {
 //	
 //	public Stream<?> getColumnStream(FieldDescriptor field);
 	
-	public IColumn<?> getColumn()
+	public IColumn<?> getColumn();
 	
 	public boolean containsColumn (FieldDescriptor field);
 	

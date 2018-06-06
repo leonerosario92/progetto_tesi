@@ -242,5 +242,8 @@ public class BaseLayoutManager extends LayoutManager {
 	private IDataSet buildDataSet(Set<IDataSet> dataSets, BitSet mergedBitSet) {
 		int columnSize = mergedBitSet.cardinality();
 		IDataSet result = new BaseDataSet(columnSize);
+		for(IDataSet dataSet : dataSets) {
+			dataSet.getColumnIterator()
+		}
 	}
 }
