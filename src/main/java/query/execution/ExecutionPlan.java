@@ -23,7 +23,6 @@ public class ExecutionPlan {
 	}
 	
 	public void addItem(ExecutionPlanItem item) {
-		FieldDescriptor referencedField = item.getReferencedField();
 		itemList.add(item);
 	}
 	

@@ -39,7 +39,7 @@ public class FieldDescriptor {
 	
 	
 	public String getKey () {
-		return getTable()+"_"+getName();
+		return getTable().getName()+"_"+getName();
 	}
 	
 	

@@ -26,8 +26,8 @@ public class FilterOnColumnImpl extends FilterOnColumnFunction {
 	public BitSet apply(FilterOnColumnArgs args) {
 		
 		FieldDescriptor column = args.getField();
-		Iterator<?> columnIterator  = args.getInputDataSet().getColumnIterator(column);
-		BitSet validityBitSet = args.getValidityBitSet();
+		Iterator<?> columnIterator  = args.getInputDataSet().getColumn(column).getColumnIterator();
+		BitSet validityBitSet = args.getInputDataSet().getValidityBitSet();
 		List<FilterStatement> statements = args.getStatements();
 		
 		TypeComparator comparator = getComparator(column.getType());
@@ -38,10 +38,12 @@ public class FilterOnColumnImpl extends FilterOnColumnFunction {
 		while(columnIterator.hasNext()) {
 			Object currentValue = columnIterator.next();
 			if (! (isValid = validityBitSet.get(index))) {
+				index ++;
 				continue;
 			}
 			boolean evaluation = evaluator.evaluate(currentValue);
 			validityBitSet.set(index,evaluation);
+			index++;
 		}
 		
 		return validityBitSet;
@@ -52,6 +54,8 @@ public class FilterOnColumnImpl extends FilterOnColumnFunction {
 		switch (type) {
 		case INTEGER:
 			return new IntComparator();
+		case BIG_DECIMAL:
+			return new BigDecimalComparator();
 		default:
 			//TODO Manage exception properly
 			throw new IllegalArgumentException();

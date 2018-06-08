@@ -30,14 +30,14 @@ public class QueryProvider  {
 		try {
 			return (FilterOnColumnFunction) clazz.newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
-			//TODO: Manage exception properly
+			//TODO Manage exception properly
 			throw new IllegalArgumentException();
 		}
 		
 	}
 	
 	
-	public void setFilterScanImpl(Class<? extends FilterOnColumnFunction> function) {
+	public void setFilterOnColumnImpl(Class<? extends FilterOnColumnFunction> function) {
 		setImplementation(RelOperatorType.FILTER_ON_COLUMN, function);
 	}	
 	

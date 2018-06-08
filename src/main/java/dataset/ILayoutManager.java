@@ -1,11 +1,11 @@
 package dataset;
 
-import java.util.Set;
+import java.util.List;
 
 
 public interface ILayoutManager {
 
-	public IDataSet mergeDatasets(Set<IDataSet> dataSets);
+	public IDataSet mergeDatasets(List<IDataSet> dataSets);
 
 	public IDataSet buildDataSet(IRecordIterator it);
 	

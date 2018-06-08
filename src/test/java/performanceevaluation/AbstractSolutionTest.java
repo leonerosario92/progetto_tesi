@@ -7,27 +7,30 @@ import org.apache.log4j.xml.DOMConfigurator;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import context.Context;
 import context.ContextFactory;
 import context.ContextFactoryException;
 import dataset.IRecordIterator;
 import datasource.IDataSource;
-import datasource.IRemoteDataSource;
 import dispatcher.MeasurementType;
 import impl.datasource.jdbc.JDBCDataSourceException;
 import impl.query.execution.ExecutionException;
 import model.FieldDescriptor;
 import model.IMetaData;
 import model.TableDescriptor;
-import objectexplorer.MemoryMeasurer;
 import query.builder.Query;
 import query.builder.predicate.FilterStatementType;
 
 public abstract class AbstractSolutionTest {
 	
+	@Rule public TestName name = new TestName();
+	
 	public static final String LOG_FILE_PATH = "log4j.xml";
+	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	public static Logger LOGGER;
 	public static StringBuilder testReport;
 	protected ContextFactory factory;
@@ -96,6 +99,9 @@ public abstract class AbstractSolutionTest {
 		} 
 		finally {
 			if(query != null) {
+				testReport.append(LINE_SEPARATOR);
+				testReport.append("TEST : ").append(name.getMethodName());
+				testReport.append(LINE_SEPARATOR);
 				testReport.append("Query execution took " + query.getExecutionTimeMillisecond() + " ms");
 			}
 		}
@@ -112,7 +118,8 @@ public abstract class AbstractSolutionTest {
 
 			query = getScanBigDataSetQuery(context);
 			String sql = query.writeSql();
-			IRecordIterator result = context.executeQuery(query, MeasurementType.EVALUATE_MEMORY_OCCUPATION);	
+			IRecordIterator result = context.executeQuery
+					(query, MeasurementType.EVALUATE_MEMORY_OCCUPATION);	
 			
 			int count = 0;
 			while(result.hasNext()) {
@@ -128,7 +135,10 @@ public abstract class AbstractSolutionTest {
 		} 
 		finally {
 			if(query != null) {
-				testReport.append("Query execution caused a occupation of : " + query.getResultSetByteSize() + "byte in main memory");
+				testReport.append(LINE_SEPARATOR);
+				testReport.append("TEST : ").append(name.getMethodName());
+				testReport.append(LINE_SEPARATOR);
+				testReport.append("Query execution caused a occupation of " + query.getResultSetByteSize() + " byte in main memory");
 			}
 		}
 		
@@ -148,7 +158,7 @@ public abstract class AbstractSolutionTest {
 			.project(storeSales)
 			.project(unitSales)
 			.project(storeCost)
-			.filter(storeCost, FilterStatementType.GREATER_THAN,new Integer(2))
+			.filter(storeCost, FilterStatementType.GREATER_THAN, new Integer(2))
 			.getQuery();
 		
 		return query;

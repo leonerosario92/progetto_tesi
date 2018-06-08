@@ -73,6 +73,35 @@ public class StatementsEvaluator {
 					return value != 0;
 				}
 			};
+		case GREATER_THAN:
+			return new Predicate<Integer>() {
+				@Override
+				public boolean test(Integer value) {
+					return value > 0;
+				}
+			};
+		case GREATER_THAN_OR_EQUAL:
+			return new Predicate<Integer>() {
+				@Override
+				public boolean test(Integer value) {
+					return value >= 0;
+				}
+			};
+		case LESS_THAN:
+			return new Predicate<Integer>() {
+				@Override
+				public boolean test(Integer value) {
+					return value < 0;
+				}
+			};
+		case LESS_THAN_OR_EQUAL:
+			return new Predicate<Integer>() {
+				@Override
+				public boolean test(Integer value) {
+					return value <= 0;
+				}
+			};
+			
 		default:
 			//TODO Manage exception properly
 			throw new IllegalArgumentException();

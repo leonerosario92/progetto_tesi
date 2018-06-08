@@ -144,7 +144,7 @@ public abstract class JDBCDataSource implements IRemoteDataSource{
 			String query = getColumnStatement(fieldNum);
 			String[] values = new String[fieldNum+1];
 			for(int i=0; i<fieldNum; i++) {
-				FieldDescriptor field = args[1];
+				FieldDescriptor field = args[i];
 				String fieldName = field.getTable().getName()+"."+field.getName();
 				values[i] = fieldName;
 			}
@@ -157,7 +157,7 @@ public abstract class JDBCDataSource implements IRemoteDataSource{
 			int recordCount = getRecordCount(table);
 			return new JDBCRecordIterator(result,recordCount);
 		} catch (SQLException e) {
-			throw new DataSourceException("An error occour while trying to retrieve a set of column from remote data surce");
+			throw new DataSourceException("An error occour while trying to retrieve a set of column from remote data source");
 		}
 	}
 
@@ -169,7 +169,7 @@ public abstract class JDBCDataSource implements IRemoteDataSource{
 		
 		Integer count = null;
 		if(result.next()) {
-			 count = result.getInt(0);
+			 count = result.getInt(1);
 		}
 		
 		return count;

@@ -1,10 +1,12 @@
 package impl.base;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import dataprovisioner.IDataProvisioner;
@@ -34,7 +36,7 @@ public class BaseQueryExecutor extends QueryExecutor {
 		
 		initializeItems(itemList);
 		
-		Set<IDataSet> partialResults = executeItems(itemList);
+		List<IDataSet> partialResults = executeItems(itemList);
 		IDataSet result = layoutManager.mergeDatasets(partialResults);
 		return result;
 	}
@@ -48,7 +50,7 @@ public class BaseQueryExecutor extends QueryExecutor {
 			List<FieldDescriptor> fields = item.getReferencedFields();
 			
 			if(fields.size() > 1) {
-				//TODO Manage case when dataSet is made by more than one column
+				//TODO Manage case when dataSet contains more than one column
 				throw new IllegalStateException();
 			}
 			
@@ -68,26 +70,36 @@ public class BaseQueryExecutor extends QueryExecutor {
 	}
 
 
-	private Set<IDataSet> executeItems(List<ExecutionPlanItem> itemList) {
-		Set<IDataSet> partialResults = new HashSet<>();	
+	private List<IDataSet> executeItems(List<ExecutionPlanItem> itemList) {
+//		List<IDataSet> partialResults = new ArrayList<>();	
 		try {
-			partialResults =
-			executor.invokeAll(itemList)
-			.stream()
-			.map(future -> {
-			    try {
-			        return future.get();
-			    }
-			    catch (Exception e) {
-			        throw new IllegalStateException(e);
-			    }
-			})
-			.collect(Collectors.toSet());
+			List<Future<IDataSet>>partialResults =
+					executor.invokeAll(itemList);
+			for(Future<IDataSet> partialResult : partialResults) {
+				IDataSet ds = partialResult.get();
+			}
 		} catch (InterruptedException e) {
-			//TODO manage exception properly
-			throw new RuntimeException(e);
+			e.printStackTrace();
 		}
-		return partialResults;
+//		try {
+//			partialResults =
+//			executor.invokeAll(itemList)
+//			.stream()
+//			.map(future -> {
+//			    try {
+//			        return future.get();
+//			    }
+//			    catch (Exception e) {
+//			        throw new IllegalStateException(e);
+//			    }
+//			})
+//			.collect(Collectors.toList());
+//		} catch (InterruptedException e) {
+//			//TODO manage exception properly
+//			throw new RuntimeException(e);
+//		}
+//		return partialResults;
+		return null;
 	}
 
 }

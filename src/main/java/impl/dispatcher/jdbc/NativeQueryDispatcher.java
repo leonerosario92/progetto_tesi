@@ -35,7 +35,8 @@ public class NativeQueryDispatcher extends QueryDispatcher {
 		try {
 			statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery(sqlStatement);
-			IRecordIterator result = new JDBCRecordIterator(rs);
+			//TODO spostare getRecord count in una utility class
+			IRecordIterator result = new JDBCRecordIterator(rs,0);
 			return result;
 		} catch (SQLException | JDBCDataSourceException e) {
 			//TODO: Manage exception properly
@@ -46,7 +47,17 @@ public class NativeQueryDispatcher extends QueryDispatcher {
 	
 	@Override
 	public IRecordIterator dispatchQuery(Query query, MeasurementType measurementType) throws ExecutionException {
-		// TODO Auto-generated method stub
-		return null;
+		switch(measurementType) {
+		case EVALUATE_PERFORMANCE :
+			query.setExecutionStartTime();
+			IRecordIterator result = dispatchQuery(query);
+			query.setExecutionEndTime();
+			return result;
+		case EVALUATE_MEMORY_OCCUPATION :
+			query.setResultSetByteSize(0L);
+			return dispatchQuery(query);
+		default :
+			throw new IllegalArgumentException("Unknown measurement type.");
+		}
 	}
 }

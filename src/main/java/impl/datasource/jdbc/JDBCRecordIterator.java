@@ -74,7 +74,7 @@ public class JDBCRecordIterator implements IRecordIterator {
 	@Override
 	public String getTableName(int index) {
 		try {
-			return metadata.getColumnName(index);
+			return metadata.getTableName(index);
 		} catch (SQLException e) {
 			manageSqlException();
 		}
@@ -83,7 +83,7 @@ public class JDBCRecordIterator implements IRecordIterator {
 	
 	
 	@Override
-	public Object getValueByIndex(int index) {
+	public Object getValueByColumnIndex(int index) {
 		try {
 			return resultSet.getObject(index);
 		} catch (SQLException e) {

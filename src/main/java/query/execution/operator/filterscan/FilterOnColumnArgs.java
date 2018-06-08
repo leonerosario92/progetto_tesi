@@ -21,7 +21,7 @@ public class FilterOnColumnArgs implements IOperatorArgs {
 
 
 		public void setStatements(List<FilterStatement> statements) {
-			statements.addAll(statements);
+			this.statements.addAll(statements);
 		}
 		
 		public  List<FilterStatement> getStatements() {

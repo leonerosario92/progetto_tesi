@@ -3,23 +3,18 @@ package context;
 
 
 import dataprovisioner.DataProvisioner;
-import dataprovisioner.IDataProvisioner;
 import dataset.LayoutManager;
-import dataset.ILayoutManager;
 import datasource.IDataSource;
 import dispatcher.QueryDispatcher;
-import dispatcher.IQueryDispatcher;
 import impl.base.BaseDataProvisioner;
 import impl.base.BaseQueryDispatcher;
 import impl.base.BaseQueryExecutor;
 import impl.base.BaseQueryPlanner;
-import impl.query.execution.operator.filterscan.StreamFilterScan;
+import impl.query.execution.operator.filterscan.FilterOnColumnImpl;
 import impl.base.BaseLayoutManager;
 import query.QueryPlanner;
-import query.IQueryPlanner;
 import query.QueryProvider;
 import query.execution.QueryExecutor;
-import query.execution.IQueryExecutor;
 
 public class ContextFactory {
 	
@@ -36,7 +31,7 @@ public class ContextFactory {
 		
 		this.dataSource = dataSource;
 		this.queryProvider = new QueryProvider();
-		this.queryProvider.setFilterScanImpl(new StreamFilterScan().getClass());
+		this.queryProvider.setFilterOnColumnImpl(FilterOnColumnImpl.class);
 		
 		this.layoutManagerImpl = BaseLayoutManager.class;
 		this.dataProvisionerImpl = BaseDataProvisioner.class;

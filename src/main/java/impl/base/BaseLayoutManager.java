@@ -5,44 +5,86 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import com.google.common.collect.Lists;
+
 import context.DataType;
 import dataset.LayoutManager;
+import dataset.ColumnDescriptor;
+import dataset.IColumn;
 import dataset.IDataSet;
 import dataset.IRecordIterator;
 import model.FieldDescriptor;
 
 public class BaseLayoutManager extends LayoutManager {
 	
+	
+	/*==== IColumn implementation ====*/
+	private class ColumnImpl<T> implements IColumn<T>{
+		
+		private ArrayList<T> values;
+		private ColumnDescriptor descriptor;
+		private int length;
+		
+		public ColumnImpl(ColumnDescriptor descriptor,int length) {
+			this.descriptor = descriptor;
+			this.length = length;
+			this.values = new ArrayList<>(length);
+		}
+		
+		public ColumnImpl(ColumnDescriptor descriptor, ArrayList<T> values) {
+			this.descriptor = descriptor;
+			this.length = values.size();
+			this.values = values;
+		}
 
-	/*======INNER CLASSES THAT IMPLEMENTS DATASET=====*/
-	private class ColumnImpl<T>{
-		
-		private ArrayList<T> column;
-		
-		public ColumnImpl() {
-			this.column = new ArrayList<>();
+		@Override
+		public Iterator<T> getColumnIterator() {
+			return values.iterator();
+		}
+
+		@Override
+		public Stream<T> getColumnStream() {
+			return values.stream();
+		}
+
+		@Override
+		public T getValueAt(int index) {
+			return values.get(index);
+		}
+
+		@Override
+		public void storeValueAt(Object value, int index) {
+			T typedValue = (T) value;
+			values.add(index,typedValue);
 		}
 		
-		public void storeValueAt(int index, Object val) {
-			T value = (T) val;
-			column.add(index,value);
+		@Override
+		public ColumnDescriptor getDescriptor() {
+			return descriptor;
 		}
 		
-		public Iterator<T> getIterator(){
-			return column.iterator();
-		}
-		
-		public Stream<T> getStream(){
-			return column.stream();
+		public ColumnImpl<T> getFilteredInstance (BitSet bitSet) {
+			int newLength = bitSet.size();
+			if(newLength != this.length) {
+				throw new IllegalArgumentException();
+			}
+			ArrayList<T> filteredValues = new ArrayList<>(newLength);
+			 for (int i = bitSet.nextSetBit(0); i >= 0; i = bitSet.nextSetBit(i+1)) {
+				 filteredValues.add(getValueAt(i));
+			 }
+			 return new ColumnImpl<T>(descriptor,filteredValues);
 		}
 		
 	}
 	
 	
+	
+	/*==== IDataSet implementation ====*/
 	private class BaseDataSet implements IDataSet {
 		
 		private HashMap<String, ColumnImpl<?>> columns;
@@ -54,68 +96,28 @@ public class BaseLayoutManager extends LayoutManager {
 			this.columns = new HashMap<>();
 			initializeValidityBitSet(recordCount);
 		}
-
-
-		@Override
-		public Iterator<?> getColumnIterator(FieldDescriptor field) {
-			String key = getFieldKey(field);
-			if(!(columns.containsKey(key))) {
-				throw new IllegalArgumentException("Attempt to refer a non-existent column");
-			}	
-			return columns.get(key).getIterator();
-		}
-
-		
-		@Override
-		public Stream<?> getColumnStream(FieldDescriptor field) {
-			String key = getFieldKey(field);
-			if(!(columns.containsKey(key))) {
-				throw new IllegalArgumentException("Attempt to refer a non-existent column");
-			}
-			return columns.get(key).getStream();
-		}
-
 		
 		@Override
 		public boolean containsColumn(FieldDescriptor field) {
-			String key = getFieldKey(field);
+			String key = field.getKey();
 			return columns.containsKey(key);
 		}
-
-		
-		//TODO
-		@Override
-		public IDataSet getVerticalpartition(FieldDescriptor... fields) {
-			return null;
-		}
 		
 		
-		private String getFieldKey (FieldDescriptor field) {
-			return getFieldKey(field.getTable().getName(), field.getName());
-		}
-		
-		
-		private String getFieldKey(String tableName, String columnName) {
-			return tableName + "." + columnName;
-		}
-
-		
-	    void addColumn(String tableName, String columnName, ColumnImpl<?> newColumn) {
-			String key = getFieldKey(tableName, columnName);
+	    void addColumn( ColumnImpl<?> newColumn) {
+			String key = newColumn.getDescriptor().getKey();
 			columns.put(key, newColumn);
 		}
 	    
+	    
 	    private void initializeValidityBitSet(int recordNum) {
 	    	this.validityBitset = new BitSet(recordNum);
-	    	validityBitset.set(0,recordNum,true);
+	    	validityBitset.set(1,recordNum,true);
 	    }
 
-		//TODO
-		@Override
-		public IRecordIterator getRecordIterator() {
-			return null;
-		}
-
+	    
+		
+		
 		
 		@Override
 		public void updateValidityBitset(BitSet validityBits) {
@@ -136,35 +138,72 @@ public class BaseLayoutManager extends LayoutManager {
 			}
 			return bitSet;
 		}
+
+
+		@Override
+		public IColumn<?> getColumn(FieldDescriptor column) {
+			String key = column.getKey();
+			return columns.get(key);
+		}
+
+
+		@Override
+		public List<IColumn<?>> getAllColumns() {
+			return Lists.newArrayList(columns.values());
+		}
+
+		@Override
+		public IDataSet getVerticalpartition(FieldDescriptor... field) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public IRecordIterator getRecordIterator() {
+			return new BaseRecordIterator(this);
+		}
+
+		@Override
+		public int getRecordCount() {
+			return recordCount;
+		}
+
+		@Override
+		public int getFieldsCount() {
+			return columns.size();
+		}
 		
 	}
+
 	
 	
+	/* ==== LayoutManager Implementation ==== */
 	public BaseLayoutManager() {
 		super();
 	}
 	
 	
-	private ColumnImpl<?> createColumn(DataType fieldsType) {
+	private ColumnImpl<?> createColumn(ColumnDescriptor descriptor, int length) {
 		ColumnImpl<?> newColumn = null;
-		switch (fieldsType) {
+		DataType type = descriptor.getColumnType();
+		switch (type) {
 		case INTEGER:
-			newColumn = new ColumnImpl<Integer>();
+			newColumn = new ColumnImpl<Integer>(descriptor,length);
 			break;
 		case DOUBLE:
-			newColumn = new ColumnImpl<Double>();
+			newColumn = new ColumnImpl<Double>(descriptor,length);
 			break;
 		case FLOAT:
-			newColumn = new ColumnImpl<Float>();
+			newColumn = new ColumnImpl<Float>(descriptor,length);
 			break;
 		case LONG:
-			newColumn = new ColumnImpl<Long>();
+			newColumn = new ColumnImpl<Long>(descriptor,length);
 			break;
 		case STRING:
-			newColumn = new ColumnImpl<String>();
+			newColumn = new ColumnImpl<String>(descriptor,length);
 			break;
 		case BIG_DECIMAL:
-			newColumn = new ColumnImpl<BigDecimal>();
+			newColumn = new ColumnImpl<BigDecimal>(descriptor,length);
 			break;
 		default:
 			throw new IllegalArgumentException();
@@ -185,8 +224,14 @@ public class BaseLayoutManager extends LayoutManager {
 		int fieldsCount = iterator.getFieldsCount();
 		ColumnImpl<?>[] columns = new ColumnImpl<?>[fieldsCount+1];
 		for(int index = 1; index <= fieldsCount; index++) {
-			DataType fieldType = iterator.getColumnType(index);
-			columns[index] = createColumn (fieldType);
+			
+			DataType columnType = iterator.getColumnType(index);
+			String columnName = iterator.getColumnName(index);
+			String tableName = iterator.getTableName(index);
+			int columnLength = iterator.getRecordCount();
+			ColumnDescriptor descriptor  =
+					new ColumnDescriptor(tableName, columnName, columnType);
+			columns[index] = createColumn (descriptor,columnLength);
 		}
 		
 		/*
@@ -197,8 +242,8 @@ public class BaseLayoutManager extends LayoutManager {
 		while(iterator.hasNext()) {
 			iterator.next();
 			for(int index = 1; index <= fieldsCount; index++) {
-				value = iterator.getValueByIndex(index);
-				columns[index].storeValueAt(columnIndex, value);
+				value = iterator.getValueByColumnIndex(index);
+				columns[index].storeValueAt(value, columnIndex);
 			}
 		}
 		
@@ -206,23 +251,21 @@ public class BaseLayoutManager extends LayoutManager {
 		 * Add every column to the new dataset
 		 */
 		for(int index = 1; index <= fieldsCount; index++) {
-			String columnName = iterator.getColumnName(index);
-			String tableName = iterator.getTableName(index);
-			dataSet.addColumn(tableName, columnName, columns[index]);
+			dataSet.addColumn(columns[index]);
 		}
 		return dataSet;
 	}
 
 
 	@Override
-	public IDataSet mergeDatasets(Set<IDataSet> dataSets) {
-		
+	public IDataSet mergeDatasets(List<IDataSet> dataSets) {
 		BitSet mergedBitSet = mergeValidityBitsets(dataSets);
 		IDataSet mergedDataSet = buildDataSet(dataSets,mergedBitSet);
+		return mergedDataSet;
 	}
 
 
-	private BitSet mergeValidityBitsets(Set<IDataSet> dataSets) {
+	private BitSet mergeValidityBitsets(List<IDataSet> dataSets) {
 		BitSet mergedValidityBitSet = null;
 		Iterator<IDataSet> it = dataSets.iterator();
 		if(it.hasNext()) {
@@ -239,11 +282,18 @@ public class BaseLayoutManager extends LayoutManager {
 	}
 
 
-	private IDataSet buildDataSet(Set<IDataSet> dataSets, BitSet mergedBitSet) {
-		int columnSize = mergedBitSet.cardinality();
-		IDataSet result = new BaseDataSet(columnSize);
+	private IDataSet buildDataSet(List<IDataSet> dataSets, BitSet bitSet) {
+		int length = bitSet.cardinality();
+		BaseDataSet newDataSet = new BaseDataSet(length);
+		
 		for(IDataSet dataSet : dataSets) {
-			dataSet.getColumnIterator()
+			for(IColumn<?> column : dataSet.getAllColumns()) {
+				ColumnImpl<?> newColumn = 
+						((ColumnImpl<?>)column).getFilteredInstance(bitSet);
+				newDataSet.addColumn( newColumn);
+			}
 		}
+		return newDataSet;
 	}
+
 }
