@@ -28,10 +28,11 @@ public class BaseRecordIterator implements IRecordIterator {
 		columnIterators = new ArrayList<>(columnCount);
 		int columnIndex = 0;
 		for (IColumn<?> column : dataSet.getAllColumns()) {
-			columnIterators.set(columnIndex,column.getColumnIterator());
-			columnDescriptors.set(columnIndex, column.getDescriptor());
+			columnIterators.add(columnIndex,column.getColumnIterator());
+			columnDescriptors.add(columnIndex, column.getDescriptor());
 			columnIndex ++;
 		}
+		
 	}
 
 	@Override

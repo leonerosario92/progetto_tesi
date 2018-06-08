@@ -69,10 +69,8 @@ public class BaseLayoutManager extends LayoutManager {
 		}
 		
 		public ColumnImpl<T> getFilteredInstance (BitSet bitSet) {
-			int newLength = bitSet.size();
-			if(newLength != this.length) {
-				throw new IllegalArgumentException();
-			}
+			int newLength = bitSet.cardinality();
+			
 			ArrayList<T> filteredValues = new ArrayList<>(newLength);
 			 for (int i = bitSet.nextSetBit(0); i >= 0; i = bitSet.nextSetBit(i+1)) {
 				 filteredValues.add(getValueAt(i));
@@ -115,9 +113,6 @@ public class BaseLayoutManager extends LayoutManager {
 	    	validityBitset.set(1,recordNum,true);
 	    }
 
-	    
-		
-		
 		
 		@Override
 		public void updateValidityBitset(BitSet validityBits) {
@@ -216,7 +211,8 @@ public class BaseLayoutManager extends LayoutManager {
 	@Override
 	public IDataSet buildDataSet(IRecordIterator iterator) {
 		
-		BaseDataSet dataSet = new BaseDataSet(iterator.getRecordCount());
+		int recordCount = iterator.getRecordCount();
+		BaseDataSet dataSet = new BaseDataSet(recordCount);
 		
 		/*
 		 * For each field in iteraror metadata, create a new column
@@ -228,7 +224,7 @@ public class BaseLayoutManager extends LayoutManager {
 			DataType columnType = iterator.getColumnType(index);
 			String columnName = iterator.getColumnName(index);
 			String tableName = iterator.getTableName(index);
-			int columnLength = iterator.getRecordCount();
+			int columnLength = recordCount;
 			ColumnDescriptor descriptor  =
 					new ColumnDescriptor(tableName, columnName, columnType);
 			columns[index] = createColumn (descriptor,columnLength);

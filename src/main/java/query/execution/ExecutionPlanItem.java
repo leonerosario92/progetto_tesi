@@ -49,7 +49,8 @@ public class ExecutionPlanItem implements Callable<IDataSet> {
 			throw new IllegalStateException();
 		}
 		args.setInputDataSet(inputDataSet);
-		return (IDataSet) function.apply(args);
+		IDataSet result = (IDataSet) function.apply(args);
+		return result;
 	}
 	
 }

@@ -53,7 +53,7 @@ public class BaseQueryDispatcher extends QueryDispatcher {
 			result = executeWithPerformanceEvaluation(query);
 			break;
 		case EVALUATE_MEMORY_OCCUPATION:
-			result = executeWithMemoryEvaluation(query);
+        			result = executeWithMemoryEvaluation(query);
 			break;
 		}
 		return result.getRecordIterator();

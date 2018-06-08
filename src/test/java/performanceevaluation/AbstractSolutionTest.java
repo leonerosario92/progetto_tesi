@@ -40,7 +40,7 @@ public abstract class AbstractSolutionTest {
 	
 	public  abstract ContextFactory getContextFactoryImpl();
 	
-	public static final int SCAN_BIG_DATASET_EXPECTED_RESULT_SIZE = 100926;
+	public static final int SCAN_BIG_DATASET_EXPECTED_RESULT_SIZE = 96014;
 	
 	
 	
@@ -90,9 +90,7 @@ public abstract class AbstractSolutionTest {
 				result.next();
 				count ++;
 			}
-			
 			assertEquals(SCAN_BIG_DATASET_EXPECTED_RESULT_SIZE , count);
-			
 		} 
 		catch (ContextFactoryException | ExecutionException e) {
 			fail(e.getMessage());
@@ -155,10 +153,11 @@ public abstract class AbstractSolutionTest {
 		Query query =
 		context.query()
 			.selection(salesTable)
-			.project(storeSales)
+			//.project(storeSales)
 			.project(unitSales)
 			.project(storeCost)
 			.filter(storeCost, FilterStatementType.GREATER_THAN, new Integer(2))
+			.filter(unitSales, FilterStatementType.DIFFERENT_FROM, new Integer(5))
 			.getQuery();
 		
 		return query;

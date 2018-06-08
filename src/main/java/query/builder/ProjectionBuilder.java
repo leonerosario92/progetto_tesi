@@ -8,6 +8,7 @@ import model.FieldDescriptor;
 import query.builder.predicate.FilterStatementType;
 import query.builder.statement.FilterStatement;
 import query.builder.statement.ProjectionStatement;
+import utils.TypeUtils;
 
 public class ProjectionBuilder {
 
@@ -29,7 +30,7 @@ public class ProjectionBuilder {
 			throw new IllegalArgumentException("Filter statements can only contain fields specified in projection clause");
 		}
 		//TODO check if operand has same type of field 
-		Object rightOperand = parseOperand(operand,field.getType());
+		Object rightOperand = TypeUtils.parseOperand(operand,field.getType());
 		FilterStatement statement = type.getInstance(field, rightOperand);
 		query.filter(statement);
 		return new FilterBuilder(context,query);
@@ -46,52 +47,5 @@ public class ProjectionBuilder {
 		return this;
 	}
 	
-	
-	private Object parseOperand(Object operand, DataType type ) {
-		if(!((operand instanceof Number) || (operand instanceof String))){
-			throw new IllegalArgumentException("Right Operand of filter statement has invalid type.");
-		}
-		switch (type) {
-		case STRING :
-			return parseStringOperand (operand);
-		case BIG_DECIMAL:
-		case DOUBLE:
-		case FLOAT:
-		case INTEGER:
-		case LONG:
-			return parseNumericOperand(operand,type);
-		default :
-			throw new IllegalStateException("Filter Statements cannot be applied to fields that have a non-comparable type");
-		}
-	}
 
-
-	private Object parseStringOperand(Object operand) {
-		if (!(operand instanceof String)) {
-			throw new IllegalArgumentException("Right operand of filter statement does not match the type of the field to which is applied.");
-		}
-		return operand;
-	}
-
-	
-	private Object parseNumericOperand(Object operand, DataType type) {
-		if(! (operand instanceof Number)) {
-			throw new IllegalArgumentException("Right operand of filter statement does not match the type of the field to which is applied.");
-		}
-		String literalValue = operand.toString();
-		switch (type) {
-		case BIG_DECIMAL:
-			return new BigDecimal(literalValue);
-		case DOUBLE:
-			return Double.parseDouble(literalValue);
-		case FLOAT:
-			return Float.parseFloat(literalValue);
-		case INTEGER:
-			return Integer.parseInt(literalValue);
-		case LONG:
-			return Long.parseLong(literalValue);
-		default:
-			return null;
-		}
-	}
 }

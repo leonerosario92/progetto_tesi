@@ -4,6 +4,7 @@ import context.Context;
 import model.FieldDescriptor;
 import query.builder.predicate.FilterStatementType;
 import query.builder.statement.FilterStatement;
+import utils.TypeUtils;
 
 public class FilterBuilder {
 
@@ -20,8 +21,8 @@ public class FilterBuilder {
 			//TODO manage exception properly
 			throw new IllegalArgumentException("Filter statements can only contain fields specified in projection clause");
 		}
-		//TODO check if operand has same type of field 
-		FilterStatement statement = type.getInstance(field, operand);
+		Object rightOperand = TypeUtils.parseOperand(operand,field.getType());
+		FilterStatement statement = type.getInstance(field, rightOperand);
 		query.filter(statement);
 		return this;
 	}

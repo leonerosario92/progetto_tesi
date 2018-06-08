@@ -23,11 +23,12 @@ public class FilterOnColumnImpl extends FilterOnColumnFunction {
 
 
 	@Override
-	public BitSet apply(FilterOnColumnArgs args) {
+	public IDataSet apply(FilterOnColumnArgs args) {
 		
 		FieldDescriptor column = args.getField();
-		Iterator<?> columnIterator  = args.getInputDataSet().getColumn(column).getColumnIterator();
-		BitSet validityBitSet = args.getInputDataSet().getValidityBitSet();
+		IDataSet dataSet = args.getInputDataSet();
+		Iterator<?> columnIterator  = dataSet.getColumn(column).getColumnIterator();
+		BitSet validityBitSet = dataSet.getValidityBitSet();
 		List<FilterStatement> statements = args.getStatements();
 		
 		TypeComparator comparator = getComparator(column.getType());
@@ -45,8 +46,8 @@ public class FilterOnColumnImpl extends FilterOnColumnFunction {
 			validityBitSet.set(index,evaluation);
 			index++;
 		}
-		
-		return validityBitSet;
+		dataSet.updateValidityBitset(validityBitSet);
+		return dataSet;
 	}
 
 	

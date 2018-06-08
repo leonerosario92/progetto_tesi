@@ -6,7 +6,7 @@ import dataset.IDataSet;
 import query.execution.operator.IOperatorFunction;
 
 
-public abstract class FilterOnColumnFunction  implements IOperatorFunction<FilterOnColumnArgs, BitSet> {
+public abstract class FilterOnColumnFunction  implements IOperatorFunction<FilterOnColumnArgs, IDataSet> {
 	
 	private FilterOnColumnArgs args;
 	
