@@ -4,6 +4,7 @@ import dataprovisioner.IDataProvisioner;
 import dataset.ILayoutManager;
 import dataset.IRecordIterator;
 import datasource.IDataSource;
+import datasource.IRemoteDataSource;
 import dispatcher.IQueryDispatcher;
 import dispatcher.MeasurementType;
 import impl.query.execution.ExecutionException;
@@ -14,7 +15,7 @@ import query.builder.InitialBuilder;
 import query.builder.Query;
 import query.execution.IQueryExecutor;
 
-public class Context {
+public class Context implements AutoCloseable {
 		
 	private IDataSource dataSource;
 	private IQueryDispatcher queryDispatcher;
@@ -49,12 +50,21 @@ public class Context {
 	}
 	
 	
-	public IRecordIterator executeQuery(Query query) {
+	public IRecordIterator executeQuery(Query query) throws ExecutionException {
 		return queryDispatcher.dispatchQuery(query);
 	}
 	
 	public IRecordIterator executeQuery(Query query, MeasurementType measurememtType) throws ExecutionException {
 		return queryDispatcher.dispatchQuery(query, measurememtType);
+	}
+
+
+	@Override
+	public void close() throws Exception {
+		if(dataSource instanceof IRemoteDataSource) {
+			dataSource.close();
+		}
+		
 	}
 	
 }

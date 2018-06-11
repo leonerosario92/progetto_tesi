@@ -1,4 +1,4 @@
-package performanceevaluation;
+package benchmark;
 import context.ContextFactory;
 
 public class JDBCMySqlBaseSolutionTest extends JDBCMySqlSolutionTest {

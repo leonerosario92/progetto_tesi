@@ -110,7 +110,7 @@ public class BaseLayoutManager extends LayoutManager {
 	    
 	    private void initializeValidityBitSet(int recordNum) {
 	    	this.validityBitset = new BitSet(recordNum);
-	    	validityBitset.set(1,recordNum,true);
+	    	validityBitset.set(0,recordNum,true);
 	    }
 
 		

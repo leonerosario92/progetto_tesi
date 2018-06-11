@@ -1,4 +1,4 @@
-package performanceevaluation;
+package benchmark;
 import context.ContextFactory;
 import impl.dispatcher.jdbc.NativeQueryDispatcher;
 

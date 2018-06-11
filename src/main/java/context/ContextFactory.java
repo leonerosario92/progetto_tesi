@@ -95,24 +95,38 @@ public class ContextFactory {
 		this.layoutManagerImpl = layoutManagerImpl;
 	}
 
+	
 	public void setDataProvisioner(Class<? extends DataProvisioner> dataProvisionerImpl) {
 		this.dataProvisionerImpl = dataProvisionerImpl;
 	}
 
+	
 	public void setQueryExecutor(Class<? extends QueryExecutor> queryExecutorImpl) {
 		this.queryExecutorImpl = queryExecutorImpl;
 	}
 
+	
 //	public void setQueryProvider(QueryProvider queryProviderImpl) {
 //		this.queryProviderImpl = queryProviderImpl;
 //	}
 
+	
 	public void setQueryPlanner(Class<? extends QueryPlanner> queryPlannerImpl) {
 		this.queryPlannerImpl = queryPlannerImpl;
 	}
 
+	
 	public void setQueryDispatcher(Class<? extends QueryDispatcher> queryDispatcherImpl) {
 		this.queryDispatcherImpl = queryDispatcherImpl;
+	}
+
+
+	public String getConfiguration() {
+		final String LINE_SEPARATOR = System.getProperty("line.separator");
+		StringBuilder sb = new StringBuilder();
+		sb.append("CONTEXT CONFIGURATION : ").append(LINE_SEPARATOR)
+			.append("DataSet : ").append(this.dataSource.getClass().getSimpleName());
+		return sb.toString();
 	}
 	
 }

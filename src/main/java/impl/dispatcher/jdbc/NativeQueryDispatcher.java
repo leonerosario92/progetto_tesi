@@ -52,6 +52,8 @@ public class NativeQueryDispatcher extends QueryDispatcher {
 			query.setExecutionStartTime();
 			IRecordIterator result = dispatchQuery(query);
 			query.setExecutionEndTime();
+			query.setDataSetLoadingStartTime();
+			query.setDataSetLoadingEndTime();
 			return result;
 		case EVALUATE_MEMORY_OCCUPATION :
 			query.setResultSetByteSize(0L);

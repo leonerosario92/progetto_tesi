@@ -13,10 +13,13 @@ import dataprovisioner.IDataProvisioner;
 import dataset.IDataSet;
 import dataset.ILayoutManager;
 import datasource.DataSourceException;
+import dispatcher.MeasurementType;
 import impl.query.execution.ExecutionException;
 import model.FieldDescriptor;
 import model.TableDescriptor;
+import objectexplorer.MemoryMeasurer;
 import query.execution.QueryExecutor;
+import query.builder.Query;
 import query.execution.ExecutionPlan;
 import query.execution.ExecutionPlanItem;
 
@@ -39,6 +42,48 @@ public class BaseQueryExecutor extends QueryExecutor {
 		return result;
 	}
 
+		
+	@Override
+	public IDataSet executePlan(ExecutionPlan plan, Query query, MeasurementType measurement) throws ExecutionException {
+		switch (measurement) {
+		case EVALUATE_PERFORMANCE:
+			return execAndEvaluatePerformance(plan, query);
+		case EVALUATE_MEMORY_OCCUPATION:
+			return execAndEvaluateMemoryOccupation(plan,query);
+		default :
+			throw new IllegalArgumentException();
+		}
+	}
+	
+
+	private IDataSet execAndEvaluatePerformance(ExecutionPlan plan, Query query) throws ExecutionException {
+		List<ExecutionPlanItem> itemList = plan.getItemList();
+		
+		query.setDataSetLoadingStartTime();
+		initializeItems(itemList);
+		query.setDataSetLoadingEndTime();
+		
+		query.setExecutionStartTime();
+		List<IDataSet> partialResults = executeItems(itemList);
+		IDataSet result = layoutManager.mergeDatasets(partialResults);
+		query.setExecutionEndTime();
+		
+		return result;
+	}
+	
+	
+	private IDataSet execAndEvaluateMemoryOccupation(ExecutionPlan plan, Query query) throws ExecutionException {
+		List<ExecutionPlanItem> itemList = plan.getItemList();	
+		initializeItems(itemList);
+		List<IDataSet> partialResults = executeItems(itemList);
+		IDataSet result = layoutManager.mergeDatasets(partialResults);
+		
+		query.setResultSetByteSize(MemoryMeasurer.measureBytes(result));
+		
+		return result;
+	}
+
+	
 	private void initializeItems(List<ExecutionPlanItem> itemList) throws ExecutionException {
 		/*
 		 * For every execution item, load input DataSet
@@ -61,7 +106,7 @@ public class BaseQueryExecutor extends QueryExecutor {
 			}
 		}
 	}
-
+	
 	
 	private List<IDataSet> executeItems(List<ExecutionPlanItem> itemList) {
 		List<IDataSet> partialResults = new ArrayList<>();	
@@ -84,4 +129,6 @@ public class BaseQueryExecutor extends QueryExecutor {
 		}
 		return partialResults;
 	}
+
+
 }

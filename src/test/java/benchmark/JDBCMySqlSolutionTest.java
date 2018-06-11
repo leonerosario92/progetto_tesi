@@ -1,4 +1,4 @@
-package performanceevaluation;
+package benchmark;
 
 import static org.junit.Assert.fail;
 

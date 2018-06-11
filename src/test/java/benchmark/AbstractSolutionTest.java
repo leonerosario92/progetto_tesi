@@ -1,4 +1,4 @@
-package performanceevaluation;
+package benchmark;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -31,8 +31,9 @@ public abstract class AbstractSolutionTest {
 	
 	public static final String LOG_FILE_PATH = "log4j.xml";
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+	private static final String TABULATION = "    ";
 	public static Logger LOGGER;
-	public static StringBuilder testReport;
+	public static StringBuilder benchmarkReport;
 	protected ContextFactory factory;
 	protected IDataSource dataSource;
 	
@@ -40,15 +41,13 @@ public abstract class AbstractSolutionTest {
 	
 	public  abstract ContextFactory getContextFactoryImpl();
 	
-	public static final int SCAN_BIG_DATASET_EXPECTED_RESULT_SIZE = 96014;
+	public static final int SCAN_SMALL_DATASET_EXPECTED_RESULT_SIZE = 96015;
 	
 	
 	
 	@BeforeClass
 	public static void setupBeforeClass() {
-		
-		testReport = new StringBuilder();
-		
+		benchmarkReport = new StringBuilder();
 		String logFilePath =
 				LOG_FILE_PATH;
 				 DOMConfigurator.configure(logFilePath);
@@ -58,7 +57,8 @@ public abstract class AbstractSolutionTest {
 	
 	@AfterClass
 	public static void tearDownAfterClass() {
-		LOGGER.info(testReport.toString());
+		benchmarkReport.append(LINE_SEPARATOR);
+		LOGGER.info(benchmarkReport.toString());
 	}
 	
 	
@@ -71,50 +71,52 @@ public abstract class AbstractSolutionTest {
 			fail();
 		}
 		this.factory = getContextFactoryImpl();
+		
 	}
 	
 	
 	@Test
-	public void TestScanBigDataSetPerformance(){
+	public void TestScanSmallDataSetPerformance(){
 		
+		String testReport = new String();
 		Query query = null;
 		try {
 			Context context = factory.getContext();
 
-			query = getScanBigDataSetQuery(context);
+			query = getScanSmallDataSetQuery(context);
 			String sql = query.writeSql();
 			IRecordIterator result = context.executeQuery(query,MeasurementType.EVALUATE_PERFORMANCE);	
 			
+			query.setResultIterationStartTime();
 			int count = 0;
 			while(result.hasNext()) {
 				result.next();
 				count ++;
 			}
-			assertEquals(SCAN_BIG_DATASET_EXPECTED_RESULT_SIZE , count);
+			query.setResultIterationEndTime();
+			assertEquals("Wrong ResultSet Size", SCAN_SMALL_DATASET_EXPECTED_RESULT_SIZE, count);
+			
+			testReport = getPerformanceEvaluationReport(query);
+			
 		} 
 		catch (ContextFactoryException | ExecutionException e) {
+			testReport = getErrorReport(e);
 			fail(e.getMessage());
-		} 
-		finally {
-			if(query != null) {
-				testReport.append(LINE_SEPARATOR);
-				testReport.append("TEST : ").append(name.getMethodName());
-				testReport.append(LINE_SEPARATOR);
-				testReport.append("Query execution took " + query.getExecutionTimeMillisecond() + " ms");
-			}
+		}finally {
+			appendReport (testReport);
 		}
-		
 	}
 	
 	
 	@Test
-	public void TestScanBigDataSetMemoryOccupation(){
+	public void TestScanSmallDataSetMemoryOccupation(){
 		
+		String testReport = new String();
 		Query query = null;
 		try {
 			Context context = factory.getContext();
 
-			query = getScanBigDataSetQuery(context);
+			query = getScanSmallDataSetQuery(context);
 			String sql = query.writeSql();
 			IRecordIterator result = context.executeQuery
 					(query, MeasurementType.EVALUATE_MEMORY_OCCUPATION);	
@@ -125,28 +127,24 @@ public abstract class AbstractSolutionTest {
 				count ++;
 			}
 			
-			assertEquals(SCAN_BIG_DATASET_EXPECTED_RESULT_SIZE , count);
+			assertEquals("Wrong ResultSet Size", SCAN_SMALL_DATASET_EXPECTED_RESULT_SIZE , count);
+			testReport = getMemoryOccupationReport(query);
 			
 		} 
 		catch (ContextFactoryException | ExecutionException e) {
-			fail(e.getMessage());
+			testReport = getErrorReport(e);
 		} 
 		finally {
-			if(query != null) {
-				testReport.append(LINE_SEPARATOR);
-				testReport.append("TEST : ").append(name.getMethodName());
-				testReport.append(LINE_SEPARATOR);
-				testReport.append("Query execution caused a occupation of " + query.getResultSetByteSize() + " byte in main memory");
-			}
+			appendReport(testReport);
 		}
 		
 	}
 	
 	
-	private Query getScanBigDataSetQuery(Context context) {
+	private Query getScanSmallDataSetQuery(Context context) {
 		IMetaData metaData = context.getMetadata();
 		TableDescriptor salesTable = metaData.getTable("sales_fact_1998");
-		FieldDescriptor storeSales = salesTable.getField("store_sales");
+		//FieldDescriptor storeSales = salesTable.getField("store_sales");
 		FieldDescriptor unitSales = salesTable.getField("unit_sales");
 		FieldDescriptor storeCost = salesTable.getField("store_cost");
 		
@@ -162,5 +160,47 @@ public abstract class AbstractSolutionTest {
 		
 		return query;
 	} 
+	
+	
+	public String getTestReportHeader() {
+		return ("TEST Method : " + name.getMethodName());
+	}
+	
+	
+	private String getPerformanceEvaluationReport(Query query) {
+		return (
+				"RESULT : "
+//				+ "Query overall execution time :  " + query.getOverallExecutionTimeMillisecond() +" ms"
+				+LINE_SEPARATOR +TABULATION
+				+"DataSet loading time : " + query.getDataSetloadingTimeMillisecond() +" ms"
+				+LINE_SEPARATOR+TABULATION
+				+"Query execution time : " + query.getExecutionTimeMillisecond() +" ms"
+				+LINE_SEPARATOR+TABULATION
+				+"Result iteration time : " + query.getResultIterationTimeMillisecond() +" ms"
+				);
+				
+	}
+	
+	
+	private String getMemoryOccupationReport(Query query) {
+		return("RESULT : Query execution caused a occupation of " + new Float(query.getResultSetByteSize())/(1024*1024) + " MByte in main memory");
+	}
+	 
+	
+	private String getErrorReport(Exception e ) {
+		return ("RESULT : Test execution failed. Cause : " + e.getMessage());
+	}
+
+	
+	private void appendReport(String testReport) {
+		synchronized (benchmarkReport) {
+			benchmarkReport
+				.append(LINE_SEPARATOR)
+				.append(getTestReportHeader())
+				.append(LINE_SEPARATOR)
+				.append(testReport)
+				.append(LINE_SEPARATOR);
+		}
+	}	
 
 }

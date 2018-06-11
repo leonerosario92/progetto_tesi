@@ -1,6 +1,7 @@
 package query.builder;
 
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 
@@ -21,6 +22,10 @@ public class Query {
 	
 	private Long executionStartTime;
 	private Long executionEndTime;
+	private Long dataSetLoadingStartTime;
+	private Long dataSetLoadingEndTime;
+	private Long resultIterationStartTime;
+	private Long resultIterationEndTime;
 	
 	private Long resultSetByteSize;
 	
@@ -88,13 +93,35 @@ public class Query {
 
 
 	public void setExecutionStartTime() {
-		this.executionStartTime = new Long (new Date().getTime());	
-		}
+		this.executionStartTime = System.currentTimeMillis();
+	}
 
 
 	public void setExecutionEndTime() {
-		this.executionEndTime = new Long (new Date().getTime());
-		}
+		this.executionEndTime = System.currentTimeMillis();
+	}
+	
+	
+	public void setDataSetLoadingStartTime() {
+		this.dataSetLoadingStartTime = System.currentTimeMillis();
+	}
+	
+	
+	public void setDataSetLoadingEndTime() {
+		this.dataSetLoadingEndTime = System.currentTimeMillis();
+	}
+	
+	
+	public void setResultIterationStartTime () {
+		this.resultIterationStartTime = System.currentTimeMillis();
+	}
+	
+	
+	public void setResultIterationEndTime() {
+		this.resultIterationEndTime = System.currentTimeMillis();
+	}
+	
+	
 	
 	public long getExecutionTimeMillisecond() {
 		if((executionStartTime == null) || (executionEndTime == null)) {
@@ -102,7 +129,23 @@ public class Query {
 		}
 		return executionEndTime - executionStartTime;
 	}
+	
+	
+	public long getDataSetloadingTimeMillisecond() {
+		if((dataSetLoadingStartTime == null) || (dataSetLoadingEndTime == null)) {
+			throw new IllegalStateException("DataSet loading time cannot be read if execution's start and end time are not explictly set");
+		}
+		return dataSetLoadingEndTime - dataSetLoadingStartTime;
+	} 
+	
 
+	public long getResultIterationTimeMillisecond() {
+		if((resultIterationStartTime == null) || (resultIterationEndTime == null)) {
+			throw new IllegalStateException("Result iteration time cannot be read if execution's start and end time are not explictly set");
+		}
+		return resultIterationEndTime - resultIterationStartTime;
+	}
+	
 
 	public void setResultSetByteSize(Long resultSetByteSize) {
 		this.resultSetByteSize = resultSetByteSize;

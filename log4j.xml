@@ -8,7 +8,7 @@
     <appender name="TestAppender" class="org.apache.log4j.FileAppender">
        <param name="File" value="test-log.txt" />
        <layout class="org.apache.log4j.PatternLayout">
-          <param name="ConversionPattern" value="%-7p %d  %c %x - %m%n"/>
+          <param name="ConversionPattern" value=" %n %n %n BENCHMARK EXECUTION %n Performed at :  %d %n  %m%n"/>
        </layout>
     </appender>
  

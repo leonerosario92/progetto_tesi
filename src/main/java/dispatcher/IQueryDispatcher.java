@@ -6,7 +6,7 @@ import query.builder.Query;
 
 public interface IQueryDispatcher {
 
-	public IRecordIterator dispatchQuery(Query query);
+	public IRecordIterator dispatchQuery(Query query) throws ExecutionException;
 	
 	public IRecordIterator dispatchQuery(Query query, MeasurementType measurementType) throws ExecutionException;
 	
