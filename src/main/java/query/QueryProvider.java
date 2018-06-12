@@ -2,10 +2,10 @@ package query;
 
 import java.util.HashMap;
 
-import query.execution.ExecutionPlanItem;
-import query.execution.operator.IOperatorFunction;
+import query.execution.DataProcessor;
 import query.execution.operator.RelOperatorType;
-import query.execution.operator.filterscan.FilterOnColumnFunction;
+import query.execution.operator.filteroncolumn.FilterOnColumnFunction;
+import query.execution.operator.loadcolumn.LoadColumnFunction;
 
 public class QueryProvider  {
 	
@@ -24,22 +24,32 @@ public class QueryProvider  {
 	}
 	
 	
+	
+	public void setFilterOnColumnImpl(Class<? extends FilterOnColumnFunction> function) {
+		setImplementation(RelOperatorType.FILTER_ON_COLUMN, function);
+	}	
 	public FilterOnColumnFunction getFilterOnColumnImpl () {
-		checkImplementation(RelOperatorType.FILTER_ON_COLUMN);
-		Class<?> clazz = implementations.get(RelOperatorType.FILTER_ON_COLUMN);
+		return(FilterOnColumnFunction) getImplementationInstance(RelOperatorType.FILTER_ON_COLUMN);
+	}
+	
+	public void setLoadColumnImpl(Class<? extends LoadColumnFunction> function) {
+		setImplementation(RelOperatorType.LOAD_COLUMN, function);
+	}
+	public LoadColumnFunction getLoadColumnImpl () {
+		return (LoadColumnFunction) getImplementationInstance(RelOperatorType.LOAD_COLUMN);
+	}
+	
+	
+	private Object getImplementationInstance(RelOperatorType type) {
+		checkImplementation(type);
+		Class<?> clazz = implementations.get(type);
 		try {
 			return (FilterOnColumnFunction) clazz.newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
 			//TODO Manage exception properly
 			throw new IllegalArgumentException();
 		}
-		
 	}
-	
-	
-	public void setFilterOnColumnImpl(Class<? extends FilterOnColumnFunction> function) {
-		setImplementation(RelOperatorType.FILTER_ON_COLUMN, function);
-	}	
 	
 	
 	private void setImplementation(RelOperatorType type, Class<?> clazz) {

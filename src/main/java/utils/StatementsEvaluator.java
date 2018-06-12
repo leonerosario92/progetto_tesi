@@ -3,9 +3,10 @@ package utils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
-import impl.query.execution.operator.filterscan.TypeComparator;
+import impl.query.execution.operator.filteroncolumn.TypeComparator;
 import query.builder.predicate.FilterStatementType;
 import query.builder.statement.FilterStatement;
 
@@ -15,7 +16,7 @@ public class StatementsEvaluator {
 	Predicate<Object> evaluator;
 
 	
-	public StatementsEvaluator(TypeComparator comparator, List<FilterStatement> statements ) {
+	public StatementsEvaluator(TypeComparator comparator, Set<FilterStatement> statements ) {
 		this.comparator = comparator;
 		
 		Iterator<FilterStatement> it = statements.iterator();

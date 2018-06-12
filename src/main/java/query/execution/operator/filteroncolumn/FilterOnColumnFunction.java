@@ -1,12 +1,12 @@
-package query.execution.operator.filterscan;
+package query.execution.operator.filteroncolumn;
 
 import java.util.BitSet;
 
 import dataset.IDataSet;
-import query.execution.operator.IOperatorFunction;
+import query.execution.operator.DataSetProcessingFunction;
 
 
-public abstract class FilterOnColumnFunction  implements IOperatorFunction<FilterOnColumnArgs, IDataSet> {
+public abstract class FilterOnColumnFunction implements DataSetProcessingFunction <FilterOnColumnArgs> {
 	
 	private FilterOnColumnArgs args;
 	

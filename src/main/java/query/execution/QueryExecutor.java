@@ -20,5 +20,13 @@ public abstract class QueryExecutor implements IQueryExecutor {
 		this.layoutManager = layoutManager;
 	}
 	
+	@Override
+	public IDataProvisioner getProvisioner() {
+		return dataProvisioner;
+	}
 
+	@Override
+	public ILayoutManager getlayoutManager() {
+		return layoutManager;
+	}
 }

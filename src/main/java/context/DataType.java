@@ -1,6 +1,6 @@
 package context;
 
-import impl.query.execution.operator.filterscan.TypeComparator;
+import impl.query.execution.operator.filteroncolumn.TypeComparator;
 
 public enum DataType {
 	INTEGER,

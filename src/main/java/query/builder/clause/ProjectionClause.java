@@ -3,6 +3,7 @@ package query.builder.clause;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import model.FieldDescriptor;
 import query.builder.QueryConstants;
@@ -12,7 +13,7 @@ import query.builder.statement.ProjectionStatement;
 public class ProjectionClause  {
 
 	private ArrayList<ProjectionStatement> statements;
-	private HashSet<String> referencedFields;
+	private HashSet<FieldDescriptor> referencedFields;
 	
 	public ProjectionClause() {
 		this.statements = new ArrayList<>();
@@ -22,8 +23,7 @@ public class ProjectionClause  {
 	public void addStatement(ProjectionStatement statement) {
 		statements.add(statement);
 		FieldDescriptor field = statement.getField();
-		String key = field.getName()+"_"+field.getTable().getName();
-		referencedFields.add(key);
+		referencedFields.add(field);
 	}
 	
 	public String writeSql() {
@@ -52,14 +52,18 @@ public class ProjectionClause  {
 	
 	
 	public boolean referField(FieldDescriptor field) {
-		String key = field.getName()+"_"+field.getTable().getName();
-		return referencedFields.contains(key);
+		return referencedFields.contains(field);
 	}
 
+	
 	public ArrayList<ProjectionStatement> getStatements() {
 		return statements;
 	}
 	
+	
+	public Set<FieldDescriptor> getReferencedFields(){
+		return referencedFields;
+	}
 	
 	
 	

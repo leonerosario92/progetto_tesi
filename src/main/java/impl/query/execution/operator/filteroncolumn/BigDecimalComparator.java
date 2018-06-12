@@ -1,4 +1,4 @@
-package impl.query.execution.operator.filterscan;
+package impl.query.execution.operator.filteroncolumn;
 
 import java.math.BigDecimal;
 

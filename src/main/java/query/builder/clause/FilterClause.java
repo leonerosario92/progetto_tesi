@@ -2,9 +2,11 @@ package query.builder.clause;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import model.FieldDescriptor;
 import query.builder.QueryConstants;
@@ -14,6 +16,7 @@ import query.builder.statement.FilterStatement;
 public class FilterClause  {
 	
 	private ArrayList<FilterStatement> filterStatements;
+	
 	
 	public FilterClause() {
 		filterStatements = new ArrayList<>();
@@ -47,6 +50,15 @@ public class FilterClause  {
 	
 	public List<FilterStatement> getStatements(){
 		return filterStatements;
+	}
+	
+	
+	public Set<FieldDescriptor> getReferencedFields(){
+		HashSet<FieldDescriptor> result = new HashSet<>();
+		for(FilterStatement statement : filterStatements) {
+			result.add(statement.getField());
+		}
+		return result;
 	}
 	
 	

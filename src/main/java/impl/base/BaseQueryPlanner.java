@@ -2,9 +2,14 @@ package impl.base;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import com.google.common.collect.Sets;
+
+import dataprovisioner.LoadingType;
 import model.FieldDescriptor;
 import query.QueryPlanner;
 import query.QueryProvider;
@@ -16,9 +21,14 @@ import query.builder.statement.FilterStatement;
 import query.builder.statement.ProjectionStatement;
 import query.builder.statement.SelectionStatement;
 import query.execution.ExecutionPlan;
-import query.execution.ExecutionPlanItem;
-import query.execution.operator.filterscan.FilterOnColumnArgs;
-import query.execution.operator.filterscan.FilterOnColumnFunction;
+import query.execution.operator.filteroncolumn.FilterOnColumnArgs;
+import query.execution.operator.filteroncolumn.FilterOnColumnFunction;
+import query.execution.operator.loadcolumn.LoadColumnArgs;
+import query.execution.operator.loadcolumn.LoadColumnFunction;
+import query.execution.DataLoader;
+import query.execution.DataProcessor;
+import query.execution.ExecutableBlock;
+import query.execution.ExecutableSequence;
 
 public class BaseQueryPlanner extends QueryPlanner {
 	
@@ -36,68 +46,84 @@ public class BaseQueryPlanner extends QueryPlanner {
 	@Override
 	public ExecutionPlan getExecutionPlan(Query query) {
 		
-		SelectionClause selectionClause = query.getSelectionClause();
+		//SelectionClause selectionClause = query.getSelectionClause();
 		ProjectionClause projectionClause = query.getProjectionClause();
 		FilterClause filterClause = query.getFilterClause();
 		
-		ExecutionPlan result = new ExecutionPlan();
+		ExecutableBlock rootExecutable = new ExecutableBlock();
 		
-		//setReferencedTables(result,selectionClause);
-		//setReferencedFields(result,projectionClause);
-		setFilterStatements(result,filterClause);
+		Set<FieldDescriptor> unfilteredFields = 
+			Sets.difference(projectionClause.getReferencedFields(), filterClause.getReferencedFields());
+		
+		setProjectionOperators(rootExecutable, unfilteredFields);
+		setFilterOperators(rootExecutable,filterClause);
+		
+		ExecutionPlan result = new ExecutionPlan(rootExecutable);
 		
 		return result;
 		
 	}
 	
 	
-//	private void setReferencedTables(ExecutionPlan result, SelectionClause selectionClause) {
-//		for(SelectionStatement statement : selectionClause.getStatements()) {
-//			result.setReferencedTable(statement.getTable());
-//		}
-//	}
-//
-//	
-//	private void setReferencedFields(ExecutionPlan result, ProjectionClause projectionClause) {
-//		for(ProjectionStatement statement : projectionClause.getStatements()) {
-//			result.setReferencedField(statement.getField());
-//		}
-//	}
+	
+	private void setProjectionOperators(ExecutableBlock rootExecutable, Set<FieldDescriptor> unfilteredFields) {
+		for(FieldDescriptor field : unfilteredFields) {
+			ExecutableSequence exSequence = new ExecutableSequence();
+			DataLoader loader = getDataSetLoader(field);
+			rootExecutable.addExecutable(exSequence);
+		}
+	}
 
 	
-	private void setFilterStatements(ExecutionPlan result, FilterClause filterClause) {
-		Map<FieldDescriptor, List<FilterStatement>> groupedStatements =
+	private void setFilterOperators(ExecutableBlock rootExecutable, FilterClause filterClause) {
+		Map<FieldDescriptor, Set<FilterStatement>> groupedStatements =
 				statementsByField(filterClause.getStatements());
 		
-		FilterOnColumnFunction function = queryProvider.getFilterOnColumnImpl();
+		FilterOnColumnFunction filterFunction = queryProvider.getFilterOnColumnImpl();
 		groupedStatements.entrySet().forEach(
 				(pair)->{
-					ExecutionPlanItem item = new ExecutionPlanItem();
-					item.setFunction(function);
-					FilterOnColumnArgs args = new FilterOnColumnArgs();
-					FieldDescriptor referencedField = pair.getKey();
-					args.setField(referencedField);
-					item.setReferencedField(referencedField);
-					args.setStatements(pair.getValue());
-					item.setArgs(args);
+					ExecutableSequence exSequence = new ExecutableSequence();
 					
-					result.addItem(item);
+					DataLoader loader = getDataSetLoader(pair.getKey());
+					exSequence.setDataLoader(loader);
+					
+					DataProcessor filterOperator = new DataProcessor();
+					filterOperator.setFunction(filterFunction);
+					FilterOnColumnArgs filterArgs = new FilterOnColumnArgs();
+					filterArgs.setField(pair.getKey());
+					filterArgs.setStatements(pair.getValue());
+					exSequence.addOperator(filterOperator, 0);
+					
+					rootExecutable.addExecutable(exSequence);
 				});
 	}
 
 	
-	private Map<FieldDescriptor,List<FilterStatement>> 
+	private DataLoader getDataSetLoader(FieldDescriptor field) {
+		
+		LoadColumnFunction loadFunction = queryProvider.getLoadColumnImpl();
+		
+		DataLoader loader = new DataLoader();
+		loader.setFunction(loadFunction);
+		LoadColumnArgs loadArgs = new LoadColumnArgs();
+		loadArgs.setColumn(field);
+		loadArgs.setLoadingType(LoadingType.WHOLE_DATASET);
+		return loader;
+		
+	}
+
+	private Map<FieldDescriptor, Set<FilterStatement>> 
 		statementsByField(List<FilterStatement> statements){
-		HashMap<FieldDescriptor,List<FilterStatement>> groupedStatements =
+		HashMap<FieldDescriptor,Set<FilterStatement>> groupedStatements =
 				new HashMap<> ();
 		for(FilterStatement statement : statements) {
 			FieldDescriptor field = statement.getField();
 			if(groupedStatements.containsKey(field)) {
 				groupedStatements.get(field).add(statement);
 			}else {
-				ArrayList<FilterStatement> l = new ArrayList<>();
-				l.add(statement);
-				groupedStatements.put(field, l);
+				HashSet<FilterStatement> s = new HashSet<>();
+				s.add(statement);
+				groupedStatements.put(field, s);
 			}
 		}
 		return groupedStatements;

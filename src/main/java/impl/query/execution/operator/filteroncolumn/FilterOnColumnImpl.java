@@ -1,4 +1,4 @@
-package impl.query.execution.operator.filterscan;
+package impl.query.execution.operator.filteroncolumn;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -15,21 +15,19 @@ import dataset.IDataSet;
 import model.FieldDescriptor;
 import query.builder.predicate.FilterStatementType;
 import query.builder.statement.FilterStatement;
-import query.execution.operator.filterscan.FilterOnColumnArgs;
-import query.execution.operator.filterscan.FilterOnColumnFunction;
+import query.execution.operator.IOperatorArgs;
+import query.execution.operator.filteroncolumn.FilterOnColumnArgs;
+import query.execution.operator.filteroncolumn.FilterOnColumnFunction;
 import utils.StatementsEvaluator;
 
 public class FilterOnColumnImpl extends FilterOnColumnFunction {
 
-
 	@Override
-	public IDataSet apply(FilterOnColumnArgs args) {
-		
+	public IDataSet apply(IDataSet dataSet, FilterOnColumnArgs args) {
 		FieldDescriptor column = args.getField();
-		IDataSet dataSet = args.getInputDataSet();
 		Iterator<?> columnIterator  = dataSet.getColumn(column).getColumnIterator();
 		BitSet validityBitSet = dataSet.getValidityBitSet();
-		List<FilterStatement> statements = args.getStatements();
+		Set<FilterStatement> statements = args.getStatements();
 		
 		TypeComparator comparator = getComparator(column.getType());
 		StatementsEvaluator evaluator = new StatementsEvaluator(comparator, statements);

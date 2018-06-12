@@ -10,7 +10,7 @@ import impl.base.BaseDataProvisioner;
 import impl.base.BaseQueryDispatcher;
 import impl.base.BaseQueryExecutor;
 import impl.base.BaseQueryPlanner;
-import impl.query.execution.operator.filterscan.FilterOnColumnImpl;
+import impl.query.execution.operator.filteroncolumn.FilterOnColumnImpl;
 import impl.base.BaseLayoutManager;
 import query.QueryPlanner;
 import query.QueryProvider;
