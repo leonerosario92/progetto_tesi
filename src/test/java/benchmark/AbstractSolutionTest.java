@@ -137,7 +137,6 @@ public abstract class AbstractSolutionTest {
 		finally {
 			appendReport(testReport);
 		}
-		
 	}
 	
 	
@@ -170,7 +169,7 @@ public abstract class AbstractSolutionTest {
 	private String getPerformanceEvaluationReport(Query query) {
 		return (
 				"RESULT : "
-//				+ "Query overall execution time :  " + query.getOverallExecutionTimeMillisecond() +" ms"
+//				+ "Query overall execution time :  " + query.getOverallExecutionTime() +" ms"
 				+LINE_SEPARATOR +TABULATION
 				+"DataSet loading time : " + query.getDataSetloadingTimeMillisecond() +" ms"
 				+LINE_SEPARATOR+TABULATION
@@ -178,7 +177,6 @@ public abstract class AbstractSolutionTest {
 				+LINE_SEPARATOR+TABULATION
 				+"Result iteration time : " + query.getResultIterationTimeMillisecond() +" ms"
 				);
-				
 	}
 	
 	
