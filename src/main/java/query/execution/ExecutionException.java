@@ -1,4 +1,4 @@
-package impl.query.execution;
+package query.execution;
 
 public class ExecutionException extends Exception {
 

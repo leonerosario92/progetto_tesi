@@ -18,12 +18,12 @@ import dataset.IRecordIterator;
 import datasource.IDataSource;
 import dispatcher.MeasurementType;
 import impl.datasource.jdbc.JDBCDataSourceException;
-import impl.query.execution.ExecutionException;
 import model.FieldDescriptor;
 import model.IMetaData;
 import model.TableDescriptor;
 import query.builder.Query;
 import query.builder.predicate.FilterStatementType;
+import query.execution.ExecutionException;
 
 public abstract class AbstractSolutionTest {
 	
@@ -143,14 +143,14 @@ public abstract class AbstractSolutionTest {
 	private Query getScanSmallDataSetQuery(Context context) {
 		IMetaData metaData = context.getMetadata();
 		TableDescriptor salesTable = metaData.getTable("sales_fact_1998");
-		//FieldDescriptor storeSales = salesTable.getField("store_sales");
+		FieldDescriptor storeSales = salesTable.getField("store_sales");
 		FieldDescriptor unitSales = salesTable.getField("unit_sales");
 		FieldDescriptor storeCost = salesTable.getField("store_cost");
 		
 		Query query =
 		context.query()
 			.selection(salesTable)
-			//.project(storeSales)
+			.project(storeSales)
 			.project(unitSales)
 			.project(storeCost)
 			.filter(storeCost, FilterStatementType.GREATER_THAN, new Integer(2))

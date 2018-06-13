@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import dataprovisioner.IDataProvisioner;
 import dataset.IDataSet;
-import impl.query.execution.ExecutionException;
+import utils.TreePrinter;
 
 public class ExecutableBlock implements IExecutable{
 	
@@ -28,7 +28,7 @@ public class ExecutableBlock implements IExecutable{
 			try {
 				futures.add(executable.exec(executor, provisioner));
 			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}
@@ -47,5 +47,17 @@ public class ExecutableBlock implements IExecutable{
 			}
 		};
 	}
+
+	@Override
+	public void addRepresentation(TreePrinter printer) {
+		printer.appendLine("[BLOCK]");
+		for(IExecutable e : executables) {
+			printer.addIndentation();
+			e.addRepresentation(printer);
+			printer.removeIndentation();
+		}
+		printer.appendLine("[END BLOCK]");
+	}
+
 
 }

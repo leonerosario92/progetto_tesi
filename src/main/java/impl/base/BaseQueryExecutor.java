@@ -16,7 +16,6 @@ import dataset.IDataSet;
 import dataset.ILayoutManager;
 import datasource.DataSourceException;
 import dispatcher.MeasurementType;
-import impl.query.execution.ExecutionException;
 import model.FieldDescriptor;
 import model.TableDescriptor;
 import objectexplorer.MemoryMeasurer;
@@ -25,6 +24,7 @@ import query.builder.Query;
 import query.execution.ExecutionPlan;
 import query.execution.IExecutable;
 import query.execution.DataProcessor;
+import query.execution.ExecutionException;
 
 public class BaseQueryExecutor extends QueryExecutor {
 

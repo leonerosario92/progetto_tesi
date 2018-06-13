@@ -1,8 +1,8 @@
 package dispatcher;
 
 import dataset.IRecordIterator;
-import impl.query.execution.ExecutionException;
 import query.builder.Query;
+import query.execution.ExecutionException;
 
 public interface IQueryDispatcher {
 

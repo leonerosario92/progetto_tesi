@@ -1,15 +1,6 @@
 package query.execution;
 
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import dataset.IDataSet;
-import impl.query.execution.ExecutionException;
-import model.FieldDescriptor;
-import model.TableDescriptor;
+import utils.TreePrinter;
 
 
 public class ExecutionPlan {
@@ -22,6 +13,13 @@ public class ExecutionPlan {
 
 	public IExecutable getRootExecutable() {
 		return rootExecutable;
+	}
+	
+	@Override
+	public String toString() {
+		TreePrinter tp = new TreePrinter();
+		rootExecutable.addRepresentation(tp);
+		return tp.toString();
 	}
 	
 }

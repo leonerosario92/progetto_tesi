@@ -12,8 +12,8 @@ import dispatcher.QueryDispatcher;
 import impl.datasource.jdbc.JDBCDataSource;
 import impl.datasource.jdbc.JDBCDataSourceException;
 import impl.datasource.jdbc.JDBCRecordIterator;
-import impl.query.execution.ExecutionException;
 import query.builder.Query;
+import query.execution.ExecutionException;
 
 public class NativeQueryDispatcher extends QueryDispatcher {
 

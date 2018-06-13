@@ -35,4 +35,10 @@ public class DataProcessor {
 		return result;
 	}
 	
+	
+	@Override
+	public String toString() {
+		return "OPERATOR : " + function.getClass().getSimpleName();
+	}
+	
 }

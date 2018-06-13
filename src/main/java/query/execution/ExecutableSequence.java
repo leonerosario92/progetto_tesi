@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
 import dataprovisioner.IDataProvisioner;
 import dataset.IDataSet;
+import utils.TreePrinter;
 
 public class ExecutableSequence implements IExecutable{
 
@@ -55,7 +56,21 @@ public class ExecutableSequence implements IExecutable{
 					throw new RuntimeException();
 				}
 			}
-		};
+		};	}
+
+
+	@Override
+	public void addRepresentation(TreePrinter printer) {
+		
+		printer.appendLine("[SEQUENCE]");
+		printer.addIndentation();
+		printer.appendLine(dataLoader.toString());
+		for(DataProcessor dp : operators) {
+			printer.appendLine(dp.toString());
+		}
+		printer.removeIndentation();
+		printer.appendLine("[END SEQUENCE]");
+		
 	}
 	
 

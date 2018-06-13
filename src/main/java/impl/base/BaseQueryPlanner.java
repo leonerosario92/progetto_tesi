@@ -70,6 +70,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 		for(FieldDescriptor field : unfilteredFields) {
 			ExecutableSequence exSequence = new ExecutableSequence();
 			DataLoader loader = getDataSetLoader(field);
+			exSequence.setDataLoader(loader);
 			rootExecutable.addExecutable(exSequence);
 		}
 	}
@@ -92,6 +93,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 					FilterOnColumnArgs filterArgs = new FilterOnColumnArgs();
 					filterArgs.setField(pair.getKey());
 					filterArgs.setStatements(pair.getValue());
+					filterOperator.setArgs(filterArgs);
 					exSequence.addOperator(filterOperator, 0);
 					
 					rootExecutable.addExecutable(exSequence);
@@ -108,6 +110,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 		LoadColumnArgs loadArgs = new LoadColumnArgs();
 		loadArgs.setColumn(field);
 		loadArgs.setLoadingType(LoadingType.WHOLE_DATASET);
+		loader.setArgs(loadArgs);
 		return loader;
 		
 	}

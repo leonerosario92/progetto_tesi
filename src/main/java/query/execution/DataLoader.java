@@ -24,4 +24,9 @@ public class DataLoader {
 		return (IDataSet) function.apply(provisioner,args);
 	}
 	
+	@Override
+	public String toString() {
+		return "OPERATOR : " + function.getClass().getSimpleName();
+	}
+	
 }

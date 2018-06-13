@@ -7,7 +7,6 @@ import dataprovisioner.IDataProvisioner;
 import dataset.IDataSet;
 import dataset.ILayoutManager;
 import dispatcher.MeasurementType;
-import impl.query.execution.ExecutionException;
 import query.builder.Query;
 
 public interface IQueryExecutor {
@@ -21,6 +20,5 @@ public interface IQueryExecutor {
 	public IDataProvisioner getProvisioner();
 
 	public ILayoutManager getlayoutManager();
-
 	
 }

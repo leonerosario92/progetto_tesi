@@ -7,12 +7,12 @@ import datasource.IDataSource;
 import datasource.IRemoteDataSource;
 import dispatcher.IQueryDispatcher;
 import dispatcher.MeasurementType;
-import impl.query.execution.ExecutionException;
 import model.IMetaData;
 import query.IQueryPlanner;
 import query.QueryProvider;
 import query.builder.InitialBuilder;
 import query.builder.Query;
+import query.execution.ExecutionException;
 import query.execution.IQueryExecutor;
 
 public class Context implements AutoCloseable {

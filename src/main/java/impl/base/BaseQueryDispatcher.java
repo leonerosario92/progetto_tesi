@@ -5,10 +5,10 @@ import dataset.IRecordIterator;
 import datasource.IDataSource;
 import dispatcher.MeasurementType;
 import dispatcher.QueryDispatcher;
-import impl.query.execution.ExecutionException;
 import objectexplorer.MemoryMeasurer;
 import query.IQueryPlanner;
 import query.builder.Query;
+import query.execution.ExecutionException;
 import query.execution.ExecutionPlan;
 import query.execution.IQueryExecutor;
 
@@ -37,9 +37,12 @@ public class BaseQueryDispatcher extends QueryDispatcher {
 		ExecutionPlan queryPlan = planner.getExecutionPlan(query);
 		//result = executor.executePlan(queryPlan, query, measurementType); 
 		
+		String plan = queryPlan.toString();
+		
 		query.setExecutionStartTime();
 		result = executor.executePlan(queryPlan);
 		query.setExecutionEndTime();
+		
 		
 		query.setDataSetLoadingStartTime();
 		query.setDataSetLoadingEndTime();

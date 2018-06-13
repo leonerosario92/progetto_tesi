@@ -11,6 +11,7 @@ import impl.base.BaseQueryDispatcher;
 import impl.base.BaseQueryExecutor;
 import impl.base.BaseQueryPlanner;
 import impl.query.execution.operator.filteroncolumn.FilterOnColumnImpl;
+import impl.query.execution.operator.loadcolumn.LoadColumnImpl;
 import impl.base.BaseLayoutManager;
 import query.QueryPlanner;
 import query.QueryProvider;
@@ -32,6 +33,7 @@ public class ContextFactory {
 		this.dataSource = dataSource;
 		this.queryProvider = new QueryProvider();
 		this.queryProvider.setFilterOnColumnImpl(FilterOnColumnImpl.class);
+		this.queryProvider.setLoadColumnImpl(LoadColumnImpl.class);
 		
 		this.layoutManagerImpl = BaseLayoutManager.class;
 		this.dataProvisionerImpl = BaseDataProvisioner.class;

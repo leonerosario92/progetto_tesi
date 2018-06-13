@@ -44,7 +44,7 @@ public class QueryProvider  {
 		checkImplementation(type);
 		Class<?> clazz = implementations.get(type);
 		try {
-			return (FilterOnColumnFunction) clazz.newInstance();
+			return  clazz.newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
 			//TODO Manage exception properly
 			throw new IllegalArgumentException();
