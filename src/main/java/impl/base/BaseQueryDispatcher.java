@@ -8,7 +8,7 @@ import dispatcher.QueryDispatcher;
 import objectexplorer.MemoryMeasurer;
 import query.IQueryPlanner;
 import query.builder.Query;
-import query.execution.ExecutionException;
+import query.execution.QueryExecutionException;
 import query.execution.ExecutionPlan;
 import query.execution.IQueryExecutor;
 
@@ -23,7 +23,7 @@ public class BaseQueryDispatcher extends QueryDispatcher {
 	}
 
 	@Override
-	public IRecordIterator dispatchQuery(Query query) throws ExecutionException {
+	public IRecordIterator dispatchQuery(Query query) throws QueryExecutionException {
 		
 		ExecutionPlan queryPlan = planner.getExecutionPlan(query);
 		IDataSet result;
@@ -32,19 +32,19 @@ public class BaseQueryDispatcher extends QueryDispatcher {
 	}
 
 	@Override
-	public IRecordIterator dispatchQuery(Query query, MeasurementType measurementType) throws ExecutionException {
+	public IRecordIterator dispatchQuery(Query query, MeasurementType measurementType) throws QueryExecutionException {
 		IDataSet result = null;
 		ExecutionPlan queryPlan = planner.getExecutionPlan(query);
 		//result = executor.executePlan(queryPlan, query, measurementType); 
-		
-		query.setExecutionStartTime();
-		result = executor.executePlan(queryPlan);
-		query.setExecutionEndTime();
 		
 		
 		String plan = queryPlan.toString();
 		
 		
+		
+		query.setExecutionStartTime();
+		result = executor.executePlan(queryPlan);
+		query.setExecutionEndTime();
 		query.setDataSetLoadingStartTime();
 		query.setDataSetLoadingEndTime();
 		

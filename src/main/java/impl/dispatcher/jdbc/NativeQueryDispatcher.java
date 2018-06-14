@@ -13,7 +13,7 @@ import impl.datasource.jdbc.JDBCDataSource;
 import impl.datasource.jdbc.JDBCDataSourceException;
 import impl.datasource.jdbc.JDBCRecordIterator;
 import query.builder.Query;
-import query.execution.ExecutionException;
+import query.execution.QueryExecutionException;
 
 public class NativeQueryDispatcher extends QueryDispatcher {
 
@@ -46,7 +46,7 @@ public class NativeQueryDispatcher extends QueryDispatcher {
 
 	
 	@Override
-	public IRecordIterator dispatchQuery(Query query, MeasurementType measurementType) throws ExecutionException {
+	public IRecordIterator dispatchQuery(Query query, MeasurementType measurementType) throws QueryExecutionException {
 		switch(measurementType) {
 		case EVALUATE_PERFORMANCE :
 			query.setExecutionStartTime();

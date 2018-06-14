@@ -12,7 +12,7 @@ import query.IQueryPlanner;
 import query.QueryProvider;
 import query.builder.InitialBuilder;
 import query.builder.Query;
-import query.execution.ExecutionException;
+import query.execution.QueryExecutionException;
 import query.execution.IQueryExecutor;
 
 public class Context implements AutoCloseable {
@@ -50,11 +50,11 @@ public class Context implements AutoCloseable {
 	}
 	
 	
-	public IRecordIterator executeQuery(Query query) throws ExecutionException {
+	public IRecordIterator executeQuery(Query query) throws QueryExecutionException {
 		return queryDispatcher.dispatchQuery(query);
 	}
 	
-	public IRecordIterator executeQuery(Query query, MeasurementType measurememtType) throws ExecutionException {
+	public IRecordIterator executeQuery(Query query, MeasurementType measurememtType) throws QueryExecutionException {
 		return queryDispatcher.dispatchQuery(query, measurememtType);
 	}
 

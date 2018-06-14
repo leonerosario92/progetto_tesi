@@ -23,7 +23,7 @@ import model.IMetaData;
 import model.TableDescriptor;
 import query.builder.Query;
 import query.builder.predicate.FilterStatementType;
-import query.execution.ExecutionException;
+import query.execution.QueryExecutionException;
 
 public abstract class AbstractSolutionTest {
 	
@@ -98,7 +98,7 @@ public abstract class AbstractSolutionTest {
 			testReport = getPerformanceEvaluationReport(query);
 			
 		} 
-		catch (ContextFactoryException | ExecutionException e) {
+		catch (ContextFactoryException | QueryExecutionException e) {
 			testReport = getErrorReport(e);
 			fail(e.getMessage());
 		}finally {
@@ -133,7 +133,7 @@ public abstract class AbstractSolutionTest {
 			testReport = getMemoryOccupationReport(query);
 			
 		} 
-		catch (ContextFactoryException | ExecutionException e) {
+		catch (ContextFactoryException | QueryExecutionException e) {
 			testReport = getErrorReport(e);
 		} 
 		finally {

@@ -3,30 +3,23 @@ package query.execution;
 import dataprovisioner.IDataProvisioner;
 import dataset.IDataSet;
 import datasource.DataSourceException;
+import query.QueryProvider;
+import query.execution.operator.DataSetProcessingFunction;
 import query.execution.operator.DatasetLoadingFunction;
 import query.execution.operator.IOperatorArgs;
+import query.execution.operator.RelOperatorType;
 
-public class DataLoader {
-
-	private DatasetLoadingFunction function;
-	private IOperatorArgs args;
+public abstract class LoadDataSetOperator<F extends DatasetLoadingFunction, A extends IOperatorArgs> extends Operator<F,A>{
 	
 	
-	public void setFunction(DatasetLoadingFunction function) {
-		this.function = function;
+	public LoadDataSetOperator(QueryProvider provider, RelOperatorType type) {
+		super(provider, type);
 	}
 
-	public void setArgs(IOperatorArgs args) {
-		this.args = args;
-	}
 	
 	public IDataSet loadDataSet (IDataProvisioner provisioner) throws DataSourceException {
 		return (IDataSet) function.apply(provisioner,args);
 	}
 	
-	@Override
-	public String toString() {
-		return "OPERATOR : " + function.getClass().getSimpleName();
-	}
 	
 }

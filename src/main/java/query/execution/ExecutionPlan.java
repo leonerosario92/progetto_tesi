@@ -5,13 +5,13 @@ import utils.TreePrinter;
 
 public class ExecutionPlan {
 	
-	private IExecutable rootExecutable;
+	private OperatorGroup rootExecutable;
 	
-	public ExecutionPlan(IExecutable rootExecutable) {
+	public ExecutionPlan(OperatorGroup rootExecutable) {
 		this.rootExecutable = rootExecutable;
 	}
 
-	public IExecutable getRootExecutable() {
+	public OperatorGroup getRootExecutable() {
 		return rootExecutable;
 	}
 	

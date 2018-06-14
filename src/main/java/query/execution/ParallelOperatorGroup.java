@@ -9,25 +9,25 @@ import dataprovisioner.IDataProvisioner;
 import dataset.IDataSet;
 import utils.TreePrinter;
 
-public class ExecutableBlock implements IExecutable{
+public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement{
 	
-	private List<IExecutable> executables;
+	private List<OperatorGroup> executables;
 	
-	public ExecutableBlock() {
+	public ParallelOperatorGroup() {
 		this.executables = new ArrayList<>();
 	}
 	
-	public void addExecutable(IExecutable executable) {
+	public void addExecutable(OperatorGroup executable) {
 		executables.add(executable);
 	}
 
 	@Override
-	public Supplier<IDataSet> exec(IQueryExecutor executor, IDataProvisioner provisioner) {
+	public Supplier<IDataSet> execOperators(IQueryExecutor executor) {
 		List<Supplier<IDataSet>> futures = new ArrayList<>();
-		for(IExecutable executable : executables) {
+		for(OperatorGroup executable : executables) {
 			try {
-				futures.add(executable.exec(executor, provisioner));
-			} catch (ExecutionException e) {
+				futures.add(executable.execOperators(executor));
+			} catch (QueryExecutionException e) {
 				
 				e.printStackTrace();
 			}
@@ -51,9 +51,22 @@ public class ExecutableBlock implements IExecutable{
 	@Override
 	public void addRepresentation(TreePrinter printer) {
 		printer.appendLine("[BLOCK]");
-		for(IExecutable e : executables) {
+		for( ExecutionPlanElement e : executables) {
 			printer.addIndentation();
 			e.addRepresentation(printer);
+			printer.removeIndentation();
+		}
+		printer.appendLine("[END BLOCK]");
+	}
+
+	
+	@Override
+	public void addRepresentationWithReport(TreePrinter printer) {
+		// TODO Auto-generated method stub
+		printer.appendLine("[BLOCK]");
+		for( ExecutionPlanElement e : executables) {
+			printer.addIndentation();
+			e.addRepresentationWithReport(printer);
 			printer.removeIndentation();
 		}
 		printer.appendLine("[END BLOCK]");

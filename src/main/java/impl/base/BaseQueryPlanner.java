@@ -21,14 +21,16 @@ import query.builder.statement.FilterStatement;
 import query.builder.statement.ProjectionStatement;
 import query.builder.statement.SelectionStatement;
 import query.execution.ExecutionPlan;
+import query.execution.FilterOnColumnOperator;
+import query.execution.LoadColumnOperator;
 import query.execution.operator.filteroncolumn.FilterOnColumnArgs;
 import query.execution.operator.filteroncolumn.FilterOnColumnFunction;
 import query.execution.operator.loadcolumn.LoadColumnArgs;
 import query.execution.operator.loadcolumn.LoadColumnFunction;
-import query.execution.DataLoader;
-import query.execution.DataProcessor;
-import query.execution.ExecutableBlock;
-import query.execution.ExecutableSequence;
+import query.execution.LoadDataSetOperator;
+import query.execution.ProcessDataSetOperator;
+import query.execution.ParallelOperatorGroup;
+import query.execution.SequentialOperatorGroup;
 
 public class BaseQueryPlanner extends QueryPlanner {
 	
@@ -50,7 +52,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 		ProjectionClause projectionClause = query.getProjectionClause();
 		FilterClause filterClause = query.getFilterClause();
 		
-		ExecutableBlock rootExecutable = new ExecutableBlock();
+		ParallelOperatorGroup rootExecutable = new ParallelOperatorGroup();
 		
 		Set<FieldDescriptor> unfilteredFields = 
 			Sets.difference(projectionClause.getReferencedFields(), filterClause.getReferencedFields());
@@ -66,34 +68,32 @@ public class BaseQueryPlanner extends QueryPlanner {
 	
 	
 	
-	private void setProjectionOperators(ExecutableBlock rootExecutable, Set<FieldDescriptor> unfilteredFields) {
+	private void setProjectionOperators(ParallelOperatorGroup rootExecutable, Set<FieldDescriptor> unfilteredFields) {
 		for(FieldDescriptor field : unfilteredFields) {
-			ExecutableSequence exSequence = new ExecutableSequence();
-			DataLoader loader = getDataSetLoader(field);
+			SequentialOperatorGroup exSequence = new SequentialOperatorGroup();
+			LoadDataSetOperator loader = getDataSetLoader(field);
 			exSequence.setDataLoader(loader);
 			rootExecutable.addExecutable(exSequence);
 		}
 	}
 
 	
-	private void setFilterOperators(ExecutableBlock rootExecutable, FilterClause filterClause) {
+	private void setFilterOperators(ParallelOperatorGroup rootExecutable, FilterClause filterClause) {
 		Map<FieldDescriptor, Set<FilterStatement>> groupedStatements =
 				statementsByField(filterClause.getStatements());
 		
-		FilterOnColumnFunction filterFunction = queryProvider.getFilterOnColumnImpl();
+		//FilterOnColumnFunction filterFunction = queryProvider.getFilterOnColumnImpl();
 		groupedStatements.entrySet().forEach(
 				(pair)->{
-					ExecutableSequence exSequence = new ExecutableSequence();
+					SequentialOperatorGroup exSequence = new SequentialOperatorGroup();
 					
-					DataLoader loader = getDataSetLoader(pair.getKey());
+					LoadDataSetOperator loader = getDataSetLoader(pair.getKey());
 					exSequence.setDataLoader(loader);
 					
-					DataProcessor filterOperator = new DataProcessor();
-					filterOperator.setFunction(filterFunction);
-					FilterOnColumnArgs filterArgs = new FilterOnColumnArgs();
+					FilterOnColumnOperator filterOperator = new FilterOnColumnOperator(queryProvider);
+					FilterOnColumnArgs filterArgs = filterOperator.getArgs();
 					filterArgs.setField(pair.getKey());
 					filterArgs.setStatements(pair.getValue());
-					filterOperator.setArgs(filterArgs);
 					exSequence.addOperator(filterOperator, 0);
 					
 					rootExecutable.addExecutable(exSequence);
@@ -101,17 +101,15 @@ public class BaseQueryPlanner extends QueryPlanner {
 	}
 
 	
-	private DataLoader getDataSetLoader(FieldDescriptor field) {
+	private LoadDataSetOperator getDataSetLoader(FieldDescriptor field) {
 		
 		LoadColumnFunction loadFunction = queryProvider.getLoadColumnImpl();
 		
-		DataLoader loader = new DataLoader();
-		loader.setFunction(loadFunction);
-		LoadColumnArgs loadArgs = new LoadColumnArgs();
+		LoadColumnOperator loadOperator = new LoadColumnOperator(queryProvider);
+		LoadColumnArgs loadArgs = loadOperator.getArgs();
 		loadArgs.setColumn(field);
 		loadArgs.setLoadingType(LoadingType.WHOLE_DATASET);
-		loader.setArgs(loadArgs);
-		return loader;
+		return loadOperator;
 		
 	}
 

@@ -1,6 +1,5 @@
 package impl.query.execution.operator.filteroncolumn;
 
-import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -16,6 +15,7 @@ import model.FieldDescriptor;
 import query.builder.predicate.FilterStatementType;
 import query.builder.statement.FilterStatement;
 import query.execution.operator.IOperatorArgs;
+import query.execution.operator.RelOperatorType;
 import query.execution.operator.filteroncolumn.FilterOnColumnArgs;
 import query.execution.operator.filteroncolumn.FilterOnColumnFunction;
 import utils.StatementsEvaluator;
@@ -60,5 +60,7 @@ public class FilterOnColumnImpl extends FilterOnColumnFunction {
 			throw new IllegalArgumentException();
 		}
 	}
+
+
 
 }

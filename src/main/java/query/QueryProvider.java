@@ -2,7 +2,7 @@ package query;
 
 import java.util.HashMap;
 
-import query.execution.DataProcessor;
+import query.execution.ProcessDataSetOperator;
 import query.execution.operator.RelOperatorType;
 import query.execution.operator.filteroncolumn.FilterOnColumnFunction;
 import query.execution.operator.loadcolumn.LoadColumnFunction;

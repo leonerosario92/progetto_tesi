@@ -1,5 +1,7 @@
 package query.execution.operator.loadcolumn;
 
+import com.mysql.jdbc.Field;
+
 import dataprovisioner.LoadingType;
 import model.FieldDescriptor;
 import query.execution.operator.IOperatorArgs;
@@ -20,6 +22,17 @@ public class LoadColumnArgs implements IOperatorArgs {
 	}
 	public void setLoadingType(LoadingType loadingType) {
 		this.loadingType = loadingType;
+	}
+	
+	@Override
+	
+	public String getStringRepresentation() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Column = ").append(column.getName())
+		.append(" , ")
+		.append("Loading Type = ").append(loadingType.name());
+		
+		return sb.toString();
 	}
 	
 }

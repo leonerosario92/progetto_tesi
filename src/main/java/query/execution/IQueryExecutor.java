@@ -11,11 +11,11 @@ import query.builder.Query;
 
 public interface IQueryExecutor {
 	 
-	public IDataSet executePlan(ExecutionPlan plan) throws ExecutionException;
+	public IDataSet executePlan(ExecutionPlan plan) throws QueryExecutionException;
 
-//	public IDataSet executePlan(ExecutionPlan plan, Query query, MeasurementType measurement) throws ExecutionException;
+	public IDataSet executePlan(ExecutionPlan plan, Query query, MeasurementType measurement) throws QueryExecutionException;
 	
-	public Future<IDataSet> execFunction(Callable<IDataSet> executable);
+	Future<IDataSet> executeOperator(Callable<IDataSet> executable);
 	
 	public IDataProvisioner getProvisioner();
 
