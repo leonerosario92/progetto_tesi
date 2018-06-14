@@ -17,6 +17,18 @@ public class ExecutableSequence implements IExecutable{
 	private List<DataProcessor> operators;
 	private DataLoader dataLoader;
 	
+	
+	
+	private long datasetLoadingStartTime;
+	private long datasetLoadingEndTime;
+	private long executionStartTime;
+	private long executionEndTime;
+	private String executionStartDate;
+	private String executionEndDate;
+	private boolean executed;
+	
+	
+	
 	public ExecutableSequence() {
 		this.operators = new ArrayList<>();
 	}
@@ -34,6 +46,7 @@ public class ExecutableSequence implements IExecutable{
 	
 	@Override
 	public Supplier<IDataSet>exec(IQueryExecutor executor, IDataProvisioner provisioner) {
+		
 		Future<IDataSet> future = executor.execFunction(new Callable<IDataSet>() {			
 			@Override
 			public IDataSet call() throws Exception {
@@ -56,7 +69,8 @@ public class ExecutableSequence implements IExecutable{
 					throw new RuntimeException();
 				}
 			}
-		};	}
+		};	
+	}
 
 
 	@Override

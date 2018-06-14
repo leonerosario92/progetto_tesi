@@ -71,7 +71,7 @@ public class BaseRecordIterator implements IRecordIterator {
 	@Override
 	public void next() {
 		for(int i = 0; i < columnCount; i++) {
-			columnIterators.get(i).next();
+			currentRecord[i] = columnIterators.get(i).next();
 		}
 		iterationIndex ++;
 	}

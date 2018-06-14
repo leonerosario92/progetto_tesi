@@ -37,11 +37,12 @@ public class BaseQueryDispatcher extends QueryDispatcher {
 		ExecutionPlan queryPlan = planner.getExecutionPlan(query);
 		//result = executor.executePlan(queryPlan, query, measurementType); 
 		
-		String plan = queryPlan.toString();
-		
 		query.setExecutionStartTime();
 		result = executor.executePlan(queryPlan);
 		query.setExecutionEndTime();
+		
+		
+		String plan = queryPlan.toString();
 		
 		
 		query.setDataSetLoadingStartTime();

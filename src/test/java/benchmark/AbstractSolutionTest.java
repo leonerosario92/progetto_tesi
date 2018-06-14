@@ -32,8 +32,8 @@ public abstract class AbstractSolutionTest {
 	public static final String LOG_FILE_PATH = "log4j.xml";
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	private static final String TABULATION = "    ";
-	public static Logger LOGGER;
-	public static StringBuilder benchmarkReport;
+	private static Logger LOGGER;
+	private static StringBuilder benchmarkReport;
 	protected ContextFactory factory;
 	protected IDataSource dataSource;
 	
@@ -48,10 +48,9 @@ public abstract class AbstractSolutionTest {
 	@BeforeClass
 	public static void setupBeforeClass() {
 		benchmarkReport = new StringBuilder();
-		String logFilePath =
-				LOG_FILE_PATH;
-				 DOMConfigurator.configure(logFilePath);
-				 LOGGER = Logger.getLogger("SolutionTest");
+		String logFilePath = LOG_FILE_PATH;
+		DOMConfigurator.configure(logFilePath);
+		LOGGER = Logger.getLogger("SolutionTest");
 	}
 	
 	
@@ -124,6 +123,9 @@ public abstract class AbstractSolutionTest {
 			int count = 0;
 			while(result.hasNext()) {
 				result.next();
+				
+				 Object res = result.getValueByColumnIndex(1);
+				
 				count ++;
 			}
 			

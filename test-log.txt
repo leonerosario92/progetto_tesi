@@ -1,0 +1,16 @@
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-06-13 18:06:14,759 
+  
+TEST Method : TestScanSmallDataSetPerformance
+RESULT : 
+    DataSet loading time : 0 ms
+    Query execution time : 5320 ms
+    Result iteration time : 16 ms
+
+TEST Method : TestScanSmallDataSetMemoryOccupation
+
+
+
