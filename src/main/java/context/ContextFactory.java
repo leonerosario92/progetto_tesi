@@ -14,13 +14,13 @@ import impl.query.execution.operator.filteroncolumn.FilterOnColumnImpl;
 import impl.query.execution.operator.loadcolumn.LoadColumnImpl;
 import impl.base.BaseLayoutManager;
 import query.QueryPlanner;
-import query.QueryProvider;
+import query.ImplementationProvider;
 import query.execution.QueryExecutor;
 
 public class ContextFactory {
 	
 	private IDataSource dataSource;
-	private QueryProvider queryProvider;
+	private ImplementationProvider queryProvider;
 
 	private Class<? extends LayoutManager> layoutManagerImpl;
 	private Class<? extends DataProvisioner> dataProvisionerImpl;
@@ -31,7 +31,7 @@ public class ContextFactory {
 	private ContextFactory(IDataSource dataSource) {
 		
 		this.dataSource = dataSource;
-		this.queryProvider = new QueryProvider();
+		this.queryProvider = new ImplementationProvider();
 		this.queryProvider.setFilterOnColumnImpl(FilterOnColumnImpl.class);
 		this.queryProvider.setLoadColumnImpl(LoadColumnImpl.class);
 		

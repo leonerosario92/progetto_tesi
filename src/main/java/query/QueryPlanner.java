@@ -3,11 +3,11 @@ package query;
 
 public abstract class QueryPlanner implements IQueryPlanner {
 
-	protected QueryProvider queryProvider;
+	protected ImplementationProvider queryProvider;
 	
 	public QueryPlanner() {}
 
-	public void setQueryProvider(QueryProvider queryProvider) {
+	public void setQueryProvider(ImplementationProvider queryProvider) {
 		this.queryProvider = queryProvider;
 	}
 	

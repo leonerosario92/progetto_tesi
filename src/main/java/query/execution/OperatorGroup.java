@@ -6,13 +6,16 @@ import dataprovisioner.IDataProvisioner;
 import dataset.IDataSet;
 import dispatcher.MeasurementType;
 import impl.base.BaseQueryExecutor;
+import utils.IResultHolder;
 import utils.TreePrinter;
 
 public interface OperatorGroup extends ExecutionPlanElement{
 
-	public Supplier<IDataSet> execOperators(IQueryExecutor executor) throws QueryExecutionException;
+	public IResultHolder<IDataSet> execSubOperators(IQueryExecutor executor) throws QueryExecutionException;
 
-	public Supplier<IDataSet> execOperators(BaseQueryExecutor baseQueryExecutor, MeasurementType measurement);
+	public IResultHolder<IDataSet> execSubOperators(IQueryExecutor executor, MeasurementType measurement) throws QueryExecutionException;
+	
 	
 }
 
+ 

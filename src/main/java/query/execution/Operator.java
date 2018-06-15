@@ -1,9 +1,13 @@
 package query.execution;
 
-import query.QueryProvider;
+import java.util.concurrent.Callable;
+
+import dataset.IDataSet;
+import query.ImplementationProvider;
 import query.execution.operator.IOperatorArgs;
 import query.execution.operator.IOperatorFunction;
 import query.execution.operator.RelOperatorType;
+import utils.IResultHolder;
 import utils.TreePrinter;
 import utils.report.ExecutionReport;
 
@@ -14,11 +18,15 @@ public abstract class Operator<F extends IOperatorFunction, A extends IOperatorA
 	protected F function;
 	protected String operatorName;
 	protected ExecutionReport report;
+
 	
 	
-	public Operator(QueryProvider provider, RelOperatorType type) { 
+	public Operator(ImplementationProvider provider, RelOperatorType type) { 
 		this.report = new ExecutionReport();
 	}
+	
+	
+//	public abstract IResultHolder<IDataSet> execute (IQueryExecutor executor);
 	
 	
 	public A getArgs() {

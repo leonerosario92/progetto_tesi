@@ -7,51 +7,93 @@ import java.util.stream.Collectors;
 
 import dataprovisioner.IDataProvisioner;
 import dataset.IDataSet;
+import dispatcher.MeasurementType;
+import impl.base.BaseQueryExecutor;
+import utils.IResultHolder;
 import utils.TreePrinter;
 
 public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement{
 	
-	private List<OperatorGroup> executables;
+	private List<OperatorGroup> subElements;
 	
 	public ParallelOperatorGroup() {
-		this.executables = new ArrayList<>();
+		this.subElements = new ArrayList<>();
 	}
 	
 	public void addExecutable(OperatorGroup executable) {
-		executables.add(executable);
+		subElements.add(executable);
+	}
+	
+	
+	@Override
+	public IResultHolder<IDataSet> execSubOperators(IQueryExecutor executor) {
+		
+		List<IResultHolder<IDataSet>> partialResults = getPartialResults(executor);
+		IResultHolder<IDataSet> result = mergePartialResults(partialResults,executor);
+		return result;
+		
 	}
 
+	
 	@Override
-	public Supplier<IDataSet> execOperators(IQueryExecutor executor) {
-		List<Supplier<IDataSet>> futures = new ArrayList<>();
-		for(OperatorGroup executable : executables) {
+	public IResultHolder<IDataSet> execSubOperators(IQueryExecutor executor, MeasurementType measurement) {
+		List<IResultHolder<IDataSet>> partialResults = getPartialResults (executor, measurement);
+		IResultHolder<IDataSet> result = mergePartialResults(partialResults,executor);
+		return result;
+	}
+	
+	
+	private List<IResultHolder<IDataSet>> getPartialResults(IQueryExecutor executor, MeasurementType measurement) {
+		List<IResultHolder<IDataSet>> partialResults = new ArrayList<>();
+		for(OperatorGroup operator : subElements) {
 			try {
-				futures.add(executable.execOperators(executor));
+				partialResults.add(operator.execSubOperators(executor,measurement));
 			} catch (QueryExecutionException e) {
-				
+				//TODO Manage exception
 				e.printStackTrace();
 			}
 		}
-		
-		List<IDataSet> partialResults = futures.stream()
-				.map(future->future.get())
+		return partialResults;
+	}
+	
+	
+	private List<IResultHolder<IDataSet>> getPartialResults(IQueryExecutor executor) {
+		List<IResultHolder<IDataSet>> partialResults = new ArrayList<>();
+		for(OperatorGroup operator : subElements) {
+			try {
+				partialResults.add(operator.execSubOperators(executor));
+			} catch (QueryExecutionException e) {
+				//TODO Manage exception
+				e.printStackTrace();
+			}
+		}
+		return partialResults;
+	}
+	
+
+	
+	private  IResultHolder<IDataSet> mergePartialResults(List<IResultHolder<IDataSet>> partialResults,IQueryExecutor executor) {
+		List<IDataSet> partialResultList = partialResults.stream()
+				.map(datasetHolder->datasetHolder.getResult())
 				.collect(Collectors.toList());	
 		
 		IDataSet result = 
-			executor.getlayoutManager().mergeDatasets(partialResults);
+			executor.getlayoutManager().mergeDatasets(partialResultList);
 		
-		return new Supplier<IDataSet>() {
+		return new IResultHolder <IDataSet>() {
 			@Override
-			public IDataSet get() {
+			public IDataSet getResult() {
 				return result;
 			}
 		};
 	}
 
+	
+
 	@Override
 	public void addRepresentation(TreePrinter printer) {
 		printer.appendLine("[BLOCK]");
-		for( ExecutionPlanElement e : executables) {
+		for( ExecutionPlanElement e : subElements) {
 			printer.addIndentation();
 			e.addRepresentation(printer);
 			printer.removeIndentation();
@@ -64,7 +106,7 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 	public void addRepresentationWithReport(TreePrinter printer) {
 		// TODO Auto-generated method stub
 		printer.appendLine("[BLOCK]");
-		for( ExecutionPlanElement e : executables) {
+		for( ExecutionPlanElement e : subElements) {
 			printer.addIndentation();
 			e.addRepresentationWithReport(printer);
 			printer.removeIndentation();

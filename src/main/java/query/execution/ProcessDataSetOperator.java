@@ -1,7 +1,7 @@
 package query.execution;
 
 import dataset.IDataSet;
-import query.QueryProvider;
+import query.ImplementationProvider;
 import query.execution.operator.DataSetProcessingFunction;
 import query.execution.operator.IOperatorArgs;
 import query.execution.operator.RelOperatorType;
@@ -9,7 +9,7 @@ import query.execution.operator.RelOperatorType;
 public abstract class ProcessDataSetOperator<F extends DataSetProcessingFunction, A extends IOperatorArgs> extends Operator<F,A>{
 	
 	
-	public ProcessDataSetOperator(QueryProvider provider, RelOperatorType type) {
+	public ProcessDataSetOperator(ImplementationProvider provider, RelOperatorType type) {
 		super(provider, type);
 	}
 

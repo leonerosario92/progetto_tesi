@@ -9,7 +9,7 @@ import dispatcher.IQueryDispatcher;
 import dispatcher.MeasurementType;
 import model.IMetaData;
 import query.IQueryPlanner;
-import query.QueryProvider;
+import query.ImplementationProvider;
 import query.builder.InitialBuilder;
 import query.builder.Query;
 import query.execution.QueryExecutionException;
@@ -26,7 +26,7 @@ public class Context implements AutoCloseable {
 			ILayoutManager layoutmanager, 
 			IDataProvisioner cachingManager,
 			IQueryExecutor queryExecutor,
-			QueryProvider queryProvider,
+			ImplementationProvider queryProvider,
 			IQueryPlanner queryOptimizer,
 			IQueryDispatcher queryDispatcher
 			) {

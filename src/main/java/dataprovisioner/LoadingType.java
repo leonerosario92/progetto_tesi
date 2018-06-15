@@ -2,7 +2,7 @@ package dataprovisioner;
 
 public enum LoadingType {
 	
-	WHOLE_DATASET,
-	STREAM
+	LOAD_DATASET,
+	LOAD_STREAM
 	
 }

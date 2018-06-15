@@ -8,14 +8,15 @@ import dataset.IDataSet;
 import dataset.ILayoutManager;
 import dispatcher.MeasurementType;
 import query.builder.Query;
+import utils.IResultHolder;
 
 public interface IQueryExecutor {
 	 
 	public IDataSet executePlan(ExecutionPlan plan) throws QueryExecutionException;
 
-	public IDataSet executePlan(ExecutionPlan plan, Query query, MeasurementType measurement) throws QueryExecutionException;
+	public IDataSet executePlan(ExecutionPlan plan, MeasurementType measurement) throws QueryExecutionException;
 	
-	Future<IDataSet> executeOperator(Callable<IDataSet> executable);
+	IResultHolder<IDataSet> submit (Callable<IDataSet> executable);
 	
 	public IDataProvisioner getProvisioner();
 

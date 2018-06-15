@@ -7,11 +7,11 @@ import query.execution.operator.RelOperatorType;
 import query.execution.operator.filteroncolumn.FilterOnColumnFunction;
 import query.execution.operator.loadcolumn.LoadColumnFunction;
 
-public class QueryProvider  {
+public class ImplementationProvider  {
 	
 	private HashMap<RelOperatorType,Class<?>> implementations;
 	
-	public QueryProvider() {
+	public ImplementationProvider() {
 		implementations = new HashMap<>();
 	}
 	

@@ -12,7 +12,7 @@ import com.google.common.collect.Sets;
 import dataprovisioner.LoadingType;
 import model.FieldDescriptor;
 import query.QueryPlanner;
-import query.QueryProvider;
+import query.ImplementationProvider;
 import query.builder.Query;
 import query.builder.clause.FilterClause;
 import query.builder.clause.ProjectionClause;
@@ -38,7 +38,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 		super();
 	}
 
-	/*
+	/**
 	 * Base implementation of a queryPlanner. Groups all filter statements 
 	 * contained in the query by the field to which they will be applied
 	 * and generates a query plan where every execution item is represented by 
@@ -70,9 +70,8 @@ public class BaseQueryPlanner extends QueryPlanner {
 	
 	private void setProjectionOperators(ParallelOperatorGroup rootExecutable, Set<FieldDescriptor> unfilteredFields) {
 		for(FieldDescriptor field : unfilteredFields) {
-			SequentialOperatorGroup exSequence = new SequentialOperatorGroup();
 			LoadDataSetOperator loader = getDataSetLoader(field);
-			exSequence.setDataLoader(loader);
+			SequentialOperatorGroup exSequence = new SequentialOperatorGroup(loader);
 			rootExecutable.addExecutable(exSequence);
 		}
 	}
@@ -85,10 +84,8 @@ public class BaseQueryPlanner extends QueryPlanner {
 		//FilterOnColumnFunction filterFunction = queryProvider.getFilterOnColumnImpl();
 		groupedStatements.entrySet().forEach(
 				(pair)->{
-					SequentialOperatorGroup exSequence = new SequentialOperatorGroup();
-					
-					LoadDataSetOperator loader = getDataSetLoader(pair.getKey());
-					exSequence.setDataLoader(loader);
+					LoadDataSetOperator datasetLoader = getDataSetLoader(pair.getKey());
+					SequentialOperatorGroup exSequence = new SequentialOperatorGroup(datasetLoader);
 					
 					FilterOnColumnOperator filterOperator = new FilterOnColumnOperator(queryProvider);
 					FilterOnColumnArgs filterArgs = filterOperator.getArgs();
@@ -108,7 +105,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 		LoadColumnOperator loadOperator = new LoadColumnOperator(queryProvider);
 		LoadColumnArgs loadArgs = loadOperator.getArgs();
 		loadArgs.setColumn(field);
-		loadArgs.setLoadingType(LoadingType.WHOLE_DATASET);
+		loadArgs.setLoadingType(LoadingType.LOAD_DATASET);
 		return loadOperator;
 		
 	}

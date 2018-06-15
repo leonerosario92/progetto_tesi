@@ -55,8 +55,8 @@ public class ExecutionReport {
 
 	private String printMemoryOccupation() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Memory occupation = ");
-		if(memoryOccupation == 0) {
+		sb.append("DataSet size = ");
+		if(memoryOccupation != 0) {
 			sb.append(getMemoryOccupationMB()).append(" MB");
 		}else {
 			sb.append("NOT_MEASURED");

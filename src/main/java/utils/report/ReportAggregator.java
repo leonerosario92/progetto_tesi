@@ -2,16 +2,16 @@ package utils.report;
 
 public class ReportAggregator {
 	
-	private float executionTime;
+	private float dataSetProcessingTime;
 	private float dataSetLoadingTime;
 	private float memoryOccupation;
 	
 	public ReportAggregator() {
-		executionTime = dataSetLoadingTime = memoryOccupation = 0.0f;
+		dataSetProcessingTime = dataSetLoadingTime = memoryOccupation = 0.0f;
 	}
 	
 	public void  sumToExecutionTime (ExecutionReport report) {
-		executionTime += report.getExecutionTimeMs();
+		dataSetProcessingTime += report.getExecutionTimeMs();
 	}
 	
 	public void sumToDataSetLoadingTime(ExecutionReport report) {
@@ -24,7 +24,7 @@ public class ReportAggregator {
 	
 	public void aggregate (ReportAggregator aggregator) {
 		this.dataSetLoadingTime += aggregator.dataSetLoadingTime;
-		this.executionTime  += aggregator.executionTime;
+		this.dataSetProcessingTime  += aggregator.dataSetProcessingTime;
 		this.memoryOccupation += aggregator.memoryOccupation;
 	}
 	
@@ -41,6 +41,6 @@ public class ReportAggregator {
 	}
 
 	private String printExecutionTime() {
-		return "Execution time = " + executionTime;
+		return "Execution time = " + dataSetProcessingTime;
 	}
 }
