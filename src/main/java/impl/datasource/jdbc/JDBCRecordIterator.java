@@ -4,19 +4,22 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-import context.DataType;
 import dataset.IRecordIterator;
+import datatype.DataType;
+import datatype.ITypeFactory;
 
 public class JDBCRecordIterator implements IRecordIterator {
 
 	private ResultSet resultSet;
 	private ResultSetMetaData metadata;
+	private ITypeFactory typeFactory;
 	private int recordCount;
 
 	
 	public JDBCRecordIterator(ResultSet resultSet, int recordCount) throws JDBCDataSourceException {
 		this.recordCount = recordCount;
 		this.resultSet = resultSet;
+		this.typeFactory= new JDBCDataTypeFactory( );
 		try {
 			this.metadata = resultSet.getMetaData();
 		} catch (SQLException e) {
@@ -52,7 +55,7 @@ public class JDBCRecordIterator implements IRecordIterator {
 		int columntype;
 		try {
 			columntype = metadata.getColumnType(index);
-			return JDBCDataTypeFactory.toDataType(columntype);
+			return typeFactory.toDataType(columntype);
 		} catch (SQLException e) {
 			manageSqlException();
 		}

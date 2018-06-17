@@ -2,7 +2,7 @@ package utils;
 
 import java.math.BigDecimal;
 
-import context.DataType;
+import datatype.DataType;
 
 public class TypeUtils {
 

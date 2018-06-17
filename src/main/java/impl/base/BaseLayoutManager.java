@@ -12,8 +12,8 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
 
-import context.DataType;
 import dataset.LayoutManager;
+import datatype.DataType;
 import dataset.ColumnDescriptor;
 import dataset.IColumn;
 import dataset.IDataSet;
@@ -28,27 +28,27 @@ public class BaseLayoutManager extends LayoutManager {
 	}
 	
 	
-	private ColumnImpl<?> createColumn(ColumnDescriptor descriptor, int length) {
-		ColumnImpl<?> newColumn = null;
+	private BaseColumn<?> createColumn(ColumnDescriptor descriptor, int length) {
+		BaseColumn<?> newColumn = null;
 		DataType type = descriptor.getColumnType();
 		switch (type) {
 		case INTEGER:
-			newColumn = new ColumnImpl<Integer>(descriptor,length);
+			newColumn = new BaseColumn<Integer>(descriptor,length);
 			break;
 		case DOUBLE:
-			newColumn = new ColumnImpl<Double>(descriptor,length);
+			newColumn = new BaseColumn<Double>(descriptor,length);
 			break;
 		case FLOAT:
-			newColumn = new ColumnImpl<Float>(descriptor,length);
+			newColumn = new BaseColumn<Float>(descriptor,length);
 			break;
 		case LONG:
-			newColumn = new ColumnImpl<Long>(descriptor,length);
+			newColumn = new BaseColumn<Long>(descriptor,length);
 			break;
 		case STRING:
-			newColumn = new ColumnImpl<String>(descriptor,length);
+			newColumn = new BaseColumn<String>(descriptor,length);
 			break;
 		case BIG_DECIMAL:
-			newColumn = new ColumnImpl<BigDecimal>(descriptor,length);
+			newColumn = new BaseColumn<BigDecimal>(descriptor,length);
 			break;
 		default:
 			throw new IllegalArgumentException();
@@ -68,7 +68,7 @@ public class BaseLayoutManager extends LayoutManager {
 		 * For each field in iteraror metadata, create a new column
 		*/
 		int fieldsCount = iterator.getFieldsCount();
-		ColumnImpl<?>[] columns = new ColumnImpl<?>[fieldsCount+1];
+		BaseColumn<?>[] columns = new BaseColumn<?>[fieldsCount+1];
 		for(int index = 1; index <= fieldsCount; index++) {
 			
 			DataType columnType = iterator.getColumnType(index);
@@ -134,8 +134,8 @@ public class BaseLayoutManager extends LayoutManager {
 		
 		for(IDataSet dataSet : dataSets) {
 			for(IColumn<?> column : dataSet.getAllColumns()) {
-				ColumnImpl<?> newColumn = 
-						((ColumnImpl<?>)column).getFilteredInstance(bitSet);
+				BaseColumn<?> newColumn = 
+						((BaseColumn<?>)column).getFilteredInstance(bitSet);
 				newDataSet.addColumn( newColumn);
 			}
 		}

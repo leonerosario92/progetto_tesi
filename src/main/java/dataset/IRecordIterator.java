@@ -1,6 +1,6 @@
 package dataset;
 
-import context.DataType;
+import datatype.DataType;
 
 public interface IRecordIterator {
 		

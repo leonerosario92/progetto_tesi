@@ -14,7 +14,7 @@ import model.FieldDescriptor;
 /*==== IDataSet implementation ====*/
 public class BaseDataSet implements IDataSet {
 	
-	private HashMap<String, ColumnImpl<?>> columns;
+	private HashMap<String, BaseColumn<?>> columns;
 	private BitSet validityBitset;
 	private int recordCount;
 	
@@ -31,7 +31,7 @@ public class BaseDataSet implements IDataSet {
 	}
 	
 	
-    void addColumn( ColumnImpl<?> newColumn) {
+    void addColumn( BaseColumn<?> newColumn) {
 		String key = newColumn.getDescriptor().getKey();
 		columns.put(key, newColumn);
 	}

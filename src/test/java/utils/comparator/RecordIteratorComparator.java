@@ -1,8 +1,8 @@
 package utils.comparator;
 
 
-import context.DataType;
 import dataset.IRecordIterator;
+import datatype.DataType;
 
 public class RecordIteratorComparator  {
 

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import impl.query.execution.operator.filteroncolumn.TypeComparator;
+import datatype.TypeComparator;
 import query.builder.predicate.FilterStatementType;
 import query.builder.statement.FilterStatement;
 

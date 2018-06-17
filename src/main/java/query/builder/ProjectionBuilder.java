@@ -3,7 +3,7 @@ package query.builder;
 import java.math.BigDecimal;
 
 import context.Context;
-import context.DataType;
+import datatype.DataType;
 import model.FieldDescriptor;
 import query.builder.predicate.FilterStatementType;
 import query.builder.statement.FilterStatement;

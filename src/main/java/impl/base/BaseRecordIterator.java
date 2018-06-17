@@ -3,11 +3,11 @@ package impl.base;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import context.DataType;
 import dataset.ColumnDescriptor;
 import dataset.IColumn;
 import dataset.IDataSet;
 import dataset.IRecordIterator;
+import datatype.DataType;
 
 public class BaseRecordIterator implements IRecordIterator {
 	

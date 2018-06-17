@@ -8,11 +8,5 @@ public interface IMetaData {
 	
 	public TableDescriptor getTable (String tableId);
 	
-	public Iterable<RelationDescriptor> getAllRelations();
-	
-	public Iterable<RelationDescriptor> getRelations(String tableId);
-	
-	public Iterable<RelationDescriptor> getRelations(String srcTableId, String dstTableId);
-	
 }
 

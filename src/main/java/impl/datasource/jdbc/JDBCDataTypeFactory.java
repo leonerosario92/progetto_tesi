@@ -4,88 +4,35 @@ package impl.datasource.jdbc;
 import java.sql.Types;
 import java.util.Map;
 
-import context.DataType;
+import datatype.DataType;
+import datatype.ITypeFactory;
 
 
-public class JDBCDataTypeFactory {
+public  class JDBCDataTypeFactory implements ITypeFactory {
 
 
-	public static Class<?> toJavaClass(int nativeType) {
-		
-		Class<?> result = Object.class;
-		
-		 switch (nativeType) {
-         case Types.CHAR:
-         case Types.VARCHAR:
-         case Types.LONGVARCHAR:
-             result = String.class;
-             break;
 
-         case Types.NUMERIC:
-         case Types.DECIMAL:
-             result = java.math.BigDecimal.class;
-             break;
-
-         case Types.BIT:
-             result = Boolean.class;
-             break;
-
-         case Types.TINYINT:
-             result = Byte.class;
-             break;
-
-         case Types.SMALLINT:
-             result = Short.class;
-             break;
-
-         case Types.INTEGER:
-             result = Integer.class;
-             break;
-
-         case Types.BIGINT:
-             result = Long.class;
-             break;
-
-         case Types.REAL:
-         case Types.FLOAT:
-             result = Float.class;
-             break;
-
-         case Types.DOUBLE:
-             result = Double.class;
-             break;
-
-         case Types.BINARY:
-         case Types.VARBINARY:
-         case Types.LONGVARBINARY:
-             result = Byte[].class;
-             break;
-
-         case Types.DATE:
-             result = java.sql.Date.class;
-             break;
-
-         case Types.TIME:
-             result = java.sql.Time.class;
-             break;
-
-         case Types.TIMESTAMP:
-             result = java.sql.Timestamp.class;
-             break;
-     }
-     return result;
-	}
-	
-	
-	public static DataType toDataType(int natveType) {
-		
-		DataType result = null;
-		
-		switch(natveType) {
+	@Override
+	public DataType toDataType(Object typeIdentifier) {
+DataType result = null;
+		int jdbcType = (int) typeIdentifier;
+		switch(jdbcType) {
 		case Types.CHAR:
         case Types.VARCHAR:
         case Types.LONGVARCHAR:
             result = DataType.STRING;
+            break;
+            
+        case Types.BIT:
+            result = DataType.BOOLEAN;
+            break;
+
+        case Types.TINYINT:
+            result = DataType.BYTE;
+            break;
+
+        case Types.SMALLINT:
+            result = DataType.SHORT;
             break;
             
         case Types.INTEGER:
@@ -111,6 +58,7 @@ public class JDBCDataTypeFactory {
             break;
 		}
 		return result;
+	
 	}
 
 }

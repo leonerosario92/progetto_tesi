@@ -9,8 +9,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import context.DataType;
 import dataset.IDataSet;
+import datatype.DataType;
 import model.FieldDescriptor;
 import query.builder.predicate.FilterStatementType;
 import query.builder.statement.FilterStatement;
@@ -50,15 +50,7 @@ public class FilterOnColumnImpl extends FilterOnColumnFunction {
 
 	
 	private TypeComparator getComparator(DataType type) {
-		switch (type) {
-		case INTEGER:
-			return new IntComparator();
-		case BIG_DECIMAL:
-			return new BigDecimalComparator();
-		default:
-			//TODO Manage exception properly
-			throw new IllegalArgumentException();
-		}
+		
 	}
 
 

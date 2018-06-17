@@ -9,19 +9,19 @@ import dataset.ColumnDescriptor;
 import dataset.IColumn;
 
 /*==== IColumn implementation ====*/
-public class ColumnImpl<T> implements IColumn<T>{
+public class BaseColumn<T> implements IColumn<T>{
 	
 	private ArrayList<T> values;
 	private ColumnDescriptor descriptor;
 	private int length;
 	
-	public ColumnImpl(ColumnDescriptor descriptor,int length) {
+	public BaseColumn(ColumnDescriptor descriptor,int length) {
 		this.descriptor = descriptor;
 		this.length = length;
 		this.values = new ArrayList<>(length);
 	}
 	
-	public ColumnImpl(ColumnDescriptor descriptor, ArrayList<T> values) {
+	public BaseColumn(ColumnDescriptor descriptor, ArrayList<T> values) {
 		this.descriptor = descriptor;
 		this.length = values.size();
 		this.values = values;
@@ -53,14 +53,14 @@ public class ColumnImpl<T> implements IColumn<T>{
 		return descriptor;
 	}
 	
-	public ColumnImpl<T> getFilteredInstance (BitSet bitSet) {
+	public BaseColumn<T> getFilteredInstance (BitSet bitSet) {
 		int newLength = bitSet.cardinality();
 		
 		ArrayList<T> filteredValues = new ArrayList<>(newLength);
 		 for (int i = bitSet.nextSetBit(0); i >= 0; i = bitSet.nextSetBit(i+1)) {
 			 filteredValues.add(getValueAt(i));
 		 }
-		 return new ColumnImpl<T>(descriptor,filteredValues);
+		 return new BaseColumn<T>(descriptor,filteredValues);
 	}
 	
 }

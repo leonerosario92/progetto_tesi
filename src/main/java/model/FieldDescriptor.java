@@ -1,6 +1,6 @@
 package model;
 
-import context.DataType;
+import datatype.DataType;
 
 public class FieldDescriptor {
 	
