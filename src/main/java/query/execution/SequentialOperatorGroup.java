@@ -51,7 +51,7 @@ public class SequentialOperatorGroup implements OperatorGroup{
 		case EVALUATE_MEMORY_OCCUPATION : 
 			callable = getCallableMemEval(executor);
 			break;
-		case EVALUATE_PERFORMANCE:
+		case EVALUATE_EXECUTION_TIME:
 			callable = getCallableExTimeEval(executor);
 			break;
 		}

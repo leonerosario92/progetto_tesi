@@ -54,6 +54,7 @@ public class Context implements AutoCloseable {
 		return queryDispatcher.dispatchQuery(query);
 	}
 	
+	
 	public IRecordIterator executeQuery(Query query, MeasurementType measurememtType) throws QueryExecutionException {
 		return queryDispatcher.dispatchQuery(query, measurememtType);
 	}

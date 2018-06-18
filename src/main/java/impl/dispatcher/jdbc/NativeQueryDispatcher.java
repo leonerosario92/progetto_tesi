@@ -26,7 +26,7 @@ public class NativeQueryDispatcher extends QueryDispatcher {
 
 	
 	@Override
-	public IRecordIterator dispatchQuery(Query query) {
+	public IRecordIterator dispatchQuery(Query query) throws QueryExecutionException {
 		String sqlStatement = query.writeSql();
 		if(!(dataSource instanceof JDBCDataSource)) {
 			//TODO: Manage exception properly
@@ -41,8 +41,7 @@ public class NativeQueryDispatcher extends QueryDispatcher {
 			IRecordIterator result = new JDBCRecordIterator(rs,0);
 			return result;
 		} catch (SQLException | JDBCDataSourceException e) {
-			//TODO: Manage exception properly
-			throw new RuntimeException();
+			throw new QueryExecutionException("An Exception occurred while executing query on native data source : "+ e.getMessage());
 		}
 	}
 
@@ -50,12 +49,12 @@ public class NativeQueryDispatcher extends QueryDispatcher {
 	@Override
 	public IRecordIterator dispatchQuery(Query query, MeasurementType measurementType) throws QueryExecutionException {
 		switch(measurementType) {
-		case EVALUATE_PERFORMANCE :
-			long executionStartTime = System.currentTimeMillis();
+		case EVALUATE_EXECUTION_TIME :
+			long executionStartTime = System.nanoTime();
 			IRecordIterator result = dispatchQuery(query);
-			long executionEndTime = System.currentTimeMillis();
-			 
-			query.setExecutionTime(executionEndTime - executionEndTime);
+			long executionEndTime = System.nanoTime();	
+			long execNanos = executionEndTime - executionStartTime;
+			query.setExecutionTime(Float.valueOf(execNanos)/ (1000*1000));
 			return result;
 		case EVALUATE_MEMORY_OCCUPATION :
 			return dispatchQuery(query);

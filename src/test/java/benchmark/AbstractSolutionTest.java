@@ -75,40 +75,20 @@ public abstract class AbstractSolutionTest {
 	
 	
 	@Test
-	public void TestScanSmallDataSetPerformance(){
-		
-		String testReport = new String();
-		Query query = null;
-		try {
-			Context context = factory.getContext();
-
-			query = getScanSmallDataSetQuery(context);
-			String sql = query.writeSql();
-			
-			IRecordIterator result = context.executeQuery(query,MeasurementType.EVALUATE_PERFORMANCE);	
-			
-			int count = 0;
-			while(result.hasNext()) {
-				result.next();
-				count ++;
-			}
-			assertEquals("Wrong ResultSet Size", SCAN_SMALL_DATASET_EXPECTED_RESULT_SIZE, count);
-			
-			testReport = writeTestReport(query);
-			
-		} 
-		catch (ContextFactoryException | QueryExecutionException e) {
-			testReport = getErrorReport(e);
-			fail(e.getMessage());
-		}finally {
-			appendReport (testReport);
-		}
+	public void TestScanSmallDataSetExecutionTime(){
+		executeTest(MeasurementType.EVALUATE_EXECUTION_TIME);
 	}
 	
 	
 	@Test
 	public void TestScanSmallDataSetMemoryOccupation(){
+		executeTest(MeasurementType.EVALUATE_MEMORY_OCCUPATION);
+	}
 		
+		
+	
+
+	private void executeTest(MeasurementType measurementType) {
 		String testReport = new String();
 		Query query = null;
 		try {
@@ -117,20 +97,21 @@ public abstract class AbstractSolutionTest {
 			query = getScanSmallDataSetQuery(context);
 			String sql = query.writeSql();
 			IRecordIterator result = context.executeQuery
-					(query, MeasurementType.EVALUATE_MEMORY_OCCUPATION);	
+					(query, measurementType);	
 			
+			long resultIterationStartTime = System.nanoTime();
 			int count = 0;
 			while(result.hasNext()) {
 				result.next();
-				
-				 Object res = result.getValueByColumnIndex(1);
-				
 				count ++;
 			}
+			long resultIterationEndTime = System.nanoTime();
+			long iterationNanos = (resultIterationEndTime - resultIterationStartTime);
+			query.setResultIterationTime(Float.valueOf(iterationNanos)/ (1000*1000));
 			
 			assertEquals("Wrong ResultSet Size", SCAN_SMALL_DATASET_EXPECTED_RESULT_SIZE , count);
-			testReport = writeTestReport(query);
 			
+			testReport = writeTestReport(query);
 		} 
 		catch (ContextFactoryException | QueryExecutionException e) {
 			testReport = getErrorReport(e);
@@ -174,7 +155,7 @@ public abstract class AbstractSolutionTest {
 			sb.append(LINE_SEPARATOR).append("Query execution time : " +query.getExecutionTime() + " ms");
 		}
 		if(query.getResultIterationTime() != 0) {
-			sb.append(LINE_SEPARATOR).append("Result Set iteration time : " + query.getResultIterationTime() + " ms");
+			sb.append(LINE_SEPARATOR).append("ResultSet iteration time : " + query.getResultIterationTime() + " ms");
 		}
 		if(query.getMemoryOccupation() != 0) {
 			sb.append(LINE_SEPARATOR).append("Query execution caused an occupation of " + query.getMemoryOccupation() + " MByte in main memory");

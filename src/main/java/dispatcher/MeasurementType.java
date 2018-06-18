@@ -3,7 +3,7 @@ package dispatcher;
 public enum MeasurementType {
 	
 	NONE,
-	EVALUATE_PERFORMANCE,
+	EVALUATE_EXECUTION_TIME,
 	EVALUATE_MEMORY_OCCUPATION
 	
 }
