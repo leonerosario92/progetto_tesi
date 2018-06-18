@@ -72,7 +72,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 		for(FieldDescriptor field : unfilteredFields) {
 			LoadDataSetOperator loader = getDataSetLoader(field);
 			SequentialOperatorGroup exSequence = new SequentialOperatorGroup(loader);
-			rootExecutable.addExecutable(exSequence);
+			rootExecutable.addSubElement(exSequence);
 		}
 	}
 
@@ -93,7 +93,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 					filterArgs.setStatements(pair.getValue());
 					exSequence.addOperator(filterOperator, 0);
 					
-					rootExecutable.addExecutable(exSequence);
+					rootExecutable.addSubElement(exSequence);
 				});
 	}
 

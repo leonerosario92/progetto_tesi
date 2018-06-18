@@ -19,8 +19,4 @@ public abstract class ProcessDataSetOperator<F extends DataSetProcessingFunction
 		return result;
 	}
 	
-
-
-
-	
 }

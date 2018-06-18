@@ -8,7 +8,6 @@ import dataset.IDataSet;
 import dataset.ILayoutManager;
 import dispatcher.MeasurementType;
 import query.builder.Query;
-import utils.IResultHolder;
 
 public interface IQueryExecutor {
 	 

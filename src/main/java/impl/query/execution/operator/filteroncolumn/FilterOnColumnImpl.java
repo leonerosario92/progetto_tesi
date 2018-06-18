@@ -1,21 +1,13 @@
 package impl.query.execution.operator.filteroncolumn;
 
 import java.util.BitSet;
-import java.util.Comparator;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import dataset.IDataSet;
 import datatype.DataType;
+import datatype.TypeComparator;
 import model.FieldDescriptor;
-import query.builder.predicate.FilterStatementType;
 import query.builder.statement.FilterStatement;
-import query.execution.operator.IOperatorArgs;
-import query.execution.operator.RelOperatorType;
 import query.execution.operator.filteroncolumn.FilterOnColumnArgs;
 import query.execution.operator.filteroncolumn.FilterOnColumnFunction;
 import utils.StatementsEvaluator;
@@ -50,7 +42,7 @@ public class FilterOnColumnImpl extends FilterOnColumnFunction {
 
 	
 	private TypeComparator getComparator(DataType type) {
-		
+		return type.getComparator();
 	}
 
 

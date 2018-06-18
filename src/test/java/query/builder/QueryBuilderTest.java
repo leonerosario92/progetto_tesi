@@ -54,7 +54,7 @@ public class QueryBuilderTest {
 		
 		Query query =
 		queryBuilder
-			.selection(salesTable)
+			.select(salesTable)
 			.project(storeSales)
 			.project(unitSales)
 			.project(storeCost)

@@ -4,7 +4,7 @@ import query.ImplementationProvider;
 import query.execution.operator.RelOperatorType;
 import query.execution.operator.loadcolumn.LoadColumnArgs;
 import query.execution.operator.loadcolumn.LoadColumnFunction;
-import utils.TreePrinter;
+import utils.ExecutionPlanNavigator;
 
 public class LoadColumnOperator extends LoadDataSetOperator<LoadColumnFunction, LoadColumnArgs>{
 	

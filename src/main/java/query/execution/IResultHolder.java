@@ -1,4 +1,4 @@
-package utils;
+package query.execution;
 
 public interface IResultHolder<T> {
 	

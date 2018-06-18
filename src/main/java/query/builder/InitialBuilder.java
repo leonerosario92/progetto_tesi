@@ -17,7 +17,7 @@ public class InitialBuilder {
 	}
 
 	
-	public SelectionBuilder selection(TableDescriptor...args) {
+	public SelectionBuilder select(TableDescriptor...args) {
 		
 		for(TableDescriptor table : args) {
 			query.select(new SelectionStatement(table));
@@ -25,10 +25,6 @@ public class InitialBuilder {
 		
 		return new SelectionBuilder(context,query);
 	}
-	
-	
-	public JoinBuilder joinSelection(TableDescriptor factTable) {
-		return new JoinBuilder(context,query,factTable);
-	}
+
 	
 }

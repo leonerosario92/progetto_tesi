@@ -1,10 +1,6 @@
 package query.builder;
 
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-
 import model.FieldDescriptor;
 import model.TableDescriptor;
 import query.builder.clause.FilterClause;
@@ -20,19 +16,20 @@ public class Query {
 	private ProjectionClause projectionClause;
 	private FilterClause filterClause;
 	
-	private Long executionStartTime;
-	private Long executionEndTime;
-	private Long dataSetLoadingStartTime;
-	private Long dataSetLoadingEndTime;
-	private Long resultIterationStartTime;
-	private Long resultIterationEndTime;
+	private float executionTime;
+	private float resultIterationTime;
+	private float memoryOccupation;
+	private String executionReport;
 	
-	private Long resultSetByteSize;
+	
 	
 	Query() {
 		this.selectionClause = new SelectionClause();
 		this.projectionClause = new ProjectionClause();
 		this.filterClause = new FilterClause();
+		
+		this.executionTime = this.resultIterationTime = this.memoryOccupation = 0;
+		this.executionReport = "";
 	}
 	
 	
@@ -92,71 +89,36 @@ public class Query {
 	}
 
 
-	public void setExecutionStartTime() {
-		this.executionStartTime = System.currentTimeMillis();
-	}
-
-
-	public void setExecutionEndTime() {
-		this.executionEndTime = System.currentTimeMillis();
+	public void setExecutionTime(float executionTime) {
+		this.executionTime = executionTime;
 	}
 	
-	
-	public void setDataSetLoadingStartTime() {
-		this.dataSetLoadingStartTime = System.currentTimeMillis();
+	public float getExecutionTime() {
+		return this.executionTime;
 	}
 	
-	
-	public void setDataSetLoadingEndTime() {
-		this.dataSetLoadingEndTime = System.currentTimeMillis();
+	public void setMemoryOccupation(float memoryOccupation) {
+		this.memoryOccupation = memoryOccupation;
 	}
 	
-	
-	public void setResultIterationStartTime () {
-		this.resultIterationStartTime = System.currentTimeMillis();
+	public float getMemoryOccupation() {
+		return this.memoryOccupation;
 	}
 	
-	
-	public void setResultIterationEndTime() {
-		this.resultIterationEndTime = System.currentTimeMillis();
+	public void setResultIterationTime( float resultIterationTime) {
+		this.resultIterationTime = resultIterationTime;
 	}
 	
-	
-	
-	public long getExecutionTimeMillisecond() {
-		if((executionStartTime == null) || (executionEndTime == null)) {
-			throw new IllegalStateException("Execution time cannot be read if execution's start and end time are not explictly set");
-		}
-		return executionEndTime - executionStartTime;
+	public float getResultIterationTime() {
+		return this.resultIterationTime;
 	}
 	
-	
-	public long getDataSetloadingTimeMillisecond() {
-		if((dataSetLoadingStartTime == null) || (dataSetLoadingEndTime == null)) {
-			throw new IllegalStateException("DataSet loading time cannot be read if execution's start and end time are not explictly set");
-		}
-		return dataSetLoadingEndTime - dataSetLoadingStartTime;
-	} 
-	
-
-	public long getResultIterationTimeMillisecond() {
-		if((resultIterationStartTime == null) || (resultIterationEndTime == null)) {
-			throw new IllegalStateException("Result iteration time cannot be read if execution's start and end time are not explictly set");
-		}
-		return resultIterationEndTime - resultIterationStartTime;
+	public void setExecutionReport(String executionReport) {
+		this.executionReport = executionReport;
 	}
 	
-
-	public void setResultSetByteSize(Long resultSetByteSize) {
-		this.resultSetByteSize = resultSetByteSize;
-	}
-	
-	
-	public Long getResultSetByteSize() {
-		if(resultSetByteSize == null) {
-			throw new IllegalStateException("Result set size cannot be retrieved since has not been explictly set");
-		}
-		return resultSetByteSize;
+	public String getExecutionReport() {
+		return this.executionReport;
 	}
 
 }

@@ -1,6 +1,6 @@
 package utils;
 
-public class TreePrinter {
+public class ExecutionPlanNavigator {
 
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	public static final String TABULATION = "    ";
@@ -8,7 +8,7 @@ public class TreePrinter {
 	private StringBuilder builder;
 	private String tabSpacing;
 	
-	public  TreePrinter () {
+	public  ExecutionPlanNavigator () {
 		tabSpacing = "";
 		builder = new StringBuilder();
 		indentationLevel = 0;

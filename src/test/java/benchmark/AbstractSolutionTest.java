@@ -84,18 +84,17 @@ public abstract class AbstractSolutionTest {
 
 			query = getScanSmallDataSetQuery(context);
 			String sql = query.writeSql();
+			
 			IRecordIterator result = context.executeQuery(query,MeasurementType.EVALUATE_PERFORMANCE);	
 			
-			query.setResultIterationStartTime();
 			int count = 0;
 			while(result.hasNext()) {
 				result.next();
 				count ++;
 			}
-			query.setResultIterationEndTime();
 			assertEquals("Wrong ResultSet Size", SCAN_SMALL_DATASET_EXPECTED_RESULT_SIZE, count);
 			
-			testReport = getPerformanceEvaluationReport(query);
+			testReport = writeTestReport(query);
 			
 		} 
 		catch (ContextFactoryException | QueryExecutionException e) {
@@ -130,7 +129,7 @@ public abstract class AbstractSolutionTest {
 			}
 			
 			assertEquals("Wrong ResultSet Size", SCAN_SMALL_DATASET_EXPECTED_RESULT_SIZE , count);
-			testReport = getMemoryOccupationReport(query);
+			testReport = writeTestReport(query);
 			
 		} 
 		catch (ContextFactoryException | QueryExecutionException e) {
@@ -141,7 +140,7 @@ public abstract class AbstractSolutionTest {
 		}
 	}
 	
-	
+
 	private Query getScanSmallDataSetQuery(Context context) {
 		IMetaData metaData = context.getMetadata();
 		TableDescriptor salesTable = metaData.getTable("sales_fact_1998");
@@ -151,7 +150,7 @@ public abstract class AbstractSolutionTest {
 		
 		Query query =
 		context.query()
-			.selection(salesTable)
+			.select(salesTable)
 			.project(storeSales)
 			.project(unitSales)
 			.project(storeCost)
@@ -164,26 +163,26 @@ public abstract class AbstractSolutionTest {
 	
 	
 	public String getTestReportHeader() {
-		return ("TEST Method : " + name.getMethodName());
+		return ("TEST NAME: " + name.getMethodName());
 	}
 	
 	
-	private String getPerformanceEvaluationReport(Query query) {
-		return (
-				"RESULT : "
-//				+ "Query overall execution time :  " + query.getOverallExecutionTime() +" ms"
-				+LINE_SEPARATOR +TABULATION
-				+"DataSet loading time : " + query.getDataSetloadingTimeMillisecond() +" ms"
-				+LINE_SEPARATOR+TABULATION
-				+"Query execution time : " + query.getExecutionTimeMillisecond() +" ms"
-				+LINE_SEPARATOR+TABULATION
-				+"Result iteration time : " + query.getResultIterationTimeMillisecond() +" ms"
-				);
-	}
-	
-	
-	private String getMemoryOccupationReport(Query query) {
-		return("RESULT : Query execution caused a occupation of " + new Float(query.getResultSetByteSize())/(1024*1024) + " MByte in main memory");
+	private String writeTestReport(Query query) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("TEST RESULT : ");
+		if(query.getExecutionTime() != 0) {
+			sb.append(LINE_SEPARATOR).append("Query execution time : " +query.getExecutionTime() + " ms");
+		}
+		if(query.getResultIterationTime() != 0) {
+			sb.append(LINE_SEPARATOR).append("Result Set iteration time : " + query.getResultIterationTime() + " ms");
+		}
+		if(query.getMemoryOccupation() != 0) {
+			sb.append(LINE_SEPARATOR).append("Query execution caused an occupation of " + query.getMemoryOccupation() + " MByte in main memory");
+		}
+		if(! query.getExecutionReport().isEmpty()) {
+			sb.append(LINE_SEPARATOR).append("EXECUTION DETAILS : ").append(LINE_SEPARATOR).append(query.getExecutionReport());
+		}
+		return sb.toString();
 	}
 	 
 	
@@ -195,6 +194,8 @@ public abstract class AbstractSolutionTest {
 	private void appendReport(String testReport) {
 		synchronized (benchmarkReport) {
 			benchmarkReport
+				.append(LINE_SEPARATOR)
+				.append(LINE_SEPARATOR)
 				.append(LINE_SEPARATOR)
 				.append(getTestReportHeader())
 				.append(LINE_SEPARATOR)

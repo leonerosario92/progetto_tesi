@@ -10,20 +10,22 @@ import java.util.function.Supplier;
 
 import dataset.IDataSet;
 import dispatcher.MeasurementType;
-import utils.IResultHolder;
-import utils.TreePrinter;
-import utils.report.ReportAggregator;
+import objectexplorer.MemoryMeasurer;
+import utils.ExecutionPlanNavigator;
+import utils.report.ExecutionReport;
 
 public class SequentialOperatorGroup implements OperatorGroup{
 
 	private List<ProcessDataSetOperator> subElements;
 	private LoadDataSetOperator dataLoader;
+	private ExecutionReport report;
 	
 	
 	
 	public SequentialOperatorGroup(LoadDataSetOperator dataLoader ) {
 		this.subElements = new ArrayList<>();
 		this.dataLoader = dataLoader;
+		this.report = new ExecutionReport();
 	}
 	
 	
@@ -32,65 +34,101 @@ public class SequentialOperatorGroup implements OperatorGroup{
 	}
 	
 	
-//	public void setDataLoader(LoadDataSetOperator dataLoader) {
-//		this.dataLoader = dataLoader;
-//	}
+	@Override
+	public IResultHolder<IDataSet> execSubOperators(IQueryExecutor executor) throws QueryExecutionException {
+		return execSubOperators(executor,MeasurementType.NONE);
+	}
 	
 	
 	@Override
 	public IResultHolder<IDataSet> execSubOperators(IQueryExecutor executor, MeasurementType measurement) {
 		
-		IResultHolder<IDataSet> result = executor.submit(
-				new Callable<IDataSet>() {			
-					@Override
-					public IDataSet call() throws Exception {
-						IDataSet dataSet = dataLoader.loadDataSet (executor.getProvisioner());
-						ProcessDataSetOperator nextOperator;
-						Iterator<ProcessDataSetOperator> it = subElements.iterator();
-						while(it.hasNext()) {
-							nextOperator = it.next();
-							dataSet = nextOperator.processDataSet(dataSet);
-						}
-						return dataSet;
-					}
-		});
+		Callable<IDataSet> callable = null;
+		switch(measurement) {
+		case NONE: 
+			callable = getCallable (executor);
+			break;
+		case EVALUATE_MEMORY_OCCUPATION : 
+			callable = getCallableMemEval(executor);
+			break;
+		case EVALUATE_PERFORMANCE:
+			callable = getCallableExTimeEval(executor);
+			break;
+		}
+	
+		IResultHolder<IDataSet> result = executor.submit(callable);
 		return result;
 		
 	}
 	
+
+	private Callable<IDataSet> getCallable(IQueryExecutor executor) {
+		return new Callable<IDataSet>() {			
+			@Override
+			public IDataSet call() throws Exception {
+				
+				IDataSet dataSet = dataLoader.loadDataSet (executor.getProvisioner());
+				
+				ProcessDataSetOperator nextOperator;
+				Iterator<ProcessDataSetOperator> it = subElements.iterator();
+				while(it.hasNext()) {
+					nextOperator = it.next();
+					dataSet = nextOperator.processDataSet(dataSet);
+				}
+				return dataSet;
+			}
+		};
+	}
 	
-//	@Override
-//	public Supplier<IDataSet>execOperators(IQueryExecutor executor) {
-//		
-//		Future<IDataSet> future = executor.executeOperator(
-//				new Callable<IDataSet>() {			
-//					@Override
-//					public IDataSet call() throws Exception {
-//						IDataSet dataSet = dataLoader.loadDataSet (executor.getProvisioner());
-//						Iterator<ProcessDataSetOperator> it = operators.iterator();
-//						while(it.hasNext()) {
-//							dataSet = it.next().processDataSet(dataSet);
-//						}
-//						return dataSet;
-//					}
-//		});
-//		
-//		return new Supplier<IDataSet> () {
-//			@Override
-//			public IDataSet get() {
-//				try {
-//					return future.get();
-//				} catch (InterruptedException | ExecutionException e) {
-//					//TODO Manage exception properly
-//					throw new RuntimeException(e.getMessage());
-//				}
-//			}
-//		};	
-//	}
+
+	private Callable<IDataSet> getCallableMemEval(IQueryExecutor executor) {
+		return new Callable<IDataSet>() {			
+			@Override
+			public IDataSet call() throws Exception {
+				
+				IDataSet dataSet = dataLoader.loadDataSet (executor.getProvisioner());
+				report.setMemoryOccupationByte(MemoryMeasurer.measureBytes(dataSet));
+				
+				ProcessDataSetOperator nextOperator;
+				Iterator<ProcessDataSetOperator> it = subElements.iterator();
+				while(it.hasNext()) {
+					nextOperator = it.next();
+					dataSet = nextOperator.processDataSet(dataSet);
+				}
+				
+				return dataSet;
+			}
+		};
+	}
+	
+	
+	private Callable<IDataSet> getCallableExTimeEval(IQueryExecutor executor) {
+		return new Callable<IDataSet>() {			
+			@Override
+			public IDataSet call() throws Exception {
+				
+				report.setDataLoadingStartTIme();
+				IDataSet dataSet = dataLoader.loadDataSet (executor.getProvisioner());
+				report.setDataLoadingEndTIme();
+				
+				report.setExecutionStartTime();
+				ProcessDataSetOperator nextOperator;
+				Iterator<ProcessDataSetOperator> it = subElements.iterator();
+				while(it.hasNext()) {
+					nextOperator = it.next();
+					dataSet = nextOperator.processDataSet(dataSet);
+				}
+				report.setExecutionEndTime();
+				
+				return dataSet;
+			}
+		};
+	}
+
 
 
 	@Override
-	public void addRepresentation(TreePrinter printer) {
+	public void addRepresentation(ExecutionPlanNavigator printer) {
 		
 		printer.appendLine("[SEQUENCE]");
 		printer.addIndentation();
@@ -106,22 +144,28 @@ public class SequentialOperatorGroup implements OperatorGroup{
 
 
 	@Override
-	public void addRepresentationWithReport(TreePrinter printer) {
+	public void addRepresentationWithReport(ExecutionPlanNavigator printer) {
 		
-		ReportAggregator reportAggregator = new ReportAggregator();
-		reportAggregator.sumToDataSetLoadingTime(dataLoader.getReport());
-		
-		for (ProcessDataSetOperator operator : subElements) {
-			reportAggregator.sumToExecutionTime(operator.getReport());
-			reportAggregator.sumToMemoryOccupation(operator.getReport());
+		printer.appendLine("[SEQUENCE]");
+		printer.addIndentation();
+		printer.appendLine("[OPERATORS]");
+		printer.addIndentation();
+		dataLoader.addRepresentation(printer);
+		for(ProcessDataSetOperator op : subElements) {
+			op.addRepresentation(printer);
 		}
+		printer.removeIndentation();
+		printer.appendLine("[END OPERATORS]");
 		
+		report.addRepresentation(printer);
+		printer.removeIndentation();
+		printer.appendLine("[END SEQUENCE]");
 	}
 
 
 	@Override
-	public IResultHolder<IDataSet> execSubOperators(IQueryExecutor executor) throws QueryExecutionException {
-		return execSubOperators(executor,MeasurementType.NONE);
+	public ExecutionReport getReport() {
+		return report;
 	}
 
 

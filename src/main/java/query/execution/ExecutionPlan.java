@@ -1,6 +1,7 @@
 package query.execution;
 
-import utils.TreePrinter;
+import utils.ExecutionPlanNavigator;
+import utils.report.ExecutionReport;
 
 
 public class ExecutionPlan {
@@ -17,9 +18,19 @@ public class ExecutionPlan {
 	
 	@Override
 	public String toString() {
-		TreePrinter tp = new TreePrinter();
-		rootExecutable.addRepresentation(tp);
-		return tp.toString();
+		ExecutionPlanNavigator navigator = new ExecutionPlanNavigator();
+		rootExecutable.addRepresentation(navigator);
+		return navigator.toString();
+	}
+	
+	public String printReport() {
+		ExecutionPlanNavigator navigator = new ExecutionPlanNavigator();
+		rootExecutable.addRepresentationWithReport(navigator);
+		return navigator.toString();
+	}
+	
+	public ExecutionReport getExecutionReport() {
+		return rootExecutable.getReport();
 	}
 	
 }

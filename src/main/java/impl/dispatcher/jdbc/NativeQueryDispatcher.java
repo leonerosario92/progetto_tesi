@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.omg.Messaging.SYNC_WITH_TRANSPORT;
+
 import dataset.IRecordIterator;
 import datasource.IRemoteDataSource;
 import dispatcher.MeasurementType;
@@ -49,14 +51,13 @@ public class NativeQueryDispatcher extends QueryDispatcher {
 	public IRecordIterator dispatchQuery(Query query, MeasurementType measurementType) throws QueryExecutionException {
 		switch(measurementType) {
 		case EVALUATE_PERFORMANCE :
-			query.setExecutionStartTime();
+			long executionStartTime = System.currentTimeMillis();
 			IRecordIterator result = dispatchQuery(query);
-			query.setExecutionEndTime();
-			query.setDataSetLoadingStartTime();
-			query.setDataSetLoadingEndTime();
+			long executionEndTime = System.currentTimeMillis();
+			 
+			query.setExecutionTime(executionEndTime - executionEndTime);
 			return result;
 		case EVALUATE_MEMORY_OCCUPATION :
-			query.setResultSetByteSize(0L);
 			return dispatchQuery(query);
 		default :
 			throw new IllegalArgumentException("Unknown measurement type.");
