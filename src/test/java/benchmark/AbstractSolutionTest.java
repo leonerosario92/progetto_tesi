@@ -1,5 +1,6 @@
 package benchmark;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.apache.log4j.Logger;
@@ -18,12 +19,14 @@ import dataset.IRecordIterator;
 import datasource.IDataSource;
 import dispatcher.MeasurementType;
 import impl.datasource.jdbc.JDBCDataSourceException;
+import impl.dispatcher.jdbc.NativeQueryDispatcher;
 import model.FieldDescriptor;
 import model.IMetaData;
 import model.TableDescriptor;
 import query.builder.Query;
 import query.builder.predicate.FilterStatementType;
 import query.execution.QueryExecutionException;
+import utils.comparator.RecordIteratorComparator;
 
 public abstract class AbstractSolutionTest {
 	
@@ -38,11 +41,9 @@ public abstract class AbstractSolutionTest {
 	protected IDataSource dataSource;
 	
 	public  abstract IDataSource getDataSourceImpl() throws JDBCDataSourceException;
-	
 	public  abstract ContextFactory getContextFactoryImpl();
 	
 	public static final int SCAN_SMALL_DATASET_EXPECTED_RESULT_SIZE = 96015;
-	
 	
 	
 	@BeforeClass
@@ -98,23 +99,21 @@ public abstract class AbstractSolutionTest {
 			String sql = query.writeSql();
 			IRecordIterator result = context.executeQuery
 					(query, measurementType);	
-			
+
 			long resultIterationStartTime = System.nanoTime();
-			int count = 0;
-			while(result.hasNext()) {
-				result.next();
-				count ++;
-			}
+			boolean correctness = testQueryResult(query, result);		
 			long resultIterationEndTime = System.nanoTime();
+			assertTrue("Error : Query execution returned a result that differs from the expected one.", correctness);
+			
 			long iterationNanos = (resultIterationEndTime - resultIterationStartTime);
 			query.setResultIterationTime(Float.valueOf(iterationNanos)/ (1000*1000));
 			
-			assertEquals("Wrong ResultSet Size", SCAN_SMALL_DATASET_EXPECTED_RESULT_SIZE , count);
 			
 			testReport = writeTestReport(query);
 		} 
 		catch (ContextFactoryException | QueryExecutionException e) {
 			testReport = getErrorReport(e);
+			appendReport(testReport);
 		} 
 		finally {
 			appendReport(testReport);
@@ -143,6 +142,27 @@ public abstract class AbstractSolutionTest {
 	} 
 	
 	
+	private boolean testQueryResult(Query query, IRecordIterator result) {
+		try {
+			ContextFactory factory = ContextFactory.getInstance(dataSource);
+			factory.setQueryDispatcher(NativeQueryDispatcher.class);
+			Context context = factory.getContext();
+			IRecordIterator nativeResult;
+			nativeResult = context.executeQuery(query);
+			return RecordIteratorComparator.compareValues(result, nativeResult);
+		} catch (QueryExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ContextFactoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	
+	
+/*====REPORT MANAGEMENT==== */
 	public String getTestReportHeader() {
 		return ("TEST NAME: " + name.getMethodName());
 	}

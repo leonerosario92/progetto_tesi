@@ -13,7 +13,7 @@ public abstract class JDBCMySqlSolutionTest extends AbstractSolutionTest{
 		
 		JDBCConnectionParams connParams =  new JDBCConnectionParams();
 		connParams.setUsername("root");
-		connParams.setPassword("");
+		connParams.setPassword("root");
 		connParams.setHost("localhost");
 		connParams.setPortNumber("3306");
 		connParams.setDbName("foodmart");

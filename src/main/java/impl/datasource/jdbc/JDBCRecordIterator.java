@@ -98,6 +98,19 @@ public class JDBCRecordIterator implements IRecordIterator {
 	
 	
 	@Override
+	public Object getValueByColumnName(String columnName) {
+		try {
+			return resultSet.getObject(columnName);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			manageSqlException();
+		}
+		return columnName;
+	}
+	
+	
+	@Override
 	public void next() {
 		try {
 			resultSet.next();
@@ -113,9 +126,20 @@ public class JDBCRecordIterator implements IRecordIterator {
 	}
 	
 	
+	@Override
+	public void resetToFirstRecord() {
+		try {
+			resultSet.beforeFirst();
+		} catch (SQLException e) {
+			manageSqlException();
+		}
+	}
+	
+	
 	private void manageSqlException() {
 		// TODO Manage exception properly
 		throw new RuntimeException("An error occurred while retrieving data from data source");
 	}
+
 
 }
