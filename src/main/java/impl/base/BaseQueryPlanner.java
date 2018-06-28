@@ -107,8 +107,8 @@ public class BaseQueryPlanner extends QueryPlanner {
 		loadArgs.setColumn(field);
 		loadArgs.setLoadingType(LoadingType.LOAD_DATASET);
 		return loadOperator;
-		
 	}
+	
 
 	private Map<FieldDescriptor, Set<FilterStatement>> 
 		statementsByField(List<FilterStatement> statements){
@@ -126,7 +126,5 @@ public class BaseQueryPlanner extends QueryPlanner {
 		}
 		return groupedStatements;
 	}
-	
-	
-	
+
 }

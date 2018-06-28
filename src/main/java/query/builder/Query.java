@@ -6,6 +6,7 @@ import model.TableDescriptor;
 import query.builder.clause.FilterClause;
 import query.builder.clause.ProjectionClause;
 import query.builder.clause.SelectionClause;
+import query.builder.statement.CFilterStatement;
 import query.builder.statement.FilterStatement;
 import query.builder.statement.ProjectionStatement;
 import query.builder.statement.SelectionStatement;
@@ -38,9 +39,9 @@ public class Query {
 	}
 	
 	
-	public void join(JoinStatement statement) {
-		selectionClause.addJoinStatement(statement);
-	}
+//	public void join(JoinStatement statement) {
+//		selectionClause.addJoinStatement(statement);
+//	}
 	
 	
 	public void project (ProjectionStatement statement) {
@@ -50,6 +51,11 @@ public class Query {
 	
 	public void filter (FilterStatement statement) {
 		filterClause.addStatement(statement);
+	}
+	
+	
+	public void filter(CFilterStatement composedStatement) {
+		filterClause.addStatement(composedStatement);
 	}
 	
 	

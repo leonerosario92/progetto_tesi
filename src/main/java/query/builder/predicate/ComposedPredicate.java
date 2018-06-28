@@ -1,6 +1,6 @@
 package query.builder.predicate;
-//package query.builder;
-//
+
+
 //import java.util.ArrayList;
 //import java.util.function.Predicate;
 //

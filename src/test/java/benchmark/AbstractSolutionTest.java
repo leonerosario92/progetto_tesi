@@ -143,21 +143,21 @@ public abstract class AbstractSolutionTest {
 	
 	
 	private boolean testQueryResult(Query query, IRecordIterator result) {
+		boolean comparisonResult = false;
 		try {
 			ContextFactory factory = ContextFactory.getInstance(dataSource);
 			factory.setQueryDispatcher(NativeQueryDispatcher.class);
 			Context context = factory.getContext();
 			IRecordIterator nativeResult;
 			nativeResult = context.executeQuery(query);
-			return RecordIteratorComparator.compareValues(result, nativeResult);
-		} catch (QueryExecutionException e) {
-			// TODO Auto-generated catch block
+			comparisonResult = RecordIteratorComparator.compareValues(result, nativeResult);
+			return comparisonResult;
+		} catch (QueryExecutionException | ContextFactoryException e) {
+			//TODO Manage exception properly
 			e.printStackTrace();
-		} catch (ContextFactoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return comparisonResult;
 		}
-		return false;
+		
 	}
 	
 	

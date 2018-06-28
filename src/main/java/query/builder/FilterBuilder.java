@@ -34,5 +34,15 @@ public class FilterBuilder {
 	public Query getQuery() {
 		return query;
 	}
+	
+	public ComposedFilterBuilder composedfilter(FieldDescriptor field, FilterStatementType type, Object operand) {
+		if(! checkField(field)) {
+			//TODO manage exception properly
+			throw new IllegalArgumentException("Filter statements can only contain fields specified in projection clause");
+		}
+		Object rightOperand = TypeUtils.parseOperand(operand,field.getType());
+		FilterStatement statement = type.getInstance(field, rightOperand);
+		return new ComposedFilterBuilder(context,query, statement);
+	}
 
 }

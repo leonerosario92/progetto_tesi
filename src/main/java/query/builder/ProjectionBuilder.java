@@ -24,6 +24,13 @@ public class ProjectionBuilder {
 		return query;
 	}
 	
+	
+	public ProjectionBuilder project(FieldDescriptor field) {
+		query.project(new ProjectionStatement(field));
+		return this;
+	}
+	
+	
 	public FilterBuilder filter (FieldDescriptor field,FilterStatementType type, Object operand) {
 		if(! checkField(field)) {
 			//TODO manage exception properly
@@ -36,16 +43,20 @@ public class ProjectionBuilder {
 		return new FilterBuilder(context,query);
 	}
 
+	
+	public ComposedFilterBuilder composedfilter(FieldDescriptor field, FilterStatementType type, Object operand) {
+		if(! checkField(field)) {
+			//TODO manage exception properly
+			throw new IllegalArgumentException("Filter statements can only contain fields specified in projection clause");
+		}
+		Object rightOperand = TypeUtils.parseOperand(operand,field.getType());
+		FilterStatement statement = type.getInstance(field, rightOperand);
+		return new ComposedFilterBuilder(context,query, statement);
+	}
+	
 
 	private boolean checkField(FieldDescriptor field){
 		return query.referField(field);
 	}
-
-	
-	public ProjectionBuilder project(FieldDescriptor field) {
-		query.project(new ProjectionStatement(field));
-		return this;
-	}
-	
 
 }

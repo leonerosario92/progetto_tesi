@@ -1,21 +1,24 @@
 package query.builder.statement;
 
 import model.FieldDescriptor;
+import query.builder.LogicalOperand;
 import query.builder.QueryConstants;
 import query.builder.predicate.FilterStatementType;
 
-public abstract class FilterStatement {
-	
+public abstract class FilterStatement implements CFNode {
 	
 	private final FilterStatementType TYPE;
 	private final String SQL_REPRESENTATION;
 	private FieldDescriptor field; 
 	private Object rightOperand;
+	private LogicalOperand chainingOperand;
+	private boolean hasNextStatement;
 	
 	
 	public FilterStatement(FilterStatementType type) {
 		this.TYPE = type;
 		this.SQL_REPRESENTATION = type.representation;
+		this.hasNextStatement = false;
 	}
 
 	
@@ -52,6 +55,25 @@ public abstract class FilterStatement {
 			.append(rightOperand);
 			
 		return sb.toString();
+	}
+
+
+	@Override
+	public void setChainingOperand(LogicalOperand operand) {
+		this.chainingOperand = operand;
+		this.hasNextStatement = true;
+	}
+	
+	
+	@Override
+	public LogicalOperand getChainingOperand() {
+		return chainingOperand;
+	}
+
+
+	@Override
+	public boolean hasNextStatement() {
+		return hasNextStatement;
 	}
 	
 	
