@@ -51,7 +51,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 	 * Base implementation of a queryPlanner. Groups all filter statements 
 	 * contained in the query by the field to which they will be applied
 	 * and generates a query plan where every execution item is represented by 
-	 * all filter operation on a specific field.
+	 * all filter operation on a specific "fields group".
 	 */
 	
 	@Override
@@ -116,24 +116,6 @@ public class BaseQueryPlanner extends QueryPlanner {
 				rootExecutable.addSubElement(exSequence);
 			}
 		);
-		
-		
-		
-//		groupedStatements.entrySet().forEach(
-//			(pair)->{
-//				LoadDataSetOperator datasetLoader = getDataSetLoader(pair.getKey());
-//				SequentialOperatorGroup exSequence = new SequentialOperatorGroup(datasetLoader);
-//				
-//				FilterOnColumnOperator filterOperator = new FilterOnColumnOperator(queryProvider);
-//				FilterOnColumnArgs filterArgs = filterOperator.getArgs();
-//				filterArgs.setField(pair.getKey());
-//				filterArgs.setStatements(pair.getValue());
-//				exSequence.addOperator(filterOperator, 0);
-//				
-//				rootExecutable.addSubElement(exSequence);
-//			}
-//		);
-		
 	}
 
 	

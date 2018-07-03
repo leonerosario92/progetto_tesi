@@ -16,159 +16,98 @@ import query.builder.statement.FilterStatement;
 
 public class RecordEvaluator {
 
-	//TypeComparator comparator;
-		private Predicate<Object[]> evaluator;
-		private Map<String,Integer> nameIndexMapping;
+	private Predicate<Object[]> evaluator;
+	private Map<String, Integer> nameIndexMapping;
 
-		
-		public RecordEvaluator(Map<String,Integer> mapping, Set<CFNode> statements ) {
-			
-			Iterator<CFNode> it = statements.iterator();
-			Predicate<Object[]> evaluator = null;
-			CFNode statement;
-			this.nameIndexMapping = mapping;
-			
-			if(it.hasNext()) {
-				statement = it.next();
-				evaluator = getStatementEvaluator(statement);
-			}
-			while(it.hasNext()) {
-				statement = it.next();
-				evaluator = evaluator.and(getStatementEvaluator(statement));
-			}
-			this.evaluator = evaluator;
-		}
-		
-		
-		public boolean evaluate (Object[] recordToEvaluate) {
-			return evaluator.test(recordToEvaluate);
-		}
-		
-		
-		private Predicate<Object[]> getStatementEvaluator(CFNode statement) {
-			
-			Predicate<Object[]> recordPredicate= null;
-			if(statement instanceof FilterStatement) {
-				recordPredicate = getSingleStatementEvaluator((FilterStatement)statement);
-			}
-			else if(statement instanceof CFilterStatement) {
-			recordPredicate = getComposedStatementEvaluator((CFilterStatement)statement);
-			}
-			return recordPredicate;
-		}
+	public RecordEvaluator(Map<String, Integer> mapping, Set<CFNode> statements) {
 
+		Iterator<CFNode> it = statements.iterator();
+		Predicate<Object[]> evaluator = null;
+		CFNode statement;
+		this.nameIndexMapping = mapping;
 
-		private Predicate<Object[]> getSingleStatementEvaluator(FilterStatement statement) {
-			Object rightOperand = statement.getRightOperand();
-			FilterStatementType type = statement.getFilterType();
-			FieldDescriptor field = statement.getField();
-			TypeComparator comparator = field.getType().getComparator();
-			Predicate<Integer>comparisonEvaluator = 
-					getComparisonEvaluator(type);
-			int fieldIndex = nameIndexMapping.get(field.getName());
-			
-			Predicate<Object[]> evaluator = new Predicate<Object[]>() {
-				@Override
-				public boolean test(Object[] record) {
-					int comparisonResult = 
-							comparator.compare(record[fieldIndex-1],rightOperand);
-					return comparisonEvaluator.test(comparisonResult);
-				}
-			};
-			return evaluator;
+		if (it.hasNext()) {
+			statement = it.next();
+			evaluator = getStatementEvaluator(statement);
 		}
-		
-		
-		private Predicate<Object[]> getComposedStatementEvaluator(CFilterStatement composedStatement) {
-			
-			Iterator <CFNode> it = composedStatement.getstatementSequence().iterator();
-			CFNode currentNode = it.next();
-			LogicalOperand chainingOperand = currentNode.getChainingOperand();
-			Predicate<Object[]> result = getStatementEvaluator(currentNode);
-			
-			while(it.hasNext()) {
-				currentNode = it.next();
-				Predicate<Object[]> currentEvaluator = getStatementEvaluator(currentNode);
-				result = chain(result,currentEvaluator ,chainingOperand);
-				
-				if(currentNode.hasNextStatement()) {
-					chainingOperand = currentNode.getChainingOperand();
-				}
-			}
-			
-			return result;
+		while (it.hasNext()) {
+			statement = it.next();
+			evaluator = evaluator.and(getStatementEvaluator(statement));
 		}
+		this.evaluator = evaluator;
+	}
 
+	public boolean evaluate(Object[] recordToEvaluate) {
+		return evaluator.test(recordToEvaluate);
+	}
 
-		private Predicate<Object[]> chain(Predicate<Object[]> oldEvaluator, Predicate<Object[]> currentEvaluator,
-				LogicalOperand chainingOperand) {
-			
-			Predicate<Object[]> result = null;
-			
-			switch (chainingOperand) {
-			case AND:
-				result = oldEvaluator.and(currentEvaluator);
-				break;
-			case OR:
-				result = oldEvaluator.or(currentEvaluator);
-				break;
-			}
-			
-			return result;
-			
+	private Predicate<Object[]> getStatementEvaluator(CFNode statement) {
+
+		Predicate<Object[]> recordPredicate = null;
+		if (statement instanceof FilterStatement) {
+			recordPredicate = getSingleStatementEvaluator((FilterStatement) statement);
+		} else if (statement instanceof CFilterStatement) {
+			recordPredicate = getComposedStatementEvaluator((CFilterStatement) statement);
 		}
+		return recordPredicate;
+	}
 
-
-		private Predicate<Integer> getComparisonEvaluator(FilterStatementType type) {
-			switch(type) {
-			case EQUALS_TO:
-				return new Predicate<Integer>(){
-					@Override
-					public boolean test(Integer value) {
-						return value == 0;
-					}
-				};
-			case DIFFERENT_FROM:
-				return new Predicate<Integer>(){
-					@Override
-					public boolean test(Integer value) {
-						return value != 0;
-					}
-				};
-			case GREATER_THAN:
-				return new Predicate<Integer>() {
-					@Override
-					public boolean test(Integer value) {
-						return value > 0;
-					}
-				};
-			case GREATER_THAN_OR_EQUAL:
-				return new Predicate<Integer>() {
-					@Override
-					public boolean test(Integer value) {
-						return value >= 0;
-					}
-				};
-			case LESS_THAN:
-				return new Predicate<Integer>() {
-					@Override
-					public boolean test(Integer value) {
-						return value < 0;
-					}
-				};
-			case LESS_THAN_OR_EQUAL:
-				return new Predicate<Integer>() {
-					@Override
-					public boolean test(Integer value) {
-						return value <= 0;
-					}
-				};
-				
-			default:
-				//TODO Manage exception properly
-				throw new IllegalArgumentException();
-			}
-		}
-		
 	
+	private Predicate<Object[]> getSingleStatementEvaluator(FilterStatement statement) {
+		Object rightOperand = statement.getRightOperand();
+		FilterStatementType type = statement.getFilterType();
+		FieldDescriptor field = statement.getField();
+		TypeComparator comparator = field.getType().getComparator();
+		Predicate<Integer> comparisonEvaluator = type.getComparisonEvaluator();
+		int fieldIndex = nameIndexMapping.get(field.getName());
+
+		Predicate<Object[]> evaluator = new Predicate<Object[]>() {
+			@Override
+			public boolean test(Object[] record) {
+				int comparisonResult = comparator.compare(record[fieldIndex - 1], rightOperand);
+				return comparisonEvaluator.test(comparisonResult);
+			}
+		};
+		return evaluator;
+	}
+
+	private Predicate<Object[]> getComposedStatementEvaluator(CFilterStatement composedStatement) {
+
+		Iterator<CFNode> it = composedStatement.getstatementSequence().iterator();
+		CFNode currentNode = it.next();
+		LogicalOperand chainingOperand = currentNode.getChainingOperand();
+		Predicate<Object[]> result = getStatementEvaluator(currentNode);
+
+		while (it.hasNext()) {
+			currentNode = it.next();
+			Predicate<Object[]> currentEvaluator = getStatementEvaluator(currentNode);
+			result = chain(result, currentEvaluator, chainingOperand);
+
+			if (currentNode.hasNextStatement()) {
+				chainingOperand = currentNode.getChainingOperand();
+			}
+		}
+
+		return result;
+	}
+
+	private Predicate<Object[]> chain(Predicate<Object[]> oldEvaluator, Predicate<Object[]> currentEvaluator,
+			LogicalOperand chainingOperand) {
+
+		Predicate<Object[]> result = null;
+
+		switch (chainingOperand) {
+		case AND:
+			result = oldEvaluator.and(currentEvaluator);
+			break;
+		case OR:
+			result = oldEvaluator.or(currentEvaluator);
+			break;
+		}
+		return result;
+
+	}
+
+
+
 }

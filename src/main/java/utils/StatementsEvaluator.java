@@ -45,7 +45,7 @@ public class StatementsEvaluator {
 		Object rightOperand = statement.getRightOperand();
 		FilterStatementType type = statement.getFilterType();
 		Predicate<Integer >resultEvaluator = 
-				getComparisonEvaluator(type);
+				type.getComparisonEvaluator();
 		
 		Predicate<Object> evaluator = new Predicate<Object>() {
 			@Override
@@ -57,55 +57,4 @@ public class StatementsEvaluator {
 		return evaluator;
 	}
 	
-	
-	private Predicate<Integer> getComparisonEvaluator(FilterStatementType type) {
-		switch(type) {
-		case EQUALS_TO:
-			return new Predicate<Integer>(){
-				@Override
-				public boolean test(Integer value) {
-					return value == 0;
-				}
-			};
-		case DIFFERENT_FROM:
-			return new Predicate<Integer>(){
-				@Override
-				public boolean test(Integer value) {
-					return value != 0;
-				}
-			};
-		case GREATER_THAN:
-			return new Predicate<Integer>() {
-				@Override
-				public boolean test(Integer value) {
-					return value > 0;
-				}
-			};
-		case GREATER_THAN_OR_EQUAL:
-			return new Predicate<Integer>() {
-				@Override
-				public boolean test(Integer value) {
-					return value >= 0;
-				}
-			};
-		case LESS_THAN:
-			return new Predicate<Integer>() {
-				@Override
-				public boolean test(Integer value) {
-					return value < 0;
-				}
-			};
-		case LESS_THAN_OR_EQUAL:
-			return new Predicate<Integer>() {
-				@Override
-				public boolean test(Integer value) {
-					return value <= 0;
-				}
-			};
-			
-		default:
-			//TODO Manage exception properly
-			throw new IllegalArgumentException();
-		}
-	}
 }
