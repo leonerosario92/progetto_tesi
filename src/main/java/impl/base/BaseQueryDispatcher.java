@@ -36,7 +36,8 @@ public class BaseQueryDispatcher extends QueryDispatcher {
 	public IRecordIterator dispatchQuery(Query query, MeasurementType measurementType) throws QueryExecutionException {
 		IDataSet result = null;
 		ExecutionPlan queryPlan = planner.getExecutionPlan(query);
-
+		String plan = queryPlan.toString();
+		
 		result = executor.executePlan(queryPlan,measurementType);
 		ExecutionReport report = queryPlan.getExecutionReport();
 		query.setExecutionTime(report.getExecutionTimeMs());

@@ -10,12 +10,10 @@ import model.FieldDescriptor;
 import model.TableDescriptor;
 
 public interface IDataProvisioner {
-	
-	public IDataSet loadEntity(TableDescriptor table, IDataSource dataSource, ILayoutManager layoutManager);
 
-	public IDataSet loadEntity(FieldDescriptor field) throws DataSourceException;
+	public IDataSet loadColumns(Set<FieldDescriptor> fields) throws DataSourceException;
 
-	public IDataSet loadDataSet(TableDescriptor table, Set<FieldDescriptor> fields) throws DataSourceException;
+	public IDataSet loadColumn(FieldDescriptor field) throws DataSourceException;
 
 }
 

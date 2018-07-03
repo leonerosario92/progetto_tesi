@@ -24,7 +24,7 @@ public class CFilterStatement implements CFNode {
 		statementSequence.add(initialStatement);
 		hasNextStatement = false;
 	}
-
+	
 
 	public CFilterStatement(FieldDescriptor field, FilterStatementType type, Object operand) {
 		statementSequence = new ArrayList<CFNode>();
@@ -67,6 +67,11 @@ public class CFilterStatement implements CFNode {
 			}
 		}
 		return result;
+	}
+	
+	
+	public List<CFNode> getstatementSequence(){
+		return statementSequence;
 	}
 
 	

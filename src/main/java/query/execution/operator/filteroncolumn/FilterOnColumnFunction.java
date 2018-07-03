@@ -1,8 +1,5 @@
 package query.execution.operator.filteroncolumn;
 
-import java.util.BitSet;
-
-import dataset.IDataSet;
 import query.execution.operator.DataSetProcessingFunction;
 
 

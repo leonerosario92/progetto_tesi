@@ -1,6 +1,7 @@
 package impl.base;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import dataset.ColumnDescriptor;
@@ -18,6 +19,7 @@ public class BaseRecordIterator implements IRecordIterator {
 	private int columnCount;
 	private Object[] currentRecord;
 	private IDataSet dataSet;
+	private HashMap <String,Integer> nameIndexMapping;
 	
 	public BaseRecordIterator(IDataSet dataSet) {
 		this.dataSet = dataSet;
@@ -25,6 +27,8 @@ public class BaseRecordIterator implements IRecordIterator {
 		columnCount = dataSet.getFieldsCount();
 		currentRecord = new Object[columnCount];
 		columnDescriptors = new ArrayList<>(columnCount);
+		nameIndexMapping = new HashMap<>();
+		
 		initializeIterators();
 	}
 
@@ -36,6 +40,7 @@ public class BaseRecordIterator implements IRecordIterator {
 		for (IColumn<?> column : dataSet.getAllColumns()) {
 			columnIterators.add(columnIndex,column.getColumnIterator());
 			columnDescriptors.add(columnIndex, column.getDescriptor());
+			nameIndexMapping.put(column.getDescriptor().getColumnName(), columnIndex);
 			columnIndex ++;
 		}
 	}
@@ -97,8 +102,23 @@ public class BaseRecordIterator implements IRecordIterator {
 
 	@Override
 	public Object getValueByColumnName(String columnName) {
-		// TODO Auto-generated method stub
-		return null;
+		int index = getColumnIndex(columnName);
+		return getValueByColumnIndex(index);
 	}
 
+
+	@Override
+	public int getColumnIndex(String columnName) {
+		if(! (nameIndexMapping.containsKey(columnName))){
+			throw new IllegalArgumentException("Attempt to retrieve index of unknown column.");
+		}
+		return (nameIndexMapping.get(columnName));
+	}
+
+
+	@Override
+	public Object[] getCurrentRecord() {
+		return currentRecord;
+	}
+	
 }

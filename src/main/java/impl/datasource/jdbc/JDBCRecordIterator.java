@@ -14,6 +14,7 @@ public class JDBCRecordIterator implements IRecordIterator {
 	private ResultSetMetaData metadata;
 	private ITypeFactory typeFactory;
 	private int recordCount;
+	private int fieldsCount;
 
 	
 	public JDBCRecordIterator(ResultSet resultSet, int recordCount) throws JDBCDataSourceException {
@@ -22,6 +23,7 @@ public class JDBCRecordIterator implements IRecordIterator {
 		this.typeFactory= new JDBCDataTypeFactory( );
 		try {
 			this.metadata = resultSet.getMetaData();
+			this.fieldsCount = metadata.getColumnCount();
 		} catch (SQLException e) {
 			manageSqlException();
 		}
@@ -41,12 +43,7 @@ public class JDBCRecordIterator implements IRecordIterator {
 
 	@Override
 	public int getFieldsCount() {
-		try {
-			return metadata.getColumnCount();
-		} catch (SQLException e) {
-			manageSqlException();
-		}
-		return 0;
+		return fieldsCount;
 	}
 
 
@@ -139,6 +136,32 @@ public class JDBCRecordIterator implements IRecordIterator {
 	private void manageSqlException() {
 		// TODO Manage exception properly
 		throw new RuntimeException("An error occurred while retrieving data from data source");
+	}
+
+
+	@Override
+	public int getColumnIndex(String columnName) {
+		for(int index = 1; index <= fieldsCount; index ++) {
+			if(getColumnName(index).equals(columnName)) {
+				return index;
+			}
+		}
+		//TODO Manage exception properly
+		throw new IllegalArgumentException("Attempt to retrieve index of unknown column.");
+	}
+
+
+	@Override
+	public Object[] getCurrentRecord() {
+		Object[] result = new Object[fieldsCount];
+		for(int i=1; i<=fieldsCount; i++) {
+			try {
+				result[i-1] = resultSet.getObject(i);
+			} catch (SQLException e) {
+				manageSqlException();;
+			}
+		}
+		return result;
 	}
 
 

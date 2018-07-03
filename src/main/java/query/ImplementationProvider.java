@@ -2,10 +2,11 @@ package query;
 
 import java.util.HashMap;
 
-import query.execution.ProcessDataSetOperator;
 import query.execution.operator.RelOperatorType;
 import query.execution.operator.filteroncolumn.FilterOnColumnFunction;
+import query.execution.operator.filteronmultiplecolumn.FilterOnMultipleColumnFunction;
 import query.execution.operator.loadcolumn.LoadColumnFunction;
+import query.execution.operator.loadverticalpartition.LoadVerticalPartitionFunction;
 
 public class ImplementationProvider  {
 	
@@ -32,11 +33,26 @@ public class ImplementationProvider  {
 		return(FilterOnColumnFunction) getImplementationInstance(RelOperatorType.FILTER_ON_COLUMN);
 	}
 	
+	public void setFilterOnMultipleColumnImpl(Class<? extends FilterOnMultipleColumnFunction> function) {
+		setImplementation(RelOperatorType.FILTER_ON_MULTIPLE_COLUMN, function);
+	}	
+	public FilterOnMultipleColumnFunction getFilterOnMultipleColumnImpl () {
+		return(FilterOnMultipleColumnFunction) getImplementationInstance(RelOperatorType.FILTER_ON_MULTIPLE_COLUMN);
+	}
+	
 	public void setLoadColumnImpl(Class<? extends LoadColumnFunction> function) {
 		setImplementation(RelOperatorType.LOAD_COLUMN, function);
 	}
 	public LoadColumnFunction getLoadColumnImpl () {
 		return (LoadColumnFunction) getImplementationInstance(RelOperatorType.LOAD_COLUMN);
+	}
+	
+	public void setLoadColumnSubsetImpl(Class<? extends LoadVerticalPartitionFunction > function) {
+		setImplementation(RelOperatorType.LOAD_VERTICAL_PARTITION, function);
+	}
+	
+	public LoadVerticalPartitionFunction getLoadColumnSubsetImpl() {
+		return (LoadVerticalPartitionFunction) getImplementationInstance(RelOperatorType.LOAD_VERTICAL_PARTITION);
 	}
 	
 	
@@ -56,5 +72,5 @@ public class ImplementationProvider  {
 		implementations.put(type, clazz);
 	}
 
-	
+
 }

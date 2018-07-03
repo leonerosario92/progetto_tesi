@@ -2,6 +2,8 @@ package benchmark;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static query.builder.predicate.FilterStatementType.GREATER_THAN;
+import static query.builder.predicate.FilterStatementType.LESS_THAN;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -25,6 +27,7 @@ import model.IMetaData;
 import model.TableDescriptor;
 import query.builder.Query;
 import query.builder.predicate.FilterStatementType;
+import query.builder.statement.CFilterStatement;
 import query.execution.QueryExecutionException;
 import utils.comparator.RecordIteratorComparator;
 
@@ -87,15 +90,19 @@ public abstract class AbstractSolutionTest {
 	}
 		
 		
-	
 
 	private void executeTest(MeasurementType measurementType) {
 		String testReport = new String();
 		Query query = null;
 		try {
 			Context context = factory.getContext();
-
-			query = getScanSmallDataSetQuery(context);
+			
+			
+			/* RIPRSTINARE QUERY ORIGINALE */
+			query = getComposedFilterQuery(context);
+			/*_____________________________*/
+			
+			
 			String sql = query.writeSql();
 			IRecordIterator result = context.executeQuery
 					(query, measurementType);	
@@ -108,7 +115,6 @@ public abstract class AbstractSolutionTest {
 			long iterationNanos = (resultIterationEndTime - resultIterationStartTime);
 			query.setResultIterationTime(Float.valueOf(iterationNanos)/ (1000*1000));
 			
-			
 			testReport = writeTestReport(query);
 		} 
 		catch (ContextFactoryException | QueryExecutionException e) {
@@ -118,6 +124,31 @@ public abstract class AbstractSolutionTest {
 		finally {
 			appendReport(testReport);
 		}
+	}
+	
+	
+	private Query getComposedFilterQuery(Context context) {
+		IMetaData metaData = context.getMetadata();
+		TableDescriptor salesTable = metaData.getTable("sales_fact_1998");
+		FieldDescriptor storeSales = salesTable.getField("store_sales");
+		FieldDescriptor unitSales = salesTable.getField("unit_sales");
+		FieldDescriptor storeCost = salesTable.getField("store_cost");
+		
+		Query query = context.query()
+		.select(salesTable)
+		.project(storeSales)
+		.project(unitSales)
+		.project(storeCost)
+		.composedfilter(storeCost, GREATER_THAN, new Integer(5))
+			.or(
+					new CFilterStatement(unitSales,FilterStatementType.LESS_THAN, new Integer(4))
+					.and(unitSales,GREATER_THAN, new Integer(2))
+			)
+		.getQuery();
+		
+		String sqlRepresentation = query.writeSql();
+		
+		return query;
 	}
 	
 
@@ -157,9 +188,7 @@ public abstract class AbstractSolutionTest {
 			e.printStackTrace();
 			return comparisonResult;
 		}
-		
 	}
-	
 	
 	
 /*====REPORT MANAGEMENT==== */

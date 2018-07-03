@@ -5,12 +5,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import context.Context;
+import context.ContextFactory;
 import datatype.DataType;
+import impl.base.BaseQueryPlanner;
 import model.FieldDescriptor;
 import model.TableDescriptor;
 import query.builder.predicate.FilterStatementType;
 import query.builder.statement.CFilterStatement;
 import query.builder.statement.FilterStatement;
+import query.execution.ExecutionPlan;
 import utils.StringUtils;
 
 import static query.builder.predicate.FilterStatementType.*;

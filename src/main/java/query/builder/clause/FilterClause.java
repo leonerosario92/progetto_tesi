@@ -88,6 +88,11 @@ public class FilterClause  {
 	}
 	
 	
+	public List<CFilterStatement> getComposedStatements(){
+		return composedFilterStatements;
+	}
+	
+	
 	public Set<FieldDescriptor> getReferencedFields(){
 		HashSet<FieldDescriptor> result = new HashSet<>();
 		for(FilterStatement statement : filterStatements) {

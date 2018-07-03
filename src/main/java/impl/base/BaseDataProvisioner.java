@@ -1,5 +1,9 @@
 package impl.base;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 import dataprovisioner.DataProvisioner;
@@ -19,14 +23,7 @@ public class BaseDataProvisioner extends DataProvisioner  {
 
 	
 	@Override
-	public IDataSet loadEntity(TableDescriptor table, IDataSource dataSource, ILayoutManager layoutManager) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	
-	@Override
-	public IDataSet loadEntity(FieldDescriptor field) throws DataSourceException {
+	public IDataSet loadColumn(FieldDescriptor field) throws DataSourceException {
 	// Here will be performed the search of requested data in the cache
 		
 		//Retrieve from dataSource the data that has not been found in the cache
@@ -42,14 +39,22 @@ public class BaseDataProvisioner extends DataProvisioner  {
 
 	
 	@Override
-	public IDataSet loadDataSet(TableDescriptor table, Set<FieldDescriptor> fields) throws DataSourceException {
+	public IDataSet loadColumns(Set<FieldDescriptor> fields) throws DataSourceException {
 		
 		// Here will be performed the search of requested data in the cache
 		
 		//Retrieve from dataSource the data that has not been found in the cache
-		FieldDescriptor [] arr = new FieldDescriptor[fields.size()];
-		IRecordIterator it = 
-				dataSource.getTableProjection(table, fields.toArray(arr));
+		
+		Map <TableDescriptor, Set<FieldDescriptor>> groupedFields = fieldsByTable(fields);
+		IRecordIterator it = null;
+		if(groupedFields.keySet().size() == 1) {
+			TableDescriptor table =
+					groupedFields.entrySet().iterator().next().getKey();
+			it = dataSource.getTableProjection(table, fields.toArray(new FieldDescriptor[fields.size()] ));
+		}else {
+			//TODO manage load from multiple Table if required
+		}
+		
 		IDataSet result = layoutManager.buildDataSet(it);
 				
 		//Merge data found in cache with data retrieved from dataSource 
@@ -57,6 +62,22 @@ public class BaseDataProvisioner extends DataProvisioner  {
 		return result;
 	}
 
+	
+	private HashMap<TableDescriptor, Set<FieldDescriptor>> fieldsByTable(Set<FieldDescriptor> fields)
+	{
+		HashMap<TableDescriptor,Set<FieldDescriptor>> groupedFields = new HashMap<> ();
+		for(FieldDescriptor field : fields) {
+			TableDescriptor table = field.getTable();
+			if(groupedFields.containsKey(table)) {
+				groupedFields.get(table).add(field);
+			}else {
+				HashSet<FieldDescriptor> s = new HashSet<>();
+				s.add(field);
+				groupedFields.put(table, s);
+			}
+		}
+		return groupedFields;
+	}
 	
 
 

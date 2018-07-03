@@ -2,6 +2,7 @@ package query.execution;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -16,14 +17,13 @@ import utils.report.ExecutionReport;
 
 public class SequentialOperatorGroup implements OperatorGroup{
 
-	private List<ProcessDataSetOperator> subElements;
+	private LinkedList<ProcessDataSetOperator> subElements;
 	private LoadDataSetOperator dataLoader;
 	private ExecutionReport report;
 	
 	
-	
 	public SequentialOperatorGroup(LoadDataSetOperator dataLoader ) {
-		this.subElements = new ArrayList<>();
+		this.subElements = new LinkedList<>();
 		this.dataLoader = dataLoader;
 		this.report = new ExecutionReport();
 	}
@@ -31,6 +31,11 @@ public class SequentialOperatorGroup implements OperatorGroup{
 	
 	public void addOperator(ProcessDataSetOperator operator, int index) {
 		subElements.add(index,operator);
+	}
+	
+	
+	public void queueOperator(ProcessDataSetOperator operator) {
+		subElements.addLast(operator);
 	}
 	
 	

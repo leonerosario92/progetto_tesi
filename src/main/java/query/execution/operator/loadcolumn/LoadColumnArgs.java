@@ -14,18 +14,21 @@ public class LoadColumnArgs implements IOperatorArgs {
 	public FieldDescriptor getColumn() {
 		return column;
 	}
+	
 	public void setColumn(FieldDescriptor column) {
 		this.column = column;
 	}
+	
 	public LoadingType getLoadingType() {
 		return loadingType;
 	}
+	
 	public void setLoadingType(LoadingType loadingType) {
 		this.loadingType = loadingType;
 	}
 	
-	@Override
 	
+	@Override
 	public String getStringRepresentation() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Column = ").append(column.getName())

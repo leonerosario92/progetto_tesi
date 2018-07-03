@@ -1,0 +1,499 @@
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-02 11:30:19,002 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+TEST RESULT : 
+Query execution time : 5883.086 ms
+ResultSet iteration time : 606.4635 ms
+EXECUTION DETAILS : 
+
+[PARALLEL GROUP]
+    [SEQUENCE]
+        [OPERATORS]
+            [OPERATOR] 
+                TYPE : LOAD_COLUMN
+                ARGS : { Column = store_sales , Loading Type = LOAD_DATASET }
+            [END OPERATOR]
+        [END OPERATORS]
+        Execution Report : 
+            DataSet Loading time = 5434.455 ms
+            DataSet Processing Time = 0.036777 ms
+            DataSet size = NOT MEASURED
+    [END SEQUENCE]
+    [SEQUENCE]
+        [OPERATORS]
+            [OPERATOR] 
+                TYPE : LOAD_COLUMN_SUBSET
+                ARGS : { Columns = [ store_cost ] Loading Type = LOAD_DATASET }
+            [END OPERATOR]
+            [OPERATOR] 
+                TYPE : FILTER_ON_COLUMN
+                ARGS : { Statements = [ sales_fact_1998.store_cost > 2 ] }
+            [END OPERATOR]
+        [END OPERATORS]
+        Execution Report : 
+            DataSet Loading time = 5669.8887 ms
+            DataSet Processing Time = 53.122894 ms
+            DataSet size = NOT MEASURED
+    [END SEQUENCE]
+    [SEQUENCE]
+        [OPERATORS]
+            [OPERATOR] 
+                TYPE : LOAD_COLUMN_SUBSET
+                ARGS : { Columns = [ unit_sales ] Loading Type = LOAD_DATASET }
+            [END OPERATOR]
+            [OPERATOR] 
+                TYPE : FILTER_ON_COLUMN
+                ARGS : { Statements = [ sales_fact_1998.unit_sales <> 5 ] }
+            [END OPERATOR]
+        [END OPERATORS]
+        Execution Report : 
+            DataSet Loading time = 5823.1406 ms
+            DataSet Processing Time = 17.278421 ms
+            DataSet size = NOT MEASURED
+    [END SEQUENCE]
+Execution Report : 
+    DataSet Loading time = NOT MEASURED
+    DataSet Processing Time = 5883.086 ms
+    DataSet size = NOT MEASURED
+[END PARALLEL GROUP]
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+TEST RESULT : 
+Query execution time : 6302.937 ms
+ResultSet iteration time : 305.39923 ms
+Query execution caused an occupation of 20.77581 MByte in main memory
+EXECUTION DETAILS : 
+
+[PARALLEL GROUP]
+    [SEQUENCE]
+        [OPERATORS]
+            [OPERATOR] 
+                TYPE : LOAD_COLUMN
+                ARGS : { Column = store_sales , Loading Type = LOAD_DATASET }
+            [END OPERATOR]
+        [END OPERATORS]
+        Execution Report : 
+            DataSet Loading time = NOT MEASURED
+            DataSet Processing Time = NOT MEASURED
+            DataSet size = 6.92527 MB
+    [END SEQUENCE]
+    [SEQUENCE]
+        [OPERATORS]
+            [OPERATOR] 
+                TYPE : LOAD_COLUMN_SUBSET
+                ARGS : { Columns = [ store_cost ] Loading Type = LOAD_DATASET }
+            [END OPERATOR]
+            [OPERATOR] 
+                TYPE : FILTER_ON_COLUMN
+                ARGS : { Statements = [ sales_fact_1998.store_cost > 2 ] }
+            [END OPERATOR]
+        [END OPERATORS]
+        Execution Report : 
+            DataSet Loading time = NOT MEASURED
+            DataSet Processing Time = NOT MEASURED
+            DataSet size = 6.92527 MB
+    [END SEQUENCE]
+    [SEQUENCE]
+        [OPERATORS]
+            [OPERATOR] 
+                TYPE : LOAD_COLUMN_SUBSET
+                ARGS : { Columns = [ unit_sales ] Loading Type = LOAD_DATASET }
+            [END OPERATOR]
+            [OPERATOR] 
+                TYPE : FILTER_ON_COLUMN
+                ARGS : { Statements = [ sales_fact_1998.unit_sales <> 5 ] }
+            [END OPERATOR]
+        [END OPERATORS]
+        Execution Report : 
+            DataSet Loading time = NOT MEASURED
+            DataSet Processing Time = NOT MEASURED
+            DataSet size = 6.92527 MB
+    [END SEQUENCE]
+Execution Report : 
+    DataSet Loading time = NOT MEASURED
+    DataSet Processing Time = 6302.937 ms
+    DataSet size = 20.77581 MB
+[END PARALLEL GROUP]
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-02 11:31:32,397 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+TEST RESULT : 
+Query execution time : 5267.035 ms
+ResultSet iteration time : 1149.9119 ms
+EXECUTION DETAILS : 
+
+[PARALLEL GROUP]
+    [SEQUENCE]
+        [OPERATORS]
+            [OPERATOR] 
+                TYPE : LOAD_COLUMN
+                ARGS : { Column = store_sales , Loading Type = LOAD_DATASET }
+            [END OPERATOR]
+        [END OPERATORS]
+        Execution Report : 
+            DataSet Loading time = 5142.686 ms
+            DataSet Processing Time = 0.017106 ms
+            DataSet size = NOT MEASURED
+    [END SEQUENCE]
+    [SEQUENCE]
+        [OPERATORS]
+            [OPERATOR] 
+                TYPE : LOAD_COLUMN
+                ARGS : { Column = store_cost , Loading Type = LOAD_DATASET }
+            [END OPERATOR]
+            [OPERATOR] 
+                TYPE : FILTER_ON_COLUMN
+                ARGS : { Statements = [ sales_fact_1998.store_cost > 2 ] }
+            [END OPERATOR]
+        [END OPERATORS]
+        Execution Report : 
+            DataSet Loading time = 5088.68 ms
+            DataSet Processing Time = 53.97048 ms
+            DataSet size = NOT MEASURED
+    [END SEQUENCE]
+    [SEQUENCE]
+        [OPERATORS]
+            [OPERATOR] 
+                TYPE : LOAD_COLUMN
+                ARGS : { Column = unit_sales , Loading Type = LOAD_DATASET }
+            [END OPERATOR]
+            [OPERATOR] 
+                TYPE : FILTER_ON_COLUMN
+                ARGS : { Statements = [ sales_fact_1998.unit_sales <> 5 ] }
+            [END OPERATOR]
+        [END OPERATORS]
+        Execution Report : 
+            DataSet Loading time = 5212.3574 ms
+            DataSet Processing Time = 17.50892 ms
+            DataSet size = NOT MEASURED
+    [END SEQUENCE]
+Execution Report : 
+    DataSet Loading time = NOT MEASURED
+    DataSet Processing Time = 5267.035 ms
+    DataSet size = NOT MEASURED
+[END PARALLEL GROUP]
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+TEST RESULT : 
+Query execution time : 6576.906 ms
+ResultSet iteration time : 349.54422 ms
+Query execution caused an occupation of 20.77581 MByte in main memory
+EXECUTION DETAILS : 
+
+[PARALLEL GROUP]
+    [SEQUENCE]
+        [OPERATORS]
+            [OPERATOR] 
+                TYPE : LOAD_COLUMN
+                ARGS : { Column = store_sales , Loading Type = LOAD_DATASET }
+            [END OPERATOR]
+        [END OPERATORS]
+        Execution Report : 
+            DataSet Loading time = NOT MEASURED
+            DataSet Processing Time = NOT MEASURED
+            DataSet size = 6.92527 MB
+    [END SEQUENCE]
+    [SEQUENCE]
+        [OPERATORS]
+            [OPERATOR] 
+                TYPE : LOAD_COLUMN
+                ARGS : { Column = store_cost , Loading Type = LOAD_DATASET }
+            [END OPERATOR]
+            [OPERATOR] 
+                TYPE : FILTER_ON_COLUMN
+                ARGS : { Statements = [ sales_fact_1998.store_cost > 2 ] }
+            [END OPERATOR]
+        [END OPERATORS]
+        Execution Report : 
+            DataSet Loading time = NOT MEASURED
+            DataSet Processing Time = NOT MEASURED
+            DataSet size = 6.92527 MB
+    [END SEQUENCE]
+    [SEQUENCE]
+        [OPERATORS]
+            [OPERATOR] 
+                TYPE : LOAD_COLUMN
+                ARGS : { Column = unit_sales , Loading Type = LOAD_DATASET }
+            [END OPERATOR]
+            [OPERATOR] 
+                TYPE : FILTER_ON_COLUMN
+                ARGS : { Statements = [ sales_fact_1998.unit_sales <> 5 ] }
+            [END OPERATOR]
+        [END OPERATORS]
+        Execution Report : 
+            DataSet Loading time = NOT MEASURED
+            DataSet Processing Time = NOT MEASURED
+            DataSet size = 6.92527 MB
+    [END SEQUENCE]
+Execution Report : 
+    DataSet Loading time = NOT MEASURED
+    DataSet Processing Time = 6576.906 ms
+    DataSet size = 20.77581 MB
+[END PARALLEL GROUP]
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-02 17:41:55,048 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-02 17:58:21,211 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-02 18:06:28,134 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-02 18:20:34,325 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-02 18:22:35,698 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-03 09:04:03,604 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-03 09:17:51,921 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-03 10:23:39,402 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-03 10:35:18,707 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-03 11:20:44,313 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+TEST RESULT : 
+Query execution time : 8104.19 ms
+ResultSet iteration time : 943.8974 ms
+EXECUTION DETAILS : 
+
+[PARALLEL GROUP]
+    [SEQUENCE]
+        [OPERATORS]
+            [OPERATOR] 
+                TYPE : LOAD_COLUMN
+                ARGS : { Column = store_sales , Loading Type = LOAD_DATASET }
+            [END OPERATOR]
+        [END OPERATORS]
+        Execution Report : 
+            DataSet Loading time = 4554.7754 ms
+            DataSet Processing Time = 0.030363 ms
+            DataSet size = NOT MEASURED
+    [END SEQUENCE]
+    [SEQUENCE]
+        [OPERATORS]
+            [OPERATOR] 
+                TYPE : LOAD_VERTICAL_PARTITION
+                ARGS : { Columns = [ unit_sales ,  store_cost ] Loading Type = LOAD_DATASET }
+            [END OPERATOR]
+            [OPERATOR] 
+                TYPE : FILTER_ON_MULTIPLE_COLUMN
+                ARGS : { Statements = { ( sales_fact_1998.store_cost > 5 ) OR ( ( sales_fact_1998.unit_sales < 4 ) AND ( sales_fact_1998.unit_sales > 2 ) ) } }
+            [END OPERATOR]
+        [END OPERATORS]
+        Execution Report : 
+            DataSet Loading time = 8000.1914 ms
+            DataSet Processing Time = 76.22654 ms
+            DataSet size = NOT MEASURED
+    [END SEQUENCE]
+Execution Report : 
+    DataSet Loading time = NOT MEASURED
+    DataSet Processing Time = 8104.19 ms
+    DataSet size = NOT MEASURED
+[END PARALLEL GROUP]
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+TEST RESULT : 
+Query execution time : 8261.263 ms
+ResultSet iteration time : 352.0212 ms
+Query execution caused an occupation of 20.756004 MByte in main memory
+EXECUTION DETAILS : 
+
+[PARALLEL GROUP]
+    [SEQUENCE]
+        [OPERATORS]
+            [OPERATOR] 
+                TYPE : LOAD_COLUMN
+                ARGS : { Column = store_sales , Loading Type = LOAD_DATASET }
+            [END OPERATOR]
+        [END OPERATORS]
+        Execution Report : 
+            DataSet Loading time = NOT MEASURED
+            DataSet Processing Time = NOT MEASURED
+            DataSet size = 6.92527 MB
+    [END SEQUENCE]
+    [SEQUENCE]
+        [OPERATORS]
+            [OPERATOR] 
+                TYPE : LOAD_VERTICAL_PARTITION
+                ARGS : { Columns = [ unit_sales ,  store_cost ] Loading Type = LOAD_DATASET }
+            [END OPERATOR]
+            [OPERATOR] 
+                TYPE : FILTER_ON_MULTIPLE_COLUMN
+                ARGS : { Statements = { ( sales_fact_1998.store_cost > 5 ) OR ( ( sales_fact_1998.unit_sales < 4 ) AND ( sales_fact_1998.unit_sales > 2 ) ) } }
+            [END OPERATOR]
+        [END OPERATORS]
+        Execution Report : 
+            DataSet Loading time = NOT MEASURED
+            DataSet Processing Time = NOT MEASURED
+            DataSet size = 13.830734 MB
+    [END SEQUENCE]
+Execution Report : 
+    DataSet Loading time = NOT MEASURED
+    DataSet Processing Time = 8261.263 ms
+    DataSet size = 20.756004 MB
+[END PARALLEL GROUP]
+
+

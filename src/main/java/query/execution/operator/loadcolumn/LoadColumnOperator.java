@@ -1,9 +1,8 @@
-package query.execution;
+package query.execution.operator.loadcolumn;
 
 import query.ImplementationProvider;
+import query.execution.LoadDataSetOperator;
 import query.execution.operator.RelOperatorType;
-import query.execution.operator.loadcolumn.LoadColumnArgs;
-import query.execution.operator.loadcolumn.LoadColumnFunction;
 import utils.ExecutionPlanNavigator;
 
 public class LoadColumnOperator extends LoadDataSetOperator<LoadColumnFunction, LoadColumnArgs>{

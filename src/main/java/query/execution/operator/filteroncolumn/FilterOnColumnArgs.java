@@ -42,7 +42,7 @@ public class FilterOnColumnArgs implements IOperatorArgs {
 		@Override
 		public String getStringRepresentation() {
 			StringBuilder sb = new StringBuilder();
-			sb.append("Statements = { ");
+			sb.append("Statements = [ ");
 			Iterator<FilterStatement> it = statements.iterator();
 			while (it.hasNext()) {
 				FilterStatement statement = it.next();
@@ -50,7 +50,7 @@ public class FilterOnColumnArgs implements IOperatorArgs {
 				if(it.hasNext()) {
 					sb.append(" , ");
 				}
-				sb.append(" }");
+				sb.append(" ]");
 			}
 			return sb.toString();			
 		}

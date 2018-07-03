@@ -1,5 +1,7 @@
 package query.builder.statement;
 
+import java.util.Set;
+
 import model.FieldDescriptor;
 import query.builder.LogicalOperand;
 import query.builder.QueryConstants;
