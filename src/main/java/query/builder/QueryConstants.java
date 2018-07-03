@@ -17,6 +17,8 @@ public class QueryConstants {
 	public static final String SELECTION_CLAUSE = "FROM";
 	public static final String PROJECTION_CLAUSE = "SELECT";
 	public static final String FILTER_CLAUSE = "WHERE";
+	public static final String ORDER_BY_CLAUSE = "ORDER BY";
+	
 	public static final String JOIN = "JOIN";
 	public static final String ON = "ON";
 

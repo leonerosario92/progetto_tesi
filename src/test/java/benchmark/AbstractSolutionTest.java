@@ -99,7 +99,7 @@ public abstract class AbstractSolutionTest {
 			
 			
 			/* RIPRSTINARE QUERY ORIGINALE */
-			query = getComposedFilterQuery(context);
+			query = getTestQuery(context);
 			/*_____________________________*/
 			
 			
@@ -127,7 +127,7 @@ public abstract class AbstractSolutionTest {
 	}
 	
 	
-	private Query getComposedFilterQuery(Context context) {
+	private Query getTestQuery(Context context) {
 		IMetaData metaData = context.getMetadata();
 		TableDescriptor salesTable = metaData.getTable("sales_fact_1998");
 		FieldDescriptor storeSales = salesTable.getField("store_sales");
@@ -139,11 +139,7 @@ public abstract class AbstractSolutionTest {
 		.project(storeSales)
 		.project(unitSales)
 		.project(storeCost)
-		.composedfilter(storeCost, GREATER_THAN, unitSales)
-			.or(
-				new CFilterStatement(unitSales,FilterStatementType.LESS_THAN, new Integer(4))
-				.and(unitSales,GREATER_THAN, new Integer(2))
-				)
+		.orderBy(unitSales,storeCost)
 		.getQuery();
 		
 		String sqlRepresentation = query.writeSql();

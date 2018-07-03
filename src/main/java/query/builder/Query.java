@@ -4,6 +4,7 @@ package query.builder;
 import model.FieldDescriptor;
 import model.TableDescriptor;
 import query.builder.clause.FilterClause;
+import query.builder.clause.OrderByClause;
 import query.builder.clause.ProjectionClause;
 import query.builder.clause.SelectionClause;
 import query.builder.statement.CFilterStatement;
@@ -16,6 +17,7 @@ public class Query {
 	private SelectionClause selectionClause;
 	private ProjectionClause projectionClause;
 	private FilterClause filterClause;
+	private OrderByClause orderByClause;
 	
 	private float executionTime;
 	private float resultIterationTime;
@@ -23,11 +25,11 @@ public class Query {
 	private String executionReport;
 	
 	
-	
 	Query() {
 		this.selectionClause = new SelectionClause();
 		this.projectionClause = new ProjectionClause();
 		this.filterClause = new FilterClause();
+		this.orderByClause = new OrderByClause();
 		
 		this.executionTime = this.resultIterationTime = this.memoryOccupation = 0;
 		this.executionReport = "";
@@ -35,13 +37,8 @@ public class Query {
 	
 	
 	public void select (SelectionStatement statement) {
-		selectionClause.addSelectStatement(statement);
+		selectionClause.addStatement(statement);
 	}
-	
-	
-//	public void join(JoinStatement statement) {
-//		selectionClause.addJoinStatement(statement);
-//	}
 	
 	
 	public void project (ProjectionStatement statement) {
@@ -59,14 +56,8 @@ public class Query {
 	}
 	
 	
-	public String writeSql() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(projectionClause.writeSql());
-		sb.append(QueryConstants.NEWLINE);
-		sb.append(selectionClause.writeSql());
-		sb.append(QueryConstants.NEWLINE);
-		sb.append(filterClause.writeSql());
-		return sb.toString();
+	public void orderBy(FieldDescriptor...fields) {
+		orderByClause.addStatement(fields);
 	}
 	
 	
@@ -83,6 +74,11 @@ public class Query {
 	public FilterClause getFilterClause() {
 		return filterClause;
 	}
+	
+	
+	public OrderByClause getOrderByClause() {
+		return orderByClause;
+	}
 
 
 	public boolean referTable(TableDescriptor table) {
@@ -92,6 +88,26 @@ public class Query {
 	
 	public boolean referField(FieldDescriptor field) {
 		return projectionClause.referField(field);
+	}
+	
+	
+	public String writeSql() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(projectionClause.writeSql());
+		sb.append(QueryConstants.NEWLINE);
+		sb.append(selectionClause.writeSql());
+		
+		if( ! (filterClause.getStatements().isEmpty())) {
+			sb.append(QueryConstants.NEWLINE);
+			sb.append(filterClause.writeSql());
+		}
+		
+		if( ! (orderByClause.getOrderingSequence().isEmpty())) {
+			sb.append(QueryConstants.NEWLINE);
+			sb.append(orderByClause.writeSql());
+		}
+		
+		return sb.toString();
 	}
 
 

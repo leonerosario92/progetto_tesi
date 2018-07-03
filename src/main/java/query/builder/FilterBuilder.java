@@ -16,6 +16,7 @@ public class FilterBuilder {
 		this.query = query;
 	}
 	
+	
 	public FilterBuilder filter (FieldDescriptor field,FilterStatementType type, Object operand) {
 		if(! checkField(field)) {
 			//TODO manage exception properly
@@ -26,14 +27,12 @@ public class FilterBuilder {
 		query.filter(statement);
 		return this;
 	}
-
-	private boolean checkField(FieldDescriptor field){
-		return query.referField(field);
-	}
+	
 	
 	public Query getQuery() {
 		return query;
 	}
+	
 	
 	public ComposedFilterBuilder composedfilter(FieldDescriptor field, FilterStatementType type, Object operand) {
 		if(! checkField(field)) {
@@ -43,6 +42,25 @@ public class FilterBuilder {
 		Object rightOperand = TypeUtils.parseOperand(operand,field.getType());
 		FilterStatement statement = type.getInstance(field, rightOperand);
 		return new ComposedFilterBuilder(context,query, statement);
+	}
+	
+	
+	public OrderByBuilder orderBy(FieldDescriptor...fields) {
+		
+		for(FieldDescriptor field : fields) {
+			if( ! checkField(field)) {
+				//TODO Manage exception properly
+				throw new IllegalArgumentException("projection arguments can only be fields of selected tables");
+			}
+		}
+		
+		query.orderBy(fields);
+		return new OrderByBuilder(context, query);
+	}
+
+	
+	private boolean checkField(FieldDescriptor field){
+		return query.referField(field);
 	}
 
 }

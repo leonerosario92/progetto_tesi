@@ -26,11 +26,19 @@ public class ProjectionBuilder {
 	
 	
 	public ProjectionBuilder project(FieldDescriptor field) {
+		if( ! checkTable(field)) {
+			//TODO Manage exception properly
+			throw new IllegalArgumentException("projection arguments can only be fields of selected tables");
+		}
 		query.project(new ProjectionStatement(field));
 		return this;
 	}
 	
 	
+	private boolean checkTable(FieldDescriptor field) {
+		return query.referTable(field.getTable());
+	}
+
 	public FilterBuilder filter (FieldDescriptor field,FilterStatementType type, Object operand) {
 		if(! checkField(field)) {
 			//TODO manage exception properly
@@ -52,6 +60,12 @@ public class ProjectionBuilder {
 		Object rightOperand = TypeUtils.parseOperand(operand,field.getType());
 		FilterStatement statement = type.getInstance(field, rightOperand);
 		return new ComposedFilterBuilder(context,query, statement);
+	}
+	
+	
+	public OrderByBuilder orderBy(FieldDescriptor...fields) {
+		query.orderBy(fields);
+		return new OrderByBuilder(context, query);
 	}
 	
 
