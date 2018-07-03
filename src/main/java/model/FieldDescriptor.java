@@ -60,4 +60,9 @@ public class FieldDescriptor {
 		return getKey().hashCode();
 	}
 	
+	@Override
+	public String toString() {
+		return (table.getName()+"."+name);
+	}
+	
 }

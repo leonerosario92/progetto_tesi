@@ -139,11 +139,11 @@ public abstract class AbstractSolutionTest {
 		.project(storeSales)
 		.project(unitSales)
 		.project(storeCost)
-		.composedfilter(storeCost, GREATER_THAN, new Integer(5))
+		.composedfilter(storeCost, GREATER_THAN, unitSales)
 			.or(
-					new CFilterStatement(unitSales,FilterStatementType.LESS_THAN, new Integer(4))
-					.and(unitSales,GREATER_THAN, new Integer(2))
-			)
+				new CFilterStatement(unitSales,FilterStatementType.LESS_THAN, new Integer(4))
+				.and(unitSales,GREATER_THAN, new Integer(2))
+				)
 		.getQuery();
 		
 		String sqlRepresentation = query.writeSql();

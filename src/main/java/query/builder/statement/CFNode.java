@@ -13,6 +13,8 @@ public interface CFNode {
 	
 	public LogicalOperand getChainingOperand ();
 	
+	public Set<FieldDescriptor> getReferencedFields();
+	
 	public String writeSql();
 	
 }

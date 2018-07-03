@@ -104,11 +104,16 @@ public class BaseQueryPlanner extends QueryPlanner {
 					FilterOnColumnArgs filterArgs = filterOperator.getArgs();
 					filterArgs.setField(group.getFields().iterator().next());
 					
-					//TODO Quick Fix. Write this better.
+					
+					//
+					//::::::::::::::::::::::::::::::::::
 					Set<FilterStatement> castedStatements = new HashSet<FilterStatement>();
 					for(CFNode statement : group.getStatements()) {
 						castedStatements.add((FilterStatement) statement);
 					}
+					//::::::::::::::::::::::::::::::::::
+					
+					
 					filterArgs.setStatements(castedStatements);
 					exSequence.queueOperator(filterOperator);
 				}
@@ -121,6 +126,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 	
 	private List<RelatedOperators> groupFilterOperators(FilterClause filterClause) {
 		LinkedList<RelatedOperators> initialGrouping = new LinkedList<>();
+		
 		for(CFilterStatement statement : filterClause.getComposedStatements()) {
 			RelatedOperators relOps = new RelatedOperators();
 			relOps.addStatement(statement);
@@ -132,7 +138,6 @@ public class BaseQueryPlanner extends QueryPlanner {
 			relOps.addStatement(statement);
 			initialGrouping.add(relOps);
 		}
-		
 		
 		List<RelatedOperators> res = new ArrayList<>();
 		while(!(initialGrouping.isEmpty())) {
@@ -160,7 +165,6 @@ public class BaseQueryPlanner extends QueryPlanner {
 
 	
 	private LoadDataSetOperator getDataSetLoader(FieldDescriptor field) {
-		
 		LoadColumnOperator loadOperator = new LoadColumnOperator(queryProvider);
 		LoadColumnArgs loadArgs = loadOperator.getArgs();
 		loadArgs.setColumn(field);
@@ -194,12 +198,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 		
 		public void addStatement (CFNode statement) {
 			statements.add(statement);
-			if(statement instanceof FilterStatement) {
-				fields.add( ((FilterStatement)statement).getField() );
-			}else if(statement instanceof CFilterStatement) {
-				Set<FieldDescriptor> refFields = ((CFilterStatement)statement).getReferencedFields();
-				fields.addAll(refFields);
-			}
+			fields.addAll(statement.getReferencedFields());
 		}
 
 		

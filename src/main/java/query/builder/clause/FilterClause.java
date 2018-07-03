@@ -96,7 +96,7 @@ public class FilterClause  {
 	public Set<FieldDescriptor> getReferencedFields(){
 		HashSet<FieldDescriptor> result = new HashSet<>();
 		for(FilterStatement statement : filterStatements) {
-			result.add(statement.getField());
+			result.addAll(statement.getReferencedFields());
 		}
 		for(CFilterStatement statement : composedFilterStatements) {
 			result.addAll(statement.getReferencedFields());

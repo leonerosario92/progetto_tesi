@@ -1,5 +1,6 @@
 package query.builder.statement;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import model.FieldDescriptor;
@@ -14,6 +15,7 @@ public abstract class FilterStatement implements CFNode {
 	private FieldDescriptor field; 
 	private Object rightOperand;
 	private LogicalOperand chainingOperand;
+	
 	private boolean hasNextStatement;
 	
 	
@@ -38,6 +40,9 @@ public abstract class FilterStatement implements CFNode {
 
 	public void setOperand(Object operand) {
 		this.rightOperand = operand;
+		if(operand instanceof FieldDescriptor) {
+			
+		}
 	}
 	
 	public Object getRightOperand() {
@@ -77,6 +82,16 @@ public abstract class FilterStatement implements CFNode {
 	public boolean hasNextStatement() {
 		return hasNextStatement;
 	}
-	
+
+
+	@Override
+	public Set<FieldDescriptor> getReferencedFields() {
+		Set<FieldDescriptor> refFields = new HashSet<>();
+		refFields.add(field);
+		if(rightOperand!= null && rightOperand instanceof FieldDescriptor) {
+			refFields.add((FieldDescriptor) rightOperand);
+		}
+		return refFields;
+	}
 	
 }

@@ -61,13 +61,28 @@ public class RecordEvaluator {
 		Predicate<Integer> comparisonEvaluator = type.getComparisonEvaluator();
 		int fieldIndex = nameIndexMapping.get(field.getName());
 
-		Predicate<Object[]> evaluator = new Predicate<Object[]>() {
-			@Override
-			public boolean test(Object[] record) {
-				int comparisonResult = comparator.compare(record[fieldIndex - 1], rightOperand);
-				return comparisonEvaluator.test(comparisonResult);
-			}
-		};
+		Predicate<Object[]> evaluator = null;
+		if(rightOperand instanceof FieldDescriptor) {
+			int operandIndex = nameIndexMapping.get( ((FieldDescriptor)rightOperand).getName());
+			evaluator = new Predicate<Object[]>() {
+				@Override
+				public boolean test(Object[] record) {
+					int comparisonResult = comparator.compare(record[fieldIndex - 1], record[operandIndex -1]);
+					return comparisonEvaluator.test(comparisonResult);
+				}
+			};
+		}
+		else {
+			evaluator = new Predicate<Object[]>() {
+				@Override
+				public boolean test(Object[] record) {
+					int comparisonResult = comparator.compare(record[fieldIndex - 1], rightOperand);
+					return comparisonEvaluator.test(comparisonResult);
+				}
+			};
+		}
+		
+		
 		return evaluator;
 	}
 
@@ -107,7 +122,5 @@ public class RecordEvaluator {
 		return result;
 
 	}
-
-
 
 }

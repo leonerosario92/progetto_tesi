@@ -3,11 +3,15 @@ package utils;
 import java.math.BigDecimal;
 
 import datatype.DataType;
+import model.FieldDescriptor;
 
 public class TypeUtils {
 
 	public static Object parseOperand(Object operand, DataType type ) {
-		if(!((operand instanceof Number) || (operand instanceof String))){
+		if(operand instanceof FieldDescriptor) {
+			return operand;
+		}
+		if(!((operand instanceof Number) || (operand instanceof String) )){
 			throw new IllegalArgumentException("Right Operand of filter statement has invalid type.");
 		}
 		switch (type) {
@@ -19,6 +23,7 @@ public class TypeUtils {
 		case INTEGER:
 		case LONG:
 			return parseNumericOperand(operand,type);
+			
 		default :
 			throw new IllegalStateException("Filter Statements cannot be applied to fields that have a non-comparable type");
 		}
