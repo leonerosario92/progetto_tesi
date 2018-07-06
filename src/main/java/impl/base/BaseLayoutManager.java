@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import com.google.common.collect.Lists;
 
 import dataset.LayoutManager;
+import datasource.IRecordScanner;
 import datatype.DataType;
 import dataset.ColumnDescriptor;
 import dataset.IColumn;
@@ -59,21 +60,21 @@ public class BaseLayoutManager extends LayoutManager {
 	
 	/*======METHODS INHERITED FROM ILayoutManager=====*/
 	@Override
-	public IDataSet buildDataSet(IRecordIterator iterator) {
+	public IDataSet buildDataSet(IRecordScanner recordScanner) {
 		
-		int recordCount = iterator.getRecordCount();
+		int recordCount = recordScanner.getRecordCount();
 		BaseDataSet dataSet = new BaseDataSet(recordCount);
 		
 		/*
 		 * For each field in iteraror metadata, create a new column
 		*/
-		int fieldsCount = iterator.getFieldsCount();
+		int fieldsCount = recordScanner.getFieldsCount();
 		BaseColumn<?>[] columns = new BaseColumn<?>[fieldsCount+1];
 		for(int index = 1; index <= fieldsCount; index++) {
 			
-			DataType columnType = iterator.getColumnType(index);
-			String columnName = iterator.getColumnName(index);
-			String tableName = iterator.getTableName(index);
+			DataType columnType = recordScanner.getColumnType(index);
+			String columnName = recordScanner.getColumnName(index);
+			String tableName = recordScanner.getTableName(index);
 			int columnLength = recordCount;
 			ColumnDescriptor descriptor  =
 					new ColumnDescriptor(tableName, columnName, columnType);
@@ -85,10 +86,10 @@ public class BaseLayoutManager extends LayoutManager {
 		 */
 		Object value;
 		int columnIndex = 0;
-		while(iterator.hasNext()) {
-			iterator.next();
+		
+		while(recordScanner.next()) {
 			for(int index = 1; index <= fieldsCount; index++) {
-				value = iterator.getValueByColumnIndex(index);
+				value = recordScanner.getValueByColumnIndex(index);
 				columns[index].storeValueAt(value, columnIndex);
 			}
 		}

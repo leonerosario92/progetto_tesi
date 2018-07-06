@@ -14,6 +14,7 @@ import impl.query.execution.operator.filteroncolumn.FilterOnColumnImpl;
 import impl.query.execution.operator.filteronmultiplecolumn.FilterOnMultipleColumnImpl;
 import impl.query.execution.operator.loadcolumn.LoadColumnImpl;
 import impl.query.execution.operator.loadverticalpartition.LoadVerticalPartitionImpl;
+import impl.query.execution.operator.orderby.OrderByImpl;
 import impl.base.BaseLayoutManager;
 import query.QueryPlanner;
 import query.ImplementationProvider;
@@ -36,8 +37,9 @@ public class ContextFactory {
 		this.queryProvider = new ImplementationProvider();
 			this.queryProvider.setFilterOnColumnImpl(FilterOnColumnImpl.class);
 			this.queryProvider.setLoadColumnImpl(LoadColumnImpl.class);
-			this.queryProvider.setLoadColumnSubsetImpl(LoadVerticalPartitionImpl.class);
+			this.queryProvider.setLoadVerticalPartitionImpl(LoadVerticalPartitionImpl.class);
 			this.queryProvider.setFilterOnMultipleColumnImpl(FilterOnMultipleColumnImpl.class);
+			this.queryProvider.setOrderByImpl(OrderByImpl.class);
 		
 		this.layoutManagerImpl = BaseLayoutManager.class;
 		this.dataProvisionerImpl = BaseDataProvisioner.class;

@@ -8,12 +8,13 @@ import java.sql.Statement;
 import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
 import dataset.IRecordIterator;
+import datasource.IRecordScanner;
 import datasource.IRemoteDataSource;
 import dispatcher.MeasurementType;
 import dispatcher.QueryDispatcher;
 import impl.datasource.jdbc.JDBCDataSource;
 import impl.datasource.jdbc.JDBCDataSourceException;
-import impl.datasource.jdbc.JDBCRecordIterator;
+import impl.datasource.jdbc.JDBCRecordScanner;
 import query.builder.Query;
 import query.execution.QueryExecutionException;
 
@@ -26,7 +27,7 @@ public class NativeQueryDispatcher extends QueryDispatcher {
 
 	
 	@Override
-	public IRecordIterator dispatchQuery(Query query) throws QueryExecutionException {
+	public IRecordScanner dispatchQuery(Query query) throws QueryExecutionException {
 		String sqlStatement = query.writeSql();
 		if(!(dataSource instanceof JDBCDataSource)) {
 			//TODO: Manage exception properly
@@ -38,7 +39,7 @@ public class NativeQueryDispatcher extends QueryDispatcher {
 			statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery(sqlStatement);
 			//TODO spostare getRecord count in una utility class
-			IRecordIterator result = new JDBCRecordIterator(rs,0);
+			IRecordScanner result = new JDBCRecordScanner(rs,0);
 			return result;
 		} catch (SQLException | JDBCDataSourceException e) {
 			throw new QueryExecutionException("An Exception occurred while executing query on native data source : "+ e.getMessage());
@@ -47,11 +48,11 @@ public class NativeQueryDispatcher extends QueryDispatcher {
 
 	
 	@Override
-	public IRecordIterator dispatchQuery(Query query, MeasurementType measurementType) throws QueryExecutionException {
+	public IRecordScanner dispatchQuery(Query query, MeasurementType measurementType) throws QueryExecutionException {
 		switch(measurementType) {
 		case EVALUATE_EXECUTION_TIME :
 			long executionStartTime = System.nanoTime();
-			IRecordIterator result = dispatchQuery(query);
+			IRecordScanner result = dispatchQuery(query);
 			long executionEndTime = System.nanoTime();	
 			long execNanos = executionEndTime - executionStartTime;
 			query.setExecutionTime(Float.valueOf(execNanos)/ (1000*1000));

@@ -11,6 +11,7 @@ import java.text.MessageFormat;
 import dataset.IColumnIterator;
 import dataset.IRecordIterator;
 import datasource.DataSourceException;
+import datasource.IRecordScanner;
 import datasource.IRemoteDataSource;
 import model.FieldDescriptor;
 import model.TableDescriptor;
@@ -124,13 +125,13 @@ public abstract class JDBCDataSource implements IRemoteDataSource{
 	}
 	
 	
-	public IRecordIterator getTable(TableDescriptor table) throws JDBCDataSourceException  {
+	public IRecordScanner getTable(TableDescriptor table) throws JDBCDataSourceException  {
 		PreparedStatement statement = getTableStatement;
 		try {
 			statement.setString(1,table.getName());
 			ResultSet result = statement.executeQuery();
 			int recordCount = getRecordCount(table);
-			return new JDBCRecordIterator (result,recordCount);
+			return new JDBCRecordScanner (result,recordCount);
 		} catch (SQLException e) {
 			throw new JDBCDataSourceException("An error occour while trying to retrieve table "+table.getName()+" from data source");
 		}
@@ -138,7 +139,7 @@ public abstract class JDBCDataSource implements IRemoteDataSource{
 
 
 	@Override
-	public IRecordIterator getTableProjection(TableDescriptor table, FieldDescriptor... args) throws DataSourceException {
+	public IRecordScanner getTableProjection(TableDescriptor table, FieldDescriptor... args) throws DataSourceException {
 		int fieldNum = args.length;
 		try {
 			String query = getColumnStatement(fieldNum);
@@ -155,7 +156,7 @@ public abstract class JDBCDataSource implements IRemoteDataSource{
 			
 			ResultSet result = statement.executeQuery(formattedQuery);
 			int recordCount = getRecordCount(table);
-			return new JDBCRecordIterator(result,recordCount);
+			return new JDBCRecordScanner(result,recordCount);
 		} catch (SQLException e) {
 			throw new DataSourceException("An error occour while trying to retrieve a set of column from remote data source");
 		}

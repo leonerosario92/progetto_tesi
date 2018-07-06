@@ -1,7 +1,5 @@
 package query.execution;
 
-import java.util.concurrent.Callable;
-
 import dataset.IDataSet;
 import query.ImplementationProvider;
 import query.execution.operator.IOperatorArgs;

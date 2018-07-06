@@ -3,6 +3,7 @@ package impl.base;
 import dataset.IDataSet;
 import dataset.IRecordIterator;
 import datasource.IDataSource;
+import datasource.IRecordScanner;
 import dispatcher.MeasurementType;
 import dispatcher.QueryDispatcher;
 import objectexplorer.MemoryMeasurer;
@@ -24,16 +25,16 @@ public class BaseQueryDispatcher extends QueryDispatcher {
 	}
 
 	@Override
-	public IRecordIterator dispatchQuery(Query query) throws QueryExecutionException {
+	public IRecordScanner dispatchQuery(Query query) throws QueryExecutionException {
 		
 		ExecutionPlan queryPlan = planner.getExecutionPlan(query);
 		IDataSet result;
 		result = executor.executePlan(queryPlan);
-		return result.getRecordIterator();				
+		return result.getRecordScanner();				
 	}
 
 	@Override
-	public IRecordIterator dispatchQuery(Query query, MeasurementType measurementType) throws QueryExecutionException {
+	public IRecordScanner dispatchQuery(Query query, MeasurementType measurementType) throws QueryExecutionException {
 		IDataSet result = null;
 		ExecutionPlan queryPlan = planner.getExecutionPlan(query);
 		String plan = queryPlan.toString();
@@ -44,7 +45,7 @@ public class BaseQueryDispatcher extends QueryDispatcher {
 		query.setMemoryOccupation(report.getMemoryOccupationMB());
 		query.setExecutionReport(queryPlan.printReport());
 		
-		return result.getRecordIterator();
+		return result.getRecordScanner();
 	}
 
 }

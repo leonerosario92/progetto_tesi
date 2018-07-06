@@ -12,6 +12,7 @@ import dataset.ILayoutManager;
 import dataset.IRecordIterator;
 import datasource.DataSourceException;
 import datasource.IDataSource;
+import datasource.IRecordScanner;
 import model.FieldDescriptor;
 import model.TableDescriptor;
 
@@ -28,7 +29,7 @@ public class BaseDataProvisioner extends DataProvisioner  {
 		
 		//Retrieve from dataSource the data that has not been found in the cache
 		
-		IRecordIterator it = 
+		IRecordScanner it = 
 				dataSource.getTableProjection(field.getTable(), field);
 		IDataSet result = layoutManager.buildDataSet(it);
 				
@@ -46,16 +47,16 @@ public class BaseDataProvisioner extends DataProvisioner  {
 		//Retrieve from dataSource the data that has not been found in the cache
 		
 		Map <TableDescriptor, Set<FieldDescriptor>> groupedFields = fieldsByTable(fields);
-		IRecordIterator it = null;
+		IRecordScanner rs = null;
 		if(groupedFields.keySet().size() == 1) {
 			TableDescriptor table =
 					groupedFields.entrySet().iterator().next().getKey();
-			it = dataSource.getTableProjection(table, fields.toArray(new FieldDescriptor[fields.size()] ));
+			rs = dataSource.getTableProjection(table, fields.toArray(new FieldDescriptor[fields.size()] ));
 		}else {
 			//TODO manage load from multiple Table if required
 		}
 		
-		IDataSet result = layoutManager.buildDataSet(it);
+		IDataSet result = layoutManager.buildDataSet(rs);
 				
 		//Merge data found in cache with data retrieved from dataSource 
 		

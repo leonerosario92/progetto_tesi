@@ -1,18 +1,24 @@
 package impl.base;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.google.common.collect.Lists;
 
 import dataset.IColumn;
 import dataset.IDataSet;
 import dataset.IRecordIterator;
+import datasource.IRecordScanner;
 import model.FieldDescriptor;
 
 /*==== IDataSet implementation ====*/
-public class BaseDataSet implements IDataSet {
+public class BaseDataSet implements IDataSet,Iterable<Object[]> {
 	
 	private HashMap<String, BaseColumn<?>> columns;
 	private BitSet validityBitset;
@@ -76,11 +82,7 @@ public class BaseDataSet implements IDataSet {
 		return Lists.newArrayList(columns.values());
 	}
 
-	@Override
-	public IDataSet getVerticalpartition(FieldDescriptor... field) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 	@Override
 	public IRecordIterator getRecordIterator() {
@@ -92,9 +94,22 @@ public class BaseDataSet implements IDataSet {
 		return recordCount;
 	}
 
+	
 	@Override
 	public int getFieldsCount() {
 		return columns.size();
 	}
+
 	
+	@Override
+	public IRecordScanner getRecordScanner() {
+		return new BaseRecordScanner(this);
+	}
+		
+	
+	@Override
+	public Iterator<Object[]> iterator() {
+		return new BaseRecordIterator(this);
+	}
+
 }

@@ -19,6 +19,7 @@ import context.ContextFactory;
 import context.ContextFactoryException;
 import dataset.IRecordIterator;
 import datasource.IDataSource;
+import datasource.IRecordScanner;
 import dispatcher.MeasurementType;
 import impl.datasource.jdbc.JDBCDataSourceException;
 import impl.dispatcher.jdbc.NativeQueryDispatcher;
@@ -29,7 +30,7 @@ import query.builder.Query;
 import query.builder.predicate.FilterStatementType;
 import query.builder.statement.CFilterStatement;
 import query.execution.QueryExecutionException;
-import utils.comparator.RecordIteratorComparator;
+import utils.comparator.QueryResultComparator;
 
 public abstract class AbstractSolutionTest {
 	
@@ -45,8 +46,6 @@ public abstract class AbstractSolutionTest {
 	
 	public  abstract IDataSource getDataSourceImpl() throws JDBCDataSourceException;
 	public  abstract ContextFactory getContextFactoryImpl();
-	
-	public static final int SCAN_SMALL_DATASET_EXPECTED_RESULT_SIZE = 96015;
 	
 	
 	@BeforeClass
@@ -104,11 +103,11 @@ public abstract class AbstractSolutionTest {
 			
 			
 			String sql = query.writeSql();
-			IRecordIterator result = context.executeQuery
+			IRecordScanner resultScanner = context.executeQuery
 					(query, measurementType);	
 
 			long resultIterationStartTime = System.nanoTime();
-			boolean correctness = testQueryResult(query, result);		
+			boolean correctness = testQueryResult(query, resultScanner);		
 			long resultIterationEndTime = System.nanoTime();
 			assertTrue("Error : Query execution returned a result that differs from the expected one.", correctness);
 			
@@ -139,7 +138,7 @@ public abstract class AbstractSolutionTest {
 		.project(storeSales)
 		.project(unitSales)
 		.project(storeCost)
-		.orderBy(unitSales,storeCost)
+		.orderBy(storeCost,unitSales)
 		.getQuery();
 		
 		String sqlRepresentation = query.writeSql();
@@ -169,15 +168,15 @@ public abstract class AbstractSolutionTest {
 	} 
 	
 	
-	private boolean testQueryResult(Query query, IRecordIterator result) {
+	private boolean testQueryResult(Query query, IRecordScanner result) {
 		boolean comparisonResult = false;
 		try {
 			ContextFactory factory = ContextFactory.getInstance(dataSource);
 			factory.setQueryDispatcher(NativeQueryDispatcher.class);
 			Context context = factory.getContext();
-			IRecordIterator nativeResult;
+			IRecordScanner nativeResult;
 			nativeResult = context.executeQuery(query);
-			comparisonResult = RecordIteratorComparator.compareValues(result, nativeResult);
+			comparisonResult = QueryResultComparator.compareValues(result, nativeResult);
 			return comparisonResult;
 		} catch (QueryExecutionException | ContextFactoryException e) {
 			//TODO Manage exception properly

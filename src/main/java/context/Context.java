@@ -4,6 +4,7 @@ import dataprovisioner.IDataProvisioner;
 import dataset.ILayoutManager;
 import dataset.IRecordIterator;
 import datasource.IDataSource;
+import datasource.IRecordScanner;
 import datasource.IRemoteDataSource;
 import dispatcher.IQueryDispatcher;
 import dispatcher.MeasurementType;
@@ -50,12 +51,12 @@ public class Context implements AutoCloseable {
 	}
 	
 	
-	public IRecordIterator executeQuery(Query query) throws QueryExecutionException {
+	public IRecordScanner executeQuery(Query query) throws QueryExecutionException {
 		return queryDispatcher.dispatchQuery(query);
 	}
 	
 	
-	public IRecordIterator executeQuery(Query query, MeasurementType measurememtType) throws QueryExecutionException {
+	public IRecordScanner executeQuery(Query query, MeasurementType measurememtType) throws QueryExecutionException {
 		return queryDispatcher.dispatchQuery(query, measurememtType);
 	}
 

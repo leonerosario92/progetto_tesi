@@ -30,8 +30,7 @@ public class FilterOnMultipleColumnImpl extends FilterOnMultipleColumnFunction {
 		int index = 0;
 		boolean isValid;
 		while(recordIterator.hasNext()) {
-			recordIterator.next();
-			Object[] currentRecord = recordIterator.getCurrentRecord();
+			Object[] currentRecord = recordIterator.next();
 			if (! (isValid = validityBitset.get(index))) {
 				index ++;
 				continue;

@@ -17,6 +17,7 @@ import query.QueryPlanner;
 import query.ImplementationProvider;
 import query.builder.Query;
 import query.builder.clause.FilterClause;
+import query.builder.clause.OrderByClause;
 import query.builder.clause.ProjectionClause;
 import query.builder.clause.SelectionClause;
 import query.builder.statement.CFNode;
@@ -25,6 +26,7 @@ import query.builder.statement.FilterStatement;
 import query.builder.statement.ProjectionStatement;
 import query.builder.statement.SelectionStatement;
 import query.execution.ExecutionPlan;
+import query.execution.IntermediateSquentialGroup;
 import query.execution.operator.filteroncolumn.FilterOnColumnArgs;
 import query.execution.operator.filteroncolumn.FilterOnColumnFunction;
 import query.execution.operator.filteroncolumn.FilterOnColumnOperator;
@@ -35,6 +37,7 @@ import query.execution.operator.loadcolumn.LoadColumnFunction;
 import query.execution.operator.loadcolumn.LoadColumnOperator;
 import query.execution.operator.loadverticalpartition.LoadVerticalPartitionArgs;
 import query.execution.operator.loadverticalpartition.LoadVerticalPartitionOperator;
+import query.execution.operator.orderby.OrderByOperator;
 import query.execution.LoadDataSetOperator;
 import query.execution.ProcessDataSetOperator;
 import query.execution.ParallelOperatorGroup;
@@ -60,17 +63,24 @@ public class BaseQueryPlanner extends QueryPlanner {
 		SelectionClause selectionClause = query.getSelectionClause();
 		ProjectionClause projectionClause = query.getProjectionClause();
 		FilterClause filterClause = query.getFilterClause();
+		OrderByClause orderByClause = query.getOrderByClause();
 		
-		ParallelOperatorGroup rootExecutable = new ParallelOperatorGroup();
+		ParallelOperatorGroup filterStatements = new ParallelOperatorGroup();
 		
 		Set<FieldDescriptor> unfilteredFields = 
 			Sets.difference(projectionClause.getReferencedFields(), filterClause.getReferencedFields());
 		
-		setProjectionOperators(rootExecutable, unfilteredFields);
-		setFilterOperators(rootExecutable,filterClause);
+		setProjectionOperators(filterStatements, unfilteredFields);
+		setFilterOperators(filterStatements,filterClause);
+		
+		IntermediateSquentialGroup rootExecutable = new IntermediateSquentialGroup();
+		rootExecutable.addSubElement(filterStatements);
+		
+		OrderByOperator orderByOp = new OrderByOperator(queryProvider);
+		orderByOp.getArgs().setOrderingSequence(orderByClause.getOrderingSequence());
+		rootExecutable.addSubElement(orderByOp);
 		
 		ExecutionPlan result = new ExecutionPlan(rootExecutable);
-		
 		return result;
 		
 	}
@@ -105,7 +115,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 					filterArgs.setField(group.getFields().iterator().next());
 					
 					
-					//
+					//TODO Quick fix. Write this better
 					//::::::::::::::::::::::::::::::::::
 					Set<FilterStatement> castedStatements = new HashSet<FilterStatement>();
 					for(CFNode statement : group.getStatements()) {

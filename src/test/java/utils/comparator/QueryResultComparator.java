@@ -1,6 +1,5 @@
 package utils.comparator;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,41 +9,40 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import dataset.IRecordIterator;
+import datasource.IRecordScanner;
 import datatype.DataType;
 import datatype.TypeComparator;
 
-public class RecordIteratorComparator  {
+public class QueryResultComparator  {
 	
-	private RecordIteratorComparator() {}
+	private QueryResultComparator() {}
 
 
-	public static boolean compareValues(IRecordIterator iterator0, IRecordIterator iterator1) {
+	public static boolean compareValues(IRecordScanner scanner0, IRecordScanner scanner1) {
 		 
-		boolean mdResult = compareMetaData(iterator0, iterator1);
+		boolean mdResult = compareMetaData(scanner0, scanner1);
 		if(! mdResult) {
 			return false;
 		}
 		
-		int fieldsCount = iterator0.getFieldsCount();
+		int fieldsCount = scanner0.getFieldsCount();
 		for(int i=1; i<=fieldsCount; i++) {
-			TypeComparator fieldComparator = iterator0.getColumnType(i).getComparator();
+			TypeComparator fieldComparator = scanner0.getColumnType(i).getComparator();
 			
 			ArrayList<Object> col0 = new ArrayList<>();
 			ArrayList<Object> col1 = new ArrayList<>();
 
-			iterator0.resetToFirstRecord();
-			iterator1.resetToFirstRecord();
+			scanner0.resetToFirstRecord();
+			scanner1.resetToFirstRecord();
 			
-			String columnName = iterator0.getColumnName(i);
+			String columnName = scanner0.getColumnName(i);
 			
-			while(iterator0.hasNext()) {
-				iterator0.next();
-				col0.add(iterator0.getValueByColumnIndex(i));
+			while(scanner0.next()) {
+				col0.add(scanner0.getValueByColumnIndex(i));
 			}
 			
-			while(iterator1.hasNext()) {
-				iterator1.next();
-				col1.add(iterator1.getValueByColumnName(columnName));
+			while(scanner1.next()) {
+				col1.add(scanner1.getValueByColumnName(columnName));
 			}
 			
 			Collections.sort(col0, fieldComparator);
@@ -59,7 +57,7 @@ public class RecordIteratorComparator  {
 	}
 	
 	
-	private static boolean compareMetaData(IRecordIterator iterator0, IRecordIterator iterator1) {
+	private static boolean compareMetaData(IRecordScanner iterator0, IRecordScanner iterator1) {
 
 		int fc0 = iterator0.getFieldsCount();
 		int fc1 = iterator1.getFieldsCount();

@@ -5,10 +5,11 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import dataset.IRecordIterator;
+import datasource.IRecordScanner;
 import datatype.DataType;
 import datatype.ITypeFactory;
 
-public class JDBCRecordIterator implements IRecordIterator {
+public class JDBCRecordScanner implements IRecordScanner {
 
 	private ResultSet resultSet;
 	private ResultSetMetaData metadata;
@@ -17,7 +18,7 @@ public class JDBCRecordIterator implements IRecordIterator {
 	private int fieldsCount;
 
 	
-	public JDBCRecordIterator(ResultSet resultSet, int recordCount) throws JDBCDataSourceException {
+	public JDBCRecordScanner(ResultSet resultSet, int recordCount) throws JDBCDataSourceException {
 		this.recordCount = recordCount;
 		this.resultSet = resultSet;
 		this.typeFactory= new JDBCDataTypeFactory( );
@@ -30,15 +31,15 @@ public class JDBCRecordIterator implements IRecordIterator {
 	}
 
 
-	@Override
-	public boolean hasNext() {
-		try {
-			return (!resultSet.isLast());
-		} catch (SQLException e) {
-			manageSqlException();
-		}
-		return false;
-	}
+//	@Override
+//	public boolean hasNext() {
+//		try {
+//			return (!resultSet.isLast());
+//		} catch (SQLException e) {
+//			manageSqlException();
+//		}
+//		return false;
+//	}
 
 
 	@Override
@@ -108,11 +109,12 @@ public class JDBCRecordIterator implements IRecordIterator {
 	
 	
 	@Override
-	public void next() {
+	public boolean next() {
 		try {
-			resultSet.next();
+			return resultSet.next();
 		} catch (SQLException e) {
 			manageSqlException();
+			return false;
 		}
 	}
 	
@@ -163,6 +165,5 @@ public class JDBCRecordIterator implements IRecordIterator {
 		}
 		return result;
 	}
-
 
 }

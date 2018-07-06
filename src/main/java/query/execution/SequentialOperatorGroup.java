@@ -68,20 +68,23 @@ public class SequentialOperatorGroup implements OperatorGroup{
 	
 
 	private Callable<IDataSet> getCallable(IQueryExecutor executor) {
-		return new Callable<IDataSet>() {			
-			@Override
-			public IDataSet call() throws Exception {
+		return 
 				
-				IDataSet dataSet = dataLoader.loadDataSet (executor.getProvisioner());
-				
-				ProcessDataSetOperator nextOperator;
-				Iterator<ProcessDataSetOperator> it = subElements.iterator();
-				while(it.hasNext()) {
-					nextOperator = it.next();
-					dataSet = nextOperator.processDataSet(dataSet);
+				new Callable<IDataSet>() {			
+				@Override
+				public IDataSet call() throws Exception {
+					
+					IDataSet dataSet = dataLoader.loadDataSet (executor.getProvisioner());
+					
+					ProcessDataSetOperator nextOperator;
+					Iterator<ProcessDataSetOperator> it = subElements.iterator();
+					while(it.hasNext()) {
+						nextOperator = it.next();
+						dataSet = nextOperator.processDataSet(dataSet);
+					}
+					return dataSet;
 				}
-				return dataSet;
-			}
+				
 		};
 	}
 	

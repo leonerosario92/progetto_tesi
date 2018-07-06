@@ -65,16 +65,13 @@ public class Query {
 		return selectionClause;
 	}
 
-
 	public ProjectionClause getProjectionClause() {
 		return projectionClause;
 	}
 
-
 	public FilterClause getFilterClause() {
 		return filterClause;
 	}
-	
 	
 	public OrderByClause getOrderByClause() {
 		return orderByClause;
