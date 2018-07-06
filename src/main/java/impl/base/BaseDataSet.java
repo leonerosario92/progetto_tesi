@@ -11,6 +11,7 @@ import java.util.stream.StreamSupport;
 
 import com.google.common.collect.Lists;
 
+import dataset.ColumnDescriptor;
 import dataset.IColumn;
 import dataset.IDataSet;
 import dataset.IRecordIterator;
@@ -22,18 +23,14 @@ public class BaseDataSet implements IDataSet,Iterable<Object[]> {
 	
 	private HashMap<String, BaseColumn<?>> columns;
 	private BitSet validityBitset;
+	private BaseColumn surrogateKeys;
 	private int recordCount;
 	
 	public BaseDataSet(int recordCount){
 		this.recordCount = recordCount;
 		this.columns = new HashMap<>();
-		initializeValidityBitSet(recordCount);
-	}
-	
-	@Override
-	public boolean containsColumn(FieldDescriptor field) {
-		String key = field.getKey();
-		return columns.containsKey(key);
+		initializeValidityBitSet();
+//		initializeSurrogateKeys();
 	}
 	
 	
@@ -43,12 +40,25 @@ public class BaseDataSet implements IDataSet,Iterable<Object[]> {
 	}
     
     
-    private void initializeValidityBitSet(int recordNum) {
-    	this.validityBitset = new BitSet(recordNum);
-    	validityBitset.set(0,recordNum,true);
+    private void initializeValidityBitSet() {
+    	this.validityBitset = new BitSet(recordCount);
+    	validityBitset.set(0,recordCount,true);
     }
 
-	
+//	
+//    private void initializeSurrogateKeys() {
+//    	ColumnDescriptor descriptor = new ColumnDescriptor(tableName, columnName, columnType)
+//    	this.surrogateKeys = new BaseColumn<Long>()
+//    }
+    
+    
+    @Override
+    public boolean containsColumn(FieldDescriptor field) {
+    	String key = field.getKey();
+    	return columns.containsKey(key);
+    }
+    
+    
 	@Override
 	public void updateValidityBitset(BitSet validityBits) {
 		if(validityBits.size() != this.validityBitset.size()) {

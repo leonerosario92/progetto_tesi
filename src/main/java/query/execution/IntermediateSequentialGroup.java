@@ -13,13 +13,12 @@ import query.execution.operator.DataSetProcessingFunction;
 import utils.ExecutionPlanNavigator;
 import utils.report.ExecutionReport;
 
-public class IntermediateSquentialGroup implements OperatorGroup {
+public class IntermediateSequentialGroup implements OperatorGroup {
 	
 	private List<ExecutionPlanElement> subElements;
 	private ExecutionReport report; 
-//	private IDataSet inputDataSet;
 
-	public IntermediateSquentialGroup() {
+	public IntermediateSequentialGroup() {
 			this.report = new ExecutionReport();
 			this.subElements = new ArrayList<>();
 	}
@@ -29,9 +28,12 @@ public class IntermediateSquentialGroup implements OperatorGroup {
 	}
 	
 	
-//	public void setInputDataSet(IDataSet inputDataSet) {
-//		this.inputDataSet = inputDataSet;
-//	}
+	@Override
+	public IResultHolder<IDataSet> execSubOperators(IQueryExecutor executor) throws QueryExecutionException {
+		Callable<IDataSet> callable = getCallable(executor);
+		IResultHolder<IDataSet> result = executor.submit(callable);
+		return result;
+	}
 	
 	
 	@Override
@@ -90,7 +92,9 @@ public class IntermediateSquentialGroup implements OperatorGroup {
 					while(it.hasNext()) {
 						nextOperator = it.next();
 						if(nextOperator instanceof OperatorGroup) {
-							dataSet = ((OperatorGroup)nextOperator).execSubOperators(executor).getResult();
+							dataSet = ((OperatorGroup)nextOperator)
+									.execSubOperators(executor,MeasurementType.EVALUATE_MEMORY_OCCUPATION)
+									.getResult();
 						}else if(nextOperator instanceof ProcessDataSetOperator) {
 							dataSet = ((ProcessDataSetOperator)nextOperator).processDataSet(dataSet);
 						}
@@ -116,7 +120,8 @@ public class IntermediateSquentialGroup implements OperatorGroup {
 					while(it.hasNext()) {
 						nextOperator = it.next();
 						if(nextOperator instanceof OperatorGroup) {
-							dataSet = ((OperatorGroup)nextOperator).execSubOperators(executor).getResult();
+							dataSet = ((OperatorGroup)nextOperator)
+									.execSubOperators(executor,MeasurementType.EVALUATE_EXECUTION_TIME).getResult();
 						}else if(nextOperator instanceof ProcessDataSetOperator) {
 							dataSet = ((ProcessDataSetOperator)nextOperator).processDataSet(dataSet);
 						}
@@ -148,7 +153,7 @@ public class IntermediateSquentialGroup implements OperatorGroup {
 			printer.addIndentation();
 		
 			for(ExecutionPlanElement op : subElements) {
-				op.addRepresentation(printer);
+				op.addRepresentationWithReport(printer);
 			}
 			printer.removeIndentation();
 			printer.appendLine("[END OPERATORS]");
@@ -158,12 +163,6 @@ public class IntermediateSquentialGroup implements OperatorGroup {
 			printer.appendLine("[END SEQUENCE]");
 		}
 
-		@Override
-		public IResultHolder<IDataSet> execSubOperators(IQueryExecutor executor) throws QueryExecutionException {
-			Callable<IDataSet> callable = getCallable(executor);
-			IResultHolder<IDataSet> result = executor.submit(callable);
-			return result;
-		}
 
 		@Override
 		public ExecutionReport getReport() {

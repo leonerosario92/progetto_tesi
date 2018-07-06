@@ -2,6 +2,7 @@ package query.execution;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -16,10 +17,13 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 	
 	private List<OperatorGroup> subElements;
 	private ExecutionReport report;
+	private MaterializationOperator materializationOperator;
 	
-	public ParallelOperatorGroup() {
+	
+	public ParallelOperatorGroup(MaterializationOperator materializationOperator) {
 		this.report = new ExecutionReport();
 		this.subElements = new ArrayList<>();
+		this.materializationOperator = materializationOperator;
 	}
 	
 	
@@ -48,9 +52,19 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 		List<IDataSet> partialResultList = partialResults.stream()
 				.map(datasetHolder->datasetHolder.getResult())
 				.collect(Collectors.toList());	
-		
-		IResultHolder<IDataSet> result = mergePartialResults(partialResultList,executor);
 		report.setExecutionEndTime();
+
+		report.setDataLoadingStartTIme();
+		IResultHolder<IDataSet> result = executor.submit(
+				new Callable<IDataSet>() {
+					@Override
+					public IDataSet call() throws Exception {
+						return materializationOperator.buildDataSet(partialResults, executor.getlayoutManager());
+					}
+				}
+		);
+		
+		report.setDataLoadingEndTIme();
 		
 		if (measurement == MeasurementType.EVALUATE_MEMORY_OCCUPATION) {
 			float totalMemoryOccupied = 0;

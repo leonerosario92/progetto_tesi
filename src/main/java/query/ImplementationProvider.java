@@ -7,6 +7,7 @@ import query.execution.operator.filteroncolumn.FilterOnColumnFunction;
 import query.execution.operator.filteronmultiplecolumn.FilterOnMultipleColumnFunction;
 import query.execution.operator.loadcolumn.LoadColumnFunction;
 import query.execution.operator.loadverticalpartition.LoadVerticalPartitionFunction;
+import query.execution.operator.mergeonbitsets.MergeOnBitSetsFunction;
 import query.execution.operator.orderby.OrderByFunction;
 
 public class ImplementationProvider  {
@@ -65,6 +66,14 @@ public class ImplementationProvider  {
 
 	public OrderByFunction getOrderByImpl() {
 		return (OrderByFunction) getImplementationInstance(RelOperatorType.ORDER_BY);
+	}
+	
+	public void setMergeOnBitSetsImpl(Class<? extends MergeOnBitSetsFunction> function) {
+		setImplementation(RelOperatorType.MERGE_ON_BITSETS, function);
+	}
+	
+	public MergeOnBitSetsFunction getMergeOnBitsetsImpl() {
+		return (MergeOnBitSetsFunction) getImplementationInstance(RelOperatorType.MERGE_ON_BITSETS);
 	}
 	
 	

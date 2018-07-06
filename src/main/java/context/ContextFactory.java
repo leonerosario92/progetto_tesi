@@ -14,6 +14,7 @@ import impl.query.execution.operator.filteroncolumn.FilterOnColumnImpl;
 import impl.query.execution.operator.filteronmultiplecolumn.FilterOnMultipleColumnImpl;
 import impl.query.execution.operator.loadcolumn.LoadColumnImpl;
 import impl.query.execution.operator.loadverticalpartition.LoadVerticalPartitionImpl;
+import impl.query.execution.operator.mergeonbitsets.MergeOnBitSetsImpl;
 import impl.query.execution.operator.orderby.OrderByImpl;
 import impl.base.BaseLayoutManager;
 import query.QueryPlanner;
@@ -39,6 +40,7 @@ public class ContextFactory {
 			this.queryProvider.setLoadColumnImpl(LoadColumnImpl.class);
 			this.queryProvider.setLoadVerticalPartitionImpl(LoadVerticalPartitionImpl.class);
 			this.queryProvider.setFilterOnMultipleColumnImpl(FilterOnMultipleColumnImpl.class);
+			this.queryProvider.setMergeOnBitSetsImpl(MergeOnBitSetsImpl.class);
 			this.queryProvider.setOrderByImpl(OrderByImpl.class);
 		
 		this.layoutManagerImpl = BaseLayoutManager.class;

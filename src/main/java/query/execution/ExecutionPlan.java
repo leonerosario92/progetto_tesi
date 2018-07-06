@@ -3,7 +3,6 @@ package query.execution;
 import utils.ExecutionPlanNavigator;
 import utils.report.ExecutionReport;
 
-
 public class ExecutionPlan {
 	
 	private OperatorGroup rootExecutable;

@@ -32,11 +32,11 @@ public class OrderByImpl extends OrderByFunction {
 		
 		Comparator<Object[]> recordComparator = getRecordComparator(iterator,orderingSequence);
 		
-		long start = System.nanoTime();
+//		long start = System.nanoTime();
 		List<Object[]> l = recordStream
 				.sorted(recordComparator).collect(Collectors.toList());
-		long end = System.nanoTime();
-		float timeMillis = ((float)(end -start))/(1000*1000); 
+//		long end = System.nanoTime();
+//		float timeMillis = ((float)(end -start))/(1000*1000); 
 		 
 		return inputSet;
 	}

@@ -42,7 +42,6 @@ public class BaseQueryExecutor extends QueryExecutor {
 	}
 	
 	
-	
 	@Override
 	public IResultHolder <IDataSet> submit(Callable<IDataSet> executable) {
 		Future<IDataSet> future = executorService.submit(executable);
@@ -54,7 +53,7 @@ public class BaseQueryExecutor extends QueryExecutor {
 					return future.get();
 				} catch (InterruptedException | ExecutionException e) {
 					e.printStackTrace();
-					throw new RuntimeException();
+					throw new RuntimeException("An error occourred during operator execution, caused by " + e.getMessage());
 				}
 			}
 		};

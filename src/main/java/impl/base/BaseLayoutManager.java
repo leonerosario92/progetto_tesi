@@ -23,12 +23,11 @@ import model.FieldDescriptor;
 
 public class BaseLayoutManager extends LayoutManager {
 	
-	/* ==== LayoutManager Implementation ==== */
 	public BaseLayoutManager() {
 		super();
 	}
 	
-	
+	//TODO: Find a way to do that in a factory method that is independent from specific Column implementation. 
 	private BaseColumn<?> createColumn(ColumnDescriptor descriptor, int length) {
 		BaseColumn<?> newColumn = null;
 		DataType type = descriptor.getColumnType();
@@ -51,6 +50,15 @@ public class BaseLayoutManager extends LayoutManager {
 		case BIG_DECIMAL:
 			newColumn = new BaseColumn<BigDecimal>(descriptor,length);
 			break;
+		case BOOLEAN:
+			newColumn = new BaseColumn<Boolean>(descriptor, length);
+			break;
+		case BYTE:
+			newColumn = new BaseColumn<Byte>(descriptor, length);
+			break;
+		case SHORT:
+			newColumn = new BaseColumn<Short>(descriptor, length);
+			break;
 		default:
 			throw new IllegalArgumentException();
 		}
@@ -58,7 +66,6 @@ public class BaseLayoutManager extends LayoutManager {
 	}
 	
 	
-	/*======METHODS INHERITED FROM ILayoutManager=====*/
 	@Override
 	public IDataSet buildDataSet(IRecordScanner recordScanner) {
 		
@@ -105,17 +112,19 @@ public class BaseLayoutManager extends LayoutManager {
 
 
 	@Override
-	public IDataSet mergeDatasets(List<IDataSet> dataSets) {
+	public IDataSet mergeDatasets(Iterable<IDataSet> dataSets) {
 		BitSet mergedBitSet = mergeValidityBitsets(dataSets);
 		IDataSet mergedDataSet = buildDataSet(dataSets,mergedBitSet);
 		return mergedDataSet;
 	}
 
 
-	private BitSet mergeValidityBitsets(List<IDataSet> dataSets) {
+	private BitSet mergeValidityBitsets(Iterable<IDataSet> dataSets) {
 		BitSet mergedValidityBitSet = null;
 		Iterator<IDataSet> it = dataSets.iterator();
 		if(it.hasNext()) {
+			
+			IDataSet next = it.next();
 			 mergedValidityBitSet  = it.next().getValidityBitSet();
 		}
 		while(it.hasNext()) {
@@ -129,7 +138,7 @@ public class BaseLayoutManager extends LayoutManager {
 	}
 
 
-	private IDataSet buildDataSet(List<IDataSet> dataSets, BitSet bitSet) {
+	private IDataSet buildDataSet(Iterable<IDataSet> dataSets, BitSet bitSet) {
 		int length = bitSet.cardinality();
 		BaseDataSet newDataSet = new BaseDataSet(length);
 		

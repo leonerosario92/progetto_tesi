@@ -26,7 +26,7 @@ import query.builder.statement.FilterStatement;
 import query.builder.statement.ProjectionStatement;
 import query.builder.statement.SelectionStatement;
 import query.execution.ExecutionPlan;
-import query.execution.IntermediateSquentialGroup;
+import query.execution.IntermediateSequentialGroup;
 import query.execution.operator.filteroncolumn.FilterOnColumnArgs;
 import query.execution.operator.filteroncolumn.FilterOnColumnFunction;
 import query.execution.operator.filteroncolumn.FilterOnColumnOperator;
@@ -37,6 +37,7 @@ import query.execution.operator.loadcolumn.LoadColumnFunction;
 import query.execution.operator.loadcolumn.LoadColumnOperator;
 import query.execution.operator.loadverticalpartition.LoadVerticalPartitionArgs;
 import query.execution.operator.loadverticalpartition.LoadVerticalPartitionOperator;
+import query.execution.operator.mergeonbitsets.MergeOnBitesetsOperator;
 import query.execution.operator.orderby.OrderByOperator;
 import query.execution.LoadDataSetOperator;
 import query.execution.ProcessDataSetOperator;
@@ -65,7 +66,8 @@ public class BaseQueryPlanner extends QueryPlanner {
 		FilterClause filterClause = query.getFilterClause();
 		OrderByClause orderByClause = query.getOrderByClause();
 		
-		ParallelOperatorGroup filterStatements = new ParallelOperatorGroup();
+		MergeOnBitesetsOperator materializator = new MergeOnBitesetsOperator(implementationProvider);
+		ParallelOperatorGroup filterStatements = new ParallelOperatorGroup(materializator);
 		
 		Set<FieldDescriptor> unfilteredFields = 
 			Sets.difference(projectionClause.getReferencedFields(), filterClause.getReferencedFields());
@@ -73,10 +75,10 @@ public class BaseQueryPlanner extends QueryPlanner {
 		setProjectionOperators(filterStatements, unfilteredFields);
 		setFilterOperators(filterStatements,filterClause);
 		
-		IntermediateSquentialGroup rootExecutable = new IntermediateSquentialGroup();
+		IntermediateSequentialGroup rootExecutable = new IntermediateSequentialGroup();
 		rootExecutable.addSubElement(filterStatements);
 		
-		OrderByOperator orderByOp = new OrderByOperator(queryProvider);
+		OrderByOperator orderByOp = new OrderByOperator(implementationProvider);
 		orderByOp.getArgs().setOrderingSequence(orderByClause.getOrderingSequence());
 		rootExecutable.addSubElement(orderByOp);
 		
@@ -104,13 +106,13 @@ public class BaseQueryPlanner extends QueryPlanner {
 				SequentialOperatorGroup exSequence = new SequentialOperatorGroup (datasetLoader);
 				
 				if(group.getFields().size() > 1) {
-					FilterOnMultipleColumnOperator filterOperator = new FilterOnMultipleColumnOperator (queryProvider);
+					FilterOnMultipleColumnOperator filterOperator = new FilterOnMultipleColumnOperator (implementationProvider);
 					FilterOnMultipleColumnArgs filterArgs = filterOperator.getArgs();
 					filterArgs.setFields(group.getFields());
 					filterArgs.setStatements(group.getStatements());
 					exSequence.queueOperator(filterOperator);
 				}else if (group.getFields().size() == 1) {
-					FilterOnColumnOperator filterOperator = new FilterOnColumnOperator(queryProvider);
+					FilterOnColumnOperator filterOperator = new FilterOnColumnOperator(implementationProvider);
 					FilterOnColumnArgs filterArgs = filterOperator.getArgs();
 					filterArgs.setField(group.getFields().iterator().next());
 					
@@ -175,7 +177,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 
 	
 	private LoadDataSetOperator getDataSetLoader(FieldDescriptor field) {
-		LoadColumnOperator loadOperator = new LoadColumnOperator(queryProvider);
+		LoadColumnOperator loadOperator = new LoadColumnOperator(implementationProvider);
 		LoadColumnArgs loadArgs = loadOperator.getArgs();
 		loadArgs.setColumn(field);
 		loadArgs.setLoadingType(LoadingType.LOAD_DATASET);
@@ -184,7 +186,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 	
 	
 	private LoadDataSetOperator getDataSetLoader(Set<FieldDescriptor> fields) {
-		LoadVerticalPartitionOperator loadOperator = new LoadVerticalPartitionOperator(queryProvider);
+		LoadVerticalPartitionOperator loadOperator = new LoadVerticalPartitionOperator(implementationProvider);
 		LoadVerticalPartitionArgs loadArgs = loadOperator.getArgs();
 		loadArgs.setColumns(fields);
 		loadArgs.setLoadingType(LoadingType.LOAD_DATASET);
