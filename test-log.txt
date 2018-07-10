@@ -264,3 +264,163 @@ EXECUTION DETAILS :
 [END SEQUENCE]
 
 
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-10 12:11:03,939 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+TEST RESULT : 
+Query execution time : 5324.059 ms
+ResultSet iteration time : 1637.3483 ms
+EXECUTION DETAILS : 
+
+[SEQUENCE]
+    [OPERATORS]
+        [PARALLEL GROUP]
+            [SEQUENCE]
+                [OPERATORS]
+                    [OPERATOR] 
+                        TYPE : LOAD_COLUMN
+                        ARGS : { Column = unit_sales , Loading Type = LOAD_DATASET }
+                    [END OPERATOR]
+                [END OPERATORS]
+                Execution Report : 
+                    DataSet Loading time = 5132.371 ms
+                    DataSet Processing Time = 0.026087 ms
+                    DataSet size = NOT MEASURED
+            [END SEQUENCE]
+            [SEQUENCE]
+                [OPERATORS]
+                    [OPERATOR] 
+                        TYPE : LOAD_COLUMN
+                        ARGS : { Column = store_cost , Loading Type = LOAD_DATASET }
+                    [END OPERATOR]
+                [END OPERATORS]
+                Execution Report : 
+                    DataSet Loading time = 5211.8467 ms
+                    DataSet Processing Time = 0.009408 ms
+                    DataSet size = NOT MEASURED
+            [END SEQUENCE]
+            [SEQUENCE]
+                [OPERATORS]
+                    [OPERATOR] 
+                        TYPE : LOAD_COLUMN
+                        ARGS : { Column = store_sales , Loading Type = LOAD_DATASET }
+                    [END OPERATOR]
+                [END OPERATORS]
+                Execution Report : 
+                    DataSet Loading time = 5261.463 ms
+                    DataSet Processing Time = 0.005987 ms
+                    DataSet size = NOT MEASURED
+            [END SEQUENCE]
+        Execution Report : 
+            DataSet Loading time = NOT MEASURED
+            DataSet Processing Time = 5277.0396 ms
+            DataSet size = NOT MEASURED
+        [END PARALLEL GROUP]
+        [OPERATOR] 
+            TYPE : ORDER_BY
+            ARGS : { orderingSequence = [ store_cost , unit_sales ] }
+        [END OPERATOR]
+    [END OPERATORS]
+    Execution Report : 
+        DataSet Loading time = NOT MEASURED
+        DataSet Processing Time = 5324.059 ms
+        DataSet size = NOT MEASURED
+[END SEQUENCE]
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-10 18:08:56,349 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-10 18:16:09,594 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-10 18:43:55,107 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-10 18:44:35,436 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-10 18:50:54,417 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+
+
+

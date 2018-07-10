@@ -19,9 +19,10 @@ public class RecordEvaluator {
 	private Predicate<Object[]> evaluator;
 	private Map<String, Integer> nameIndexMapping;
 
+	
 	public RecordEvaluator(Map<String, Integer> mapping, Set<CFNode> statements) {
-
 		Iterator<CFNode> it = statements.iterator();
+		
 		Predicate<Object[]> evaluator = null;
 		CFNode statement;
 		this.nameIndexMapping = mapping;
@@ -36,10 +37,12 @@ public class RecordEvaluator {
 		}
 		this.evaluator = evaluator;
 	}
+	
 
 	public boolean evaluate(Object[] recordToEvaluate) {
 		return evaluator.test(recordToEvaluate);
 	}
+	
 
 	private Predicate<Object[]> getStatementEvaluator(CFNode statement) {
 
@@ -59,11 +62,11 @@ public class RecordEvaluator {
 		FieldDescriptor field = statement.getField();
 		TypeComparator comparator = field.getType().getComparator();
 		Predicate<Integer> comparisonEvaluator = type.getComparisonEvaluator();
-		int fieldIndex = nameIndexMapping.get(field.getName());
+		int fieldIndex = nameIndexMapping.get(field.getKey());
 
 		Predicate<Object[]> evaluator = null;
 		if(rightOperand instanceof FieldDescriptor) {
-			int operandIndex = nameIndexMapping.get( ((FieldDescriptor)rightOperand).getName());
+			int operandIndex = nameIndexMapping.get( ((FieldDescriptor)rightOperand).getKey());
 			evaluator = new Predicate<Object[]>() {
 				@Override
 				public boolean test(Object[] record) {
@@ -81,11 +84,10 @@ public class RecordEvaluator {
 				}
 			};
 		}
-		
-		
 		return evaluator;
 	}
 
+	
 	private Predicate<Object[]> getComposedStatementEvaluator(CFilterStatement composedStatement) {
 
 		Iterator<CFNode> it = composedStatement.getstatementSequence().iterator();
@@ -106,6 +108,7 @@ public class RecordEvaluator {
 		return result;
 	}
 
+	
 	private Predicate<Object[]> chain(Predicate<Object[]> oldEvaluator, Predicate<Object[]> currentEvaluator,
 			LogicalOperand chainingOperand) {
 
@@ -119,8 +122,8 @@ public class RecordEvaluator {
 			result = oldEvaluator.or(currentEvaluator);
 			break;
 		}
+		
 		return result;
-
 	}
 
 }

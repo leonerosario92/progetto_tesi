@@ -98,7 +98,7 @@ public abstract class AbstractSolutionTest {
 			
 			
 			/* RIPRSTINARE QUERY ORIGINALE */
-			query = getTestQuery(context);
+			query = getScanSmallDataSetQuery(context);
 			/*_____________________________*/
 			
 			

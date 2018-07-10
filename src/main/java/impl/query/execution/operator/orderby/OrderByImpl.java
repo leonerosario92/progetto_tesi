@@ -1,6 +1,7 @@
 package impl.query.execution.operator.orderby;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
@@ -9,6 +10,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import dataset.IDataSet;
+import dataset.ILayoutManager;
 import dataset.IRecordIterator;
 import datatype.TypeComparator;
 import impl.base.BaseDataSet;
@@ -20,45 +22,66 @@ import query.execution.operator.orderby.OrderByFunction;
 public class OrderByImpl extends OrderByFunction {
 
 	@Override
-	public IDataSet apply(IDataSet inputSet, OrderByArgs args) throws QueryExecutionException {
+	public IDataSet apply(Iterable<IDataSet> inputDataSets, ILayoutManager layoutManager, OrderByArgs args) {
+
+		/* TODO Find a way to pass only one dataset to the function*/
+		Iterator<IDataSet> it = inputDataSets.iterator();
+		IDataSet inputSet= null;
+		if(it.hasNext()) {
+			inputSet = it.next();
+		}
+		if(inputSet == null) {
+			throw new IllegalStateException("Order by function requires only one inupt dataset");
+		}
+		/*_________________________________________________________*/
+		
 		
 		IRecordIterator iterator = inputSet.getRecordIterator();
-		int fieldsCount = iterator.getFieldsCount();
+		int fieldsCount = inputSet.getFieldsCount();
+		int recordCount = inputSet.getRecordCount();
 		
 		Stream<Object[]> recordStream = 
-				getRecordStream(iterator);
+				getRecordStream(iterator,recordCount);
 		
 		List<FieldDescriptor> orderingSequence = args.getOrderingSequence();
 		
-		Comparator<Object[]> recordComparator = getRecordComparator(iterator,orderingSequence);
+		Comparator<Object[]> recordComparator = getRecordComparator(inputSet,orderingSequence);
 		
-//		long start = System.nanoTime();
-		List<Object[]> l = recordStream
-				.sorted(recordComparator).collect(Collectors.toList());
-//		long end = System.nanoTime();
-//		float timeMillis = ((float)(end -start))/(1000*1000); 
-		 
+		long start = System.nanoTime();
+		Iterator<Object[]> resultIterator = recordStream
+				.sorted(recordComparator) 
+				.collect(Collectors.toList())
+				.iterator();
+		
+		long end = System.nanoTime();
+		float timeMillis = ((float)(end -start))/(1000*1000); 
+		
 		return inputSet;
+		
 	}
+	
 
-
-	private Stream<Object[]> getRecordStream(IRecordIterator recordIterator) {
+	private Stream<Object[]> getRecordStream(IRecordIterator recordIterator, int recordCount) {
 		Stream<Object[]> result = StreamSupport.stream
 		(
-			Spliterators.spliterator(recordIterator,recordIterator.getRecordCount(), 0)
+			Spliterators.spliterator(recordIterator,recordCount, 0)
 			,false
 		);
 		return result;
 	}
 	
 	
-	private Comparator<Object[]> getRecordComparator(IRecordIterator recordIterator, List<FieldDescriptor> orderingSequence){
+	private Comparator<Object[]> getRecordComparator(
+			IDataSet inputSet, 
+			List<FieldDescriptor> orderingSequence
+	){
 		TypeComparator[] comparators = new TypeComparator [orderingSequence.size()];
 		int [] indexes = new int[orderingSequence.size()];
 		for(int i=0; i<orderingSequence.size(); i++) {
-			indexes[i] = recordIterator.getColumnIndex(orderingSequence.get(i).getName());
+			indexes[i] = inputSet.getColumnIndex(orderingSequence.get(i));
 			comparators[i] = 
-					recordIterator.getColumnType(indexes[i])
+					inputSet.getColumnDescriptor(indexes[i])
+					.getColumnType()
 					.getComparator();		
 		}
 		

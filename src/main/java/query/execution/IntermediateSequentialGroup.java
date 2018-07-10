@@ -124,6 +124,11 @@ public class IntermediateSequentialGroup implements OperatorGroup {
 									.execSubOperators(executor,MeasurementType.EVALUATE_EXECUTION_TIME).getResult();
 						}else if(nextOperator instanceof ProcessDataSetOperator) {
 							dataSet = ((ProcessDataSetOperator)nextOperator).processDataSet(dataSet);
+						}else if(nextOperator instanceof MaterializationOperator) {
+							List<IDataSet> list = new ArrayList<>();
+							list.add(dataSet);
+							dataSet =((MaterializationOperator)nextOperator).buildDataSet(
+									list, executor.getlayoutManager());						
 						}
 					}
 					report.setExecutionEndTime();

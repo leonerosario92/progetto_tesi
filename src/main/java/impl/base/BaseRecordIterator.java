@@ -18,7 +18,6 @@ public class BaseRecordIterator implements IRecordIterator {
 	private int iterationIndex;
 	private int recordCount;
 	private int columnCount;
-	//private Object[] currentRecord;
 	private IDataSet dataSet;
 	private HashMap <String,Integer> nameIndexMapping;
 	
@@ -27,12 +26,18 @@ public class BaseRecordIterator implements IRecordIterator {
 		this.dataSet = dataSet;
 		recordCount = dataSet.getRecordCount();
 		columnCount = dataSet.getFieldsCount();
-		//currentRecord = new Object[columnCount];
 		columnDescriptors = new ArrayList<>(columnCount);
 		nameIndexMapping = new HashMap<>();
 		
 		initializeIterators();
 	}
+	
+//	
+//	public BaseRecordIterator(MaterializedDataSet dataSet) {
+//		this.dataSet = dataSet;
+//		recordCount = dataSet.getRecordCount();
+//		columnCount = dataSet.getFieldsCount();
+//	}
 
 	
 	private void initializeIterators() {
@@ -48,45 +53,6 @@ public class BaseRecordIterator implements IRecordIterator {
 	}
 	
 	
-
-	@Override
-	public DataType getColumnType(int index) {
-		return columnDescriptors.get(index).getColumnType();
-	}
-
-	@Override
-	public String getColumnName(int index) {
-		if(index < 0 || index >= recordCount) {
-			throw new IndexOutOfBoundsException();
-		}
-		return columnDescriptors.get(index).getColumnName();
-	}
-
-	@Override
-	public String getTableName(int index) {
-		return columnDescriptors.get(index-1).getTableName();
-	}
-
-	@Override
-	public int getColumnIndex(String columnName) {
-		if(! (nameIndexMapping.containsKey(columnName))){
-			throw new IllegalArgumentException("Attempt to retrieve index of unknown column.");
-		}
-		return (nameIndexMapping.get(columnName));
-	}
-
-
-	@Override
-	public int getFieldsCount() {
-		return columnCount;
-	}
-
-	@Override
-	public int getRecordCount() {
-		return recordCount;
-	}
-
-
 	@Override
 	public boolean hasNext() {
 		return (iterationIndex < recordCount);
@@ -102,5 +68,5 @@ public class BaseRecordIterator implements IRecordIterator {
 		iterationIndex ++;
 		return currentRecord;
 	}
-
+	
 }

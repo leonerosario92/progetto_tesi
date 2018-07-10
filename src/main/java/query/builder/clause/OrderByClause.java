@@ -12,11 +12,12 @@ public class OrderByClause {
 	
 	private List<FieldDescriptor> orderingSequence;
 	
-	public OrderByClause(FieldDescriptor...fields) { }
+	public OrderByClause(FieldDescriptor...fields) {
+		orderingSequence = new LinkedList<>();
+	}
 	
 	
 	public void addStatement(FieldDescriptor...fields) {
-		orderingSequence = new LinkedList<>();
 		for(int i=0; i<fields.length; i++) {
 			orderingSequence.add(i, fields[i]);
 		}

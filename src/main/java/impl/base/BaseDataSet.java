@@ -5,10 +5,7 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Spliterators;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
+import java.util.Map;
 import com.google.common.collect.Lists;
 
 import dataset.ColumnDescriptor;
@@ -21,22 +18,24 @@ import model.FieldDescriptor;
 /*==== IDataSet implementation ====*/
 public class BaseDataSet implements IDataSet,Iterable<Object[]> {
 	
-	private HashMap<String, BaseColumn<?>> columns;
+	private List<BaseColumn<?>> columns;
+	private Map<String,Integer> nameindexMapping;
 	private BitSet validityBitset;
-	private BaseColumn surrogateKeys;
 	private int recordCount;
 	
 	public BaseDataSet(int recordCount){
 		this.recordCount = recordCount;
-		this.columns = new HashMap<>();
+		this.columns = new ArrayList<>();
+		nameindexMapping = new HashMap<>();
 		initializeValidityBitSet();
-//		initializeSurrogateKeys();
 	}
 	
 	
-    void addColumn( BaseColumn<?> newColumn) {
+    void addColumn(BaseColumn<?> newColumn) {
 		String key = newColumn.getDescriptor().getKey();
-		columns.put(key, newColumn);
+		int columnIndex = columns.size()+1;
+		columns.add(columnIndex,newColumn);
+		nameindexMapping.put(key,columnIndex);
 	}
     
     
@@ -45,17 +44,11 @@ public class BaseDataSet implements IDataSet,Iterable<Object[]> {
     	validityBitset.set(0,recordCount,true);
     }
 
-//	
-//    private void initializeSurrogateKeys() {
-//    	ColumnDescriptor descriptor = new ColumnDescriptor(tableName, columnName, columnType)
-//    	this.surrogateKeys = new BaseColumn<Long>()
-//    }
-    
     
     @Override
     public boolean containsColumn(FieldDescriptor field) {
     	String key = field.getKey();
-    	return columns.containsKey(key);
+    	return nameindexMapping.containsKey(key);
     }
     
     
@@ -83,13 +76,14 @@ public class BaseDataSet implements IDataSet,Iterable<Object[]> {
 	@Override
 	public IColumn<?> getColumn(FieldDescriptor column) {
 		String key = column.getKey();
-		return columns.get(key);
+		int index = nameindexMapping.get(key);
+		return columns.get(index);
 	}
 
 
 	@Override
 	public List<IColumn<?>> getAllColumns() {
-		return Lists.newArrayList(columns.values());
+		return Lists.newArrayList(columns);
 	}
 
 
@@ -120,6 +114,23 @@ public class BaseDataSet implements IDataSet,Iterable<Object[]> {
 	@Override
 	public Iterator<Object[]> iterator() {
 		return new BaseRecordIterator(this);
+	}
+	
+	
+	@Override
+	public ColumnDescriptor getColumnDescriptor(int index) {
+		return columns.get(index).getDescriptor();
+	}
+
+	@Override
+	public int getColumnIndex(FieldDescriptor field) {
+		return nameindexMapping.get(field.getKey());
+	}
+
+
+	@Override
+	public Map<String, Integer> getNameIndexMapping() {
+		return nameindexMapping;
 	}
 
 }
