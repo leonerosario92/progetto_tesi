@@ -82,8 +82,8 @@ public class BaseQueryPlanner extends QueryPlanner {
 		orderByOp.getArgs().setOrderingSequence(orderByClause.getOrderingSequence());
 		rootExecutable.addSubElement(orderByOp);
 		
-		ExecutionPlan result = new ExecutionPlan(rootExecutable);
-		return result;
+		ExecutionPlan execPlan = new ExecutionPlan(rootExecutable);
+		return execPlan;
 		
 	}
 	

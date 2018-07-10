@@ -84,7 +84,6 @@ public class SequentialOperatorGroup implements OperatorGroup{
 					}
 					return dataSet;
 				}
-				
 		};
 	}
 	
