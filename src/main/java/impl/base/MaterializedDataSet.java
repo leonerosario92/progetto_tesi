@@ -24,7 +24,7 @@ public class MaterializedDataSet implements IDataSet {
 	private List<ColumnDescriptor> columnDescriptors;
 	private Map<String,Integer> nameIndexMapping;
 	
-	public MaterializedDataSet(int recordCount,List<FieldDescriptor> columns) {
+	public MaterializedDataSet(int recordCount,List<ColumnDescriptor> columns) {
 		this.validityBitset = new BitSet();
 		this.columnCount = columns.size();
 		this.recordCount = recordCount;
@@ -33,18 +33,13 @@ public class MaterializedDataSet implements IDataSet {
 		initializeValidityBitSet();
 	}
 
-	private void initializeColumnDescriptors(List<FieldDescriptor> columns) {
+	private void initializeColumnDescriptors(List<ColumnDescriptor> columns) {
 		this.nameIndexMapping = new HashMap<>();
 		this.columnDescriptors = new ArrayList<>();
 		int index = 0;
-		for(FieldDescriptor field : columns) {
-			ColumnDescriptor newColumn = new ColumnDescriptor(
-					field.getTable().getName(),
-					field.getName(), 
-					field.getType()
-			);
-			columnDescriptors.add(newColumn);
-			nameIndexMapping.put(field.getKey(), index);
+		for(ColumnDescriptor descriptor : columns) {
+			columnDescriptors.add(descriptor);
+			nameIndexMapping.put(descriptor.getKey(), index);
 			index ++;
 		}
 		
@@ -109,25 +104,14 @@ public class MaterializedDataSet implements IDataSet {
 
 	@Override
 	public IRecordIterator getRecordIterator() {
-		Iterator<Object[]> recordIterator = recordList.iterator();
-		return new IRecordIterator() {
-			
-			@Override
-			public Object[] next() {
-				return recordIterator.next();
-			}
-			
-			@Override
-			public boolean hasNext() {
-				return recordIterator.hasNext();			}
-		};
+			return new MaterializedRecordIterator(this);
 	}
+	
 	
 
 	@Override
 	public IRecordScanner getRecordScanner() {
-		// TODO Auto-generated method stub
-		return null;
+		return new MaterializedRecordScanner(this);
 	}
 
 	
@@ -166,14 +150,12 @@ public class MaterializedDataSet implements IDataSet {
 
 	@Override
 	public ColumnDescriptor getColumnDescriptor(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		return columnDescriptors.get(index);
 	}
 
 	@Override
 	public int getColumnIndex(FieldDescriptor field) {
-		// TODO Auto-generated method stub
-		return 0;
+		return nameIndexMapping.get(field.getKey());
 	}
 
 	@Override

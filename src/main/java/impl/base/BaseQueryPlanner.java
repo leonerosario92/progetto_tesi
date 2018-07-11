@@ -80,7 +80,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 		
 		OrderByOperator orderByOp = new OrderByOperator(implementationProvider);
 		orderByOp.getArgs().setOrderingSequence(orderByClause.getOrderingSequence());
-		//rootExecutable.addSubElement(orderByOp);
+		rootExecutable.addSubElement(orderByOp);
 		
 		ExecutionPlan execPlan = new ExecutionPlan(rootExecutable);
 		return execPlan;

@@ -1,32 +1,21 @@
 package impl.base;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
-import com.google.common.collect.Lists;
-
 import dataset.LayoutManager;
 import datasource.IRecordScanner;
 import datatype.DataType;
 import dataset.ColumnDescriptor;
 import dataset.IColumn;
 import dataset.IDataSet;
-import dataset.IRecordIterator;
-import model.FieldDescriptor;
 
 public class BaseLayoutManager extends LayoutManager {
 	
 	public BaseLayoutManager() {
 		super();
 	}
-	
 	
 	
 	@Override
@@ -86,9 +75,8 @@ public class BaseLayoutManager extends LayoutManager {
 		BitSet mergedValidityBitSet = null;
 		Iterator<IDataSet> it = dataSets.iterator();
 		if(it.hasNext()) {
-			
 			IDataSet next = it.next();
-			 mergedValidityBitSet  = it.next().getValidityBitSet();
+			mergedValidityBitSet  = next.getValidityBitSet();
 		}
 		while(it.hasNext()) {
 			BitSet bitSet = it.next().getValidityBitSet();
@@ -101,18 +89,70 @@ public class BaseLayoutManager extends LayoutManager {
 	}
 
 
+//	private IDataSet buildDataSet(Iterable<IDataSet> dataSets, BitSet bitSet) {
+//		int length = bitSet.cardinality();
+//		BaseDataSet newDataSet = new BaseDataSet(length);
+//		
+//		for(IDataSet dataSet : dataSets) {
+//			for(IColumn<?> column : dataSet.getAllColumns()) {
+//				BaseColumn<?> newColumn = 
+//						((BaseColumn<?>)column).getFilteredInstance(bitSet);
+//				newDataSet.addColumn( newColumn);
+//			}
+//		}
+//		return newDataSet;
+//	}
+	
+	
 	private IDataSet buildDataSet(Iterable<IDataSet> dataSets, BitSet bitSet) {
-		int length = bitSet.cardinality();
-		BaseDataSet newDataSet = new BaseDataSet(length);
-		
+	
+		int recordCount = bitSet.cardinality();
+		List<Iterator<?>> columnIterators = new ArrayList<>();
+		List<ColumnDescriptor> descriptors = new ArrayList<>();
+		int columnCount = 0;
 		for(IDataSet dataSet : dataSets) {
 			for(IColumn<?> column : dataSet.getAllColumns()) {
-				BaseColumn<?> newColumn = 
-						((BaseColumn<?>)column).getFilteredInstance(bitSet);
-				newDataSet.addColumn( newColumn);
+				IColumn<?> filteredColumn = ((BaseColumn<?>)column).getFilteredInstance(bitSet);
+				ColumnDescriptor descriptor = filteredColumn.getDescriptor();
+				descriptors.add(descriptor);
+				columnIterators.add(filteredColumn.getColumnIterator());
+				columnCount ++;
 			}
 		}
-		return newDataSet;
+		
+		MaterializedDataSet result = new MaterializedDataSet(recordCount, descriptors);
+		
+		for(int i=0; i<recordCount; i++) {
+			Object[] currentRecord = new Object[columnCount];
+			for(int j=0; j<columnCount; j++) {
+				currentRecord[j] = columnIterators.get(j).next();
+			}
+			result.addRecord(currentRecord);
+		}
+		
+		return result;
+	}
+
+
+	@Override
+	public IDataSet buildDataSet(
+			int recordCount, 
+			List<ColumnDescriptor> columnSequence, 
+			Iterator<Object[]> recordIterator) 
+	{
+		MaterializedDataSet result = new MaterializedDataSet(recordCount, columnSequence);
+//		int columnCount = columnSequence.size();
+//		for(Object[] record : records) {
+//			Object[] newRecord = new Object[columnCount];
+//			for(int j=0; j<columnCount; j++) {
+//				newRecord[j] = record[j];
+//			}
+//			result.addRecord(newRecord);
+//		}
+		while(recordIterator.hasNext()) {
+			result.addRecord(recordIterator.next());
+		}
+		return result;
 	}
 
 }

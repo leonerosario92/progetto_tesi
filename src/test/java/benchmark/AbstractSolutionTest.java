@@ -98,7 +98,7 @@ public abstract class AbstractSolutionTest {
 			
 			
 			/* RIPRSTINARE QUERY ORIGINALE */
-			query = getScanSmallDataSetQuery(context);
+			query = getTestQuery(context);
 			/*_____________________________*/
 			
 			
@@ -118,7 +118,6 @@ public abstract class AbstractSolutionTest {
 		} 
 		catch (ContextFactoryException | QueryExecutionException e) {
 			testReport = getErrorReport(e);
-			appendReport(testReport);
 		} 
 		finally {
 			appendReport(testReport);
@@ -135,10 +134,12 @@ public abstract class AbstractSolutionTest {
 		
 		Query query = context.query()
 		.select(salesTable)
-		.project(storeSales)
-		.project(unitSales)
+//		.project(storeSales)
+//		.project(unitSales)
 		.project(storeCost)
-		.orderBy(storeCost,unitSales)
+		.orderBy(storeCost
+//				,unitSales
+				)
 		.getQuery();
 		
 		String sqlRepresentation = query.writeSql();

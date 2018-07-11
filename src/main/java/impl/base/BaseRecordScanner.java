@@ -10,6 +10,7 @@ import dataset.IDataSet;
 import dataset.IRecordIterator;
 import datasource.IRecordScanner;
 import datatype.DataType;
+import model.FieldDescriptor;
 
 public class BaseRecordScanner implements IRecordScanner {
 	
@@ -104,14 +105,15 @@ public class BaseRecordScanner implements IRecordScanner {
 
 
 	@Override
-	public Object getValueByColumnName(String columnName) {
-		int index = getColumnIndex(columnName);
+	public Object getValueByColumnDescriptor(FieldDescriptor field) {
+		int index = getColumnIndex(field);
 		return getValueByColumnIndex(index);
 	}
 
 
 	@Override
-	public int getColumnIndex(String columnName) {
+	public int getColumnIndex(FieldDescriptor field) {
+		String columnName = field.getName();
 		if(! (nameIndexMapping.containsKey(columnName))){
 			throw new IllegalArgumentException("Attempt to retrieve index of unknown column.");
 		}
@@ -130,5 +132,16 @@ public class BaseRecordScanner implements IRecordScanner {
 		initializeIterators();
 	}
 
+
+	@Override
+	public String getColumnId(int index) {
+		return columnDescriptors.get(index-1).getKey();
+	}
+
+	@Override
+	public Object getValueByColumnID(String columnId) {
+		int index = nameIndexMapping.get(columnId);
+		return getValueByColumnIndex(index);
+	}
 	
 }

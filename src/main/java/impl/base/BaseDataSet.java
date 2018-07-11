@@ -15,15 +15,19 @@ import dataset.IRecordIterator;
 import datasource.IRecordScanner;
 import model.FieldDescriptor;
 
-/*==== IDataSet implementation ====*/
+
 public class BaseDataSet implements IDataSet,Iterable<Object[]> {
 	
 	private List<BaseColumn<?>> columns;
 	private Map<String,Integer> nameindexMapping;
 	private BitSet validityBitset;
 	private int recordCount;
+	private int columnCount;
+	private Object columnLock;
 	
 	public BaseDataSet(int recordCount){
+		this.columnCount = 0;
+		this.columnLock = new Object();
 		this.recordCount = recordCount;
 		this.columns = new ArrayList<>();
 		nameindexMapping = new HashMap<>();
@@ -33,9 +37,11 @@ public class BaseDataSet implements IDataSet,Iterable<Object[]> {
 	
     void addColumn(BaseColumn<?> newColumn) {
 		String key = newColumn.getDescriptor().getKey();
-		int columnIndex = columns.size()+1;
-		columns.add(columnIndex,newColumn);
-		nameindexMapping.put(key,columnIndex);
+		synchronized (columnLock) {
+			columns.add(newColumn);
+			nameindexMapping.put(key,columnCount);
+			columnCount ++;
+		}
 	}
     
     

@@ -3,11 +3,14 @@ package impl.datasource.jdbc;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import dataset.IRecordIterator;
 import datasource.IRecordScanner;
 import datatype.DataType;
 import datatype.ITypeFactory;
+import model.FieldDescriptor;
 
 public class JDBCRecordScanner implements IRecordScanner {
 
@@ -16,6 +19,7 @@ public class JDBCRecordScanner implements IRecordScanner {
 	private ITypeFactory typeFactory;
 	private int recordCount;
 	private int fieldsCount;
+	private Map<String,Integer>columnIndexMapping;
 
 	
 	public JDBCRecordScanner(ResultSet resultSet, int recordCount) throws JDBCDataSourceException {
@@ -28,7 +32,25 @@ public class JDBCRecordScanner implements IRecordScanner {
 		} catch (SQLException e) {
 			manageSqlException();
 		}
+		
+		initializeColumnIndexMapping();
 	}
+
+
+	private void initializeColumnIndexMapping() {
+		columnIndexMapping = new HashMap<>();
+		for(int index=1; index<=fieldsCount; index++) {
+			String tableName = getTableName(index);
+			String columnName = getColumnName(index);
+			
+			columnIndexMapping.put(
+				tableName+"_"+columnName, 
+				index
+			);
+			
+		}
+	}
+
 
 
 //	@Override
@@ -96,7 +118,8 @@ public class JDBCRecordScanner implements IRecordScanner {
 	
 	
 	@Override
-	public Object getValueByColumnName(String columnName) {
+	public Object getValueByColumnDescriptor(FieldDescriptor field) {
+		String columnName = field.getName();
 		try {
 			return resultSet.getObject(columnName);
 		} catch (SQLException e) {
@@ -142,7 +165,8 @@ public class JDBCRecordScanner implements IRecordScanner {
 
 
 	@Override
-	public int getColumnIndex(String columnName) {
+	public int getColumnIndex(FieldDescriptor field) {
+		String columnName = field.getName();
 		for(int index = 1; index <= fieldsCount; index ++) {
 			if(getColumnName(index).equals(columnName)) {
 				return index;
@@ -164,6 +188,24 @@ public class JDBCRecordScanner implements IRecordScanner {
 			}
 		}
 		return result;
+	}
+
+
+	@Override
+	public String getColumnId(int index) {
+		String tableName = getTableName(index);
+		String columnName = getColumnName(index);
+		return tableName+"_"+columnName;
+	}
+
+
+	@Override
+	public Object getValueByColumnID(String columnId) {
+		if(! (columnIndexMapping.containsKey(columnId))) {
+			throw new IllegalArgumentException("Attempt to retrieve value from an unknown column");
+		}
+		int index = columnIndexMapping.get(columnId);
+		return getValueByColumnIndex(index);
 	}
 
 }

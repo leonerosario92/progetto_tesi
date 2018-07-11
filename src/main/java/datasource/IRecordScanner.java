@@ -1,6 +1,7 @@
 package datasource;
 
 import datatype.DataType;
+import model.FieldDescriptor;
 
 public interface IRecordScanner {
 	
@@ -15,15 +16,19 @@ public interface IRecordScanner {
 	
 	public String getTableName(int index);
 	
-	public int getColumnIndex(String columnName);
+	public int getColumnIndex(FieldDescriptor field);
 	
 	public Object[] getCurrentRecord ();
 	
-		
+	public String getColumnId(int index);
+
+	
 	public Object getValueByColumnIndex(int index); 
 	
-	public Object getValueByColumnName(String columnName);
-
+	public Object getValueByColumnDescriptor(FieldDescriptor field);
+	
+	public Object getValueByColumnID(String comulnId);
+	
 	
 	public int getFieldsCount();
 	

@@ -45,7 +45,8 @@ public class BaseQueryDispatcher extends QueryDispatcher {
 		query.setMemoryOccupation(report.getMemoryOccupationMB());
 		query.setExecutionReport(queryPlan.printReport());
 		
-		return result.getRecordScanner();
+		IRecordScanner rs = result.getRecordScanner();
+		return rs;
 	}
 
 }

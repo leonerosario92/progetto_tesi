@@ -1,14 +1,8 @@
 package query.execution;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Supplier;
-
 import dataset.IDataSet;
 import dispatcher.MeasurementType;
 import objectexplorer.MemoryMeasurer;

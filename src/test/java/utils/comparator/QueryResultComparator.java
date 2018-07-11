@@ -26,8 +26,8 @@ public class QueryResultComparator  {
 		}
 		
 		int fieldsCount = scanner0.getFieldsCount();
-		for(int i=1; i<=fieldsCount; i++) {
-			TypeComparator fieldComparator = scanner0.getColumnType(i).getComparator();
+		for(int index=1; index<=fieldsCount; index++) {
+			TypeComparator fieldComparator = scanner0.getColumnType(index).getComparator();
 			
 			ArrayList<Object> col0 = new ArrayList<>();
 			ArrayList<Object> col1 = new ArrayList<>();
@@ -35,14 +35,14 @@ public class QueryResultComparator  {
 			scanner0.resetToFirstRecord();
 			scanner1.resetToFirstRecord();
 			
-			String columnName = scanner0.getColumnName(i);
+			String columnName = scanner0.getColumnId(index);
 			
 			while(scanner0.next()) {
-				col0.add(scanner0.getValueByColumnIndex(i));
+				col0.add(scanner0.getValueByColumnIndex(index));
 			}
 			
 			while(scanner1.next()) {
-				col1.add(scanner1.getValueByColumnName(columnName));
+				col1.add(scanner1.getValueByColumnID(columnName));
 			}
 			
 			Collections.sort(col0, fieldComparator);
