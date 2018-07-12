@@ -3,9 +3,10 @@ package query.execution.operator.orderby;
 import query.ImplementationProvider;
 import query.execution.MaterializationOperator;
 import query.execution.ProcessDataSetOperator;
+import query.execution.SortDataSetOperator;
 import query.execution.operator.RelOperatorType;
 
-public class OrderByOperator extends MaterializationOperator<OrderByFunction, OrderByArgs> {
+public class OrderByOperator extends SortDataSetOperator <OrderByFunction, OrderByArgs> {
 
 	public static final RelOperatorType OPERATOR_TYPE = RelOperatorType.ORDER_BY;
 	

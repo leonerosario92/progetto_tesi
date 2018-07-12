@@ -22,20 +22,8 @@ import query.execution.operator.orderby.OrderByFunction;
 public class OrderByImpl extends OrderByFunction {
 
 	@Override
-	public IDataSet apply(Iterable<IDataSet> inputDataSets, ILayoutManager layoutManager, OrderByArgs args) {
+	public IDataSet apply(IDataSet inputSet, ILayoutManager layoutManager, OrderByArgs args) {
 
-		/* TODO Find a way to pass only one dataset to the function*/
-		Iterator<IDataSet> it = inputDataSets.iterator();
-		IDataSet inputSet= null;
-		if(it.hasNext()) {
-			inputSet = it.next();
-		}
-		if(inputSet == null) {
-			throw new IllegalStateException("Order by function requires only one inupt dataset");
-		}
-		/*_________________________________________________________*/
-		
-		
 		IRecordIterator iterator = inputSet.getRecordIterator();
 		int fieldsCount = inputSet.getFieldsCount();
 		int recordCount = inputSet.getRecordCount();
