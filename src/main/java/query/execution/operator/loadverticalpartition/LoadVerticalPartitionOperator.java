@@ -14,4 +14,5 @@ public class LoadVerticalPartitionOperator extends LoadDataSetOperator<LoadVerti
 		this.operatorName = OPERATOR_TYPE.name();
 		this.function = provider.getLoadColumnSubsetImpl();
 	}
+
 }

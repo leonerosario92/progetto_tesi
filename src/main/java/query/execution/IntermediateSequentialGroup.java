@@ -69,8 +69,9 @@ public class IntermediateSequentialGroup implements OperatorGroup {
 					nextOperator = it.next();
 					if(nextOperator instanceof OperatorGroup) {
 						dataSet = ((OperatorGroup)nextOperator).execSubOperators(executor).getResult();
-					}else if(nextOperator instanceof ProcessDataSetOperator) {
-						dataSet = ((ProcessDataSetOperator)nextOperator).processDataSet(dataSet);
+					}else if(nextOperator instanceof Operator) {
+						((Operator)nextOperator).setInputData(dataSet);
+						dataSet = ((Operator) nextOperator).execOperator(executor);
 					}
 			
 				}
@@ -95,8 +96,9 @@ public class IntermediateSequentialGroup implements OperatorGroup {
 							dataSet = ((OperatorGroup)nextOperator)
 									.execSubOperators(executor,MeasurementType.EVALUATE_MEMORY_OCCUPATION)
 									.getResult();
-						}else if(nextOperator instanceof ProcessDataSetOperator) {
-							dataSet = ((ProcessDataSetOperator)nextOperator).processDataSet(dataSet);
+						}else if(nextOperator instanceof Operator) {
+							((Operator)nextOperator).setInputData(dataSet);
+							dataSet = ((Operator) nextOperator).execOperator(executor);
 						}
 					}
 					report.setMemoryOccupationByte(MemoryMeasurer.measureBytes(dataSet));
@@ -122,13 +124,9 @@ public class IntermediateSequentialGroup implements OperatorGroup {
 						if(nextOperator instanceof OperatorGroup) {
 							dataSet = ((OperatorGroup)nextOperator)
 									.execSubOperators(executor,MeasurementType.EVALUATE_EXECUTION_TIME).getResult();
-						}else if(nextOperator instanceof ProcessDataSetOperator) {
-							dataSet = ((ProcessDataSetOperator)nextOperator).processDataSet(dataSet);
-						}else if(nextOperator instanceof MaterializationOperator) {
-							List<IDataSet> list = new ArrayList<>();
-							list.add(dataSet);
-							dataSet =((MaterializationOperator)nextOperator).buildDataSet(
-									list, executor.getlayoutManager());						
+						}else if(nextOperator instanceof Operator) {
+							((Operator)nextOperator).setInputData(dataSet);
+							dataSet = ((Operator) nextOperator).execOperator(executor);
 						}
 					}
 					report.setExecutionEndTime();

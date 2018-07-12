@@ -68,13 +68,14 @@ public class SequentialOperatorGroup implements OperatorGroup{
 			@Override
 			public IDataSet call() throws Exception {
 				
-				IDataSet dataSet = dataLoader.loadDataSet (executor.getProvisioner());
+				IDataSet dataSet = dataLoader.execOperator(executor);
 				
 				ProcessDataSetOperator nextOperator;
 				Iterator<ProcessDataSetOperator> it = subElements.iterator();
 				while(it.hasNext()) {
 					nextOperator = it.next();
-					dataSet = nextOperator.processDataSet(dataSet);
+					nextOperator.setInputData(dataSet);
+					dataSet = nextOperator.execOperator(executor);
 				}
 				return dataSet;
 			}
@@ -87,14 +88,15 @@ public class SequentialOperatorGroup implements OperatorGroup{
 			@Override
 			public IDataSet call() throws Exception {
 				
-				IDataSet dataSet = dataLoader.loadDataSet (executor.getProvisioner());
+				IDataSet dataSet = dataLoader.execOperator(executor);
 				report.setMemoryOccupationByte(MemoryMeasurer.measureBytes(dataSet));
 				
 				ProcessDataSetOperator nextOperator;
 				Iterator<ProcessDataSetOperator> it = subElements.iterator();
 				while(it.hasNext()) {
 					nextOperator = it.next();
-					dataSet = nextOperator.processDataSet(dataSet);
+					nextOperator.setInputData(dataSet);
+					dataSet = nextOperator.execOperator(executor);
 				}
 				
 				return dataSet;
@@ -109,7 +111,7 @@ public class SequentialOperatorGroup implements OperatorGroup{
 			public IDataSet call() throws Exception {
 				
 				report.setDataLoadingStartTIme();
-				IDataSet dataSet = dataLoader.loadDataSet (executor.getProvisioner());
+				IDataSet dataSet = dataLoader.execOperator(executor);
 				report.setDataLoadingEndTIme();
 				
 				report.setExecutionStartTime();
@@ -117,7 +119,8 @@ public class SequentialOperatorGroup implements OperatorGroup{
 				Iterator<ProcessDataSetOperator> it = subElements.iterator();
 				while(it.hasNext()) {
 					nextOperator = it.next();
-					dataSet = nextOperator.processDataSet(dataSet);
+					nextOperator.setInputData(dataSet);
+					dataSet = nextOperator.execOperator(executor);
 				}
 				report.setExecutionEndTime();
 				

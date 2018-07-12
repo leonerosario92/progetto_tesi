@@ -1,0 +1,102 @@
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-12 11:38:26,000 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-12 11:58:03,708 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+TEST RESULT : 
+Query execution time : 3836.1611 ms
+ResultSet iteration time : 536.08777 ms
+EXECUTION DETAILS : 
+
+[SEQUENCE]
+    [OPERATORS]
+        [PARALLEL GROUP]
+            [SEQUENCE]
+                [OPERATORS]
+                    [OPERATOR] 
+                        TYPE : LOAD_COLUMN
+                        ARGS : { Column = store_cost , Loading Type = LOAD_DATASET }
+                    [END OPERATOR]
+                [END OPERATORS]
+                Execution Report : 
+                    DataSet Loading time = 3100.8225 ms
+                    DataSet Processing Time = 0.018389 ms
+                    DataSet size = NOT MEASURED
+            [END SEQUENCE]
+        Execution Report : 
+            DataSet Loading time = NOT MEASURED
+            DataSet Processing Time = 3101.1665 ms
+            DataSet size = NOT MEASURED
+        [END PARALLEL GROUP]
+        [OPERATOR] 
+            TYPE : ORDER_BY
+            ARGS : { orderingSequence = [ store_cost ] }
+        [END OPERATOR]
+    [END OPERATORS]
+    Execution Report : 
+        DataSet Loading time = NOT MEASURED
+        DataSet Processing Time = 3836.1611 ms
+        DataSet size = NOT MEASURED
+[END SEQUENCE]
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+TEST RESULT : 
+ResultSet iteration time : 157.6445 ms
+Query execution caused an occupation of 10.691788 MByte in main memory
+EXECUTION DETAILS : 
+
+[SEQUENCE]
+    [OPERATORS]
+        [PARALLEL GROUP]
+            [SEQUENCE]
+                [OPERATORS]
+                    [OPERATOR] 
+                        TYPE : LOAD_COLUMN
+                        ARGS : { Column = store_cost , Loading Type = LOAD_DATASET }
+                    [END OPERATOR]
+                [END OPERATORS]
+                Execution Report : 
+                    DataSet Loading time = NOT MEASURED
+                    DataSet Processing Time = NOT MEASURED
+                    DataSet size = 6.925392 MB
+            [END SEQUENCE]
+        Execution Report : 
+            DataSet Loading time = NOT MEASURED
+            DataSet Processing Time = 3879.4653 ms
+            DataSet size = 6.925392 MB
+        [END PARALLEL GROUP]
+        [OPERATOR] 
+            TYPE : ORDER_BY
+            ARGS : { orderingSequence = [ store_cost ] }
+        [END OPERATOR]
+    [END OPERATORS]
+    Execution Report : 
+        DataSet Loading time = NOT MEASURED
+        DataSet Processing Time = NOT MEASURED
+        DataSet size = 10.691788 MB
+[END SEQUENCE]
+
+

@@ -15,10 +15,24 @@ public abstract class LoadDataSetOperator<F extends DatasetLoadingFunction, A ex
 	public LoadDataSetOperator(ImplementationProvider provider, RelOperatorType type) {
 		super(provider, type);
 	}
+	
+	
+	public  void setInputData(IDataSet...inputData) {
+		throw new IllegalStateException("LoadDataSet operators do not accept input dataSets");
+	}
 
 	
-	public IDataSet loadDataSet (IDataProvisioner provisioner) throws DataSourceException {
-		return (IDataSet) function.apply(provisioner,args);
+	public  IDataSet execOperator(IQueryExecutor executor) throws QueryExecutionException {
+		
+		IDataProvisioner provisioner = executor.getProvisioner();
+		try {
+			return function.apply(provisioner,args);
+		} catch (DataSourceException e) {
+			throw new QueryExecutionException(
+					"An error occourred while executing operator " +operatorName
+					+" caused by : " +e.getMessage()
+					);
+		}
 	}
 	
 }

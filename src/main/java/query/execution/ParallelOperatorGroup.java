@@ -1,17 +1,12 @@
 package query.execution;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import dataprovisioner.IDataProvisioner;
 import dataset.IDataSet;
-import dataset.ILayoutManager;
 import dispatcher.MeasurementType;
-import impl.base.BaseQueryExecutor;
 import utils.ExecutionPlanNavigator;
 import utils.report.ExecutionReport;
 
@@ -19,9 +14,9 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 	
 	private List<OperatorGroup> subElements;
 	private ExecutionReport report;
-	private MaterializationOperator materializationOperator;
+	private MaterializationOperator<?, ?> materializationOperator;
 	
-	public ParallelOperatorGroup(MaterializationOperator materializationOperator) {
+	public ParallelOperatorGroup(MaterializationOperator<?,?> materializationOperator) {
 		this.report = new ExecutionReport();
 		this.subElements = new ArrayList<>();
 		this.materializationOperator = materializationOperator;
@@ -41,7 +36,7 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 				.collect(Collectors.toList());	
 		
 		IResultHolder<IDataSet> result = executor.submit(
-				getMaterializationCallable(partialResultList,executor.getlayoutManager())
+				getMaterializationCallable(partialResultList,executor)
 			);
 		
 		return result;
@@ -59,7 +54,7 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 		report.setExecutionEndTime();
 
 		IResultHolder<IDataSet> result = executor.submit(
-			getMaterializationCallable(partialResultList,executor.getlayoutManager())
+			getMaterializationCallable(partialResultList,executor)
 		);
 		
 		
@@ -91,6 +86,9 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 	private List<IResultHolder<IDataSet>> getPartialResults(IQueryExecutor executor) {
 		List<IResultHolder<IDataSet>> partialResults = new ArrayList<>();
 		for(OperatorGroup operator : subElements) {
+			
+			
+			
 			try {
 				partialResults.add(operator.execSubOperators(executor));
 			} catch (QueryExecutionException e) {
@@ -102,19 +100,20 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 	}
 	
 
-//	private  IResultHolder<IDataSet> mergePartialResults(List<IDataSet> partialResultList,IQueryExecutor executor) {
-//		
-//		IDataSet result = 
-//			executor.getlayoutManager().mergeDatasets(partialResultList);
-//		
-//		return new IResultHolder <IDataSet>() {
-//			@Override
-//			public IDataSet getResult() {
-//				return result;
-//			}
-//		};
-//	}
-
+	private Callable<IDataSet> getMaterializationCallable(List<IDataSet> partialResultList, IQueryExecutor executor) {
+		
+		IDataSet[] inputDataSets = partialResultList.toArray(new IDataSet[partialResultList.size()]);
+		materializationOperator.setInputData(inputDataSets);
+		Callable<IDataSet> result = 
+			new Callable<IDataSet>() {
+				@Override
+				public IDataSet call() throws Exception {
+					return materializationOperator.execOperator(executor);
+				}
+			};
+		return result;
+	}
+	
 	
 	@Override
 	public void addRepresentation(ExecutionPlanNavigator printer) {
@@ -141,17 +140,6 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 	}
 	
 	
-	private Callable<IDataSet> getMaterializationCallable(List<IDataSet> partialResultList,ILayoutManager layoutManager) {
-		Callable<IDataSet> result = 
-			new Callable<IDataSet>() {
-				@Override
-				public IDataSet call() throws Exception {
-					 return materializationOperator.buildDataSet(partialResultList, layoutManager);
-				}
-			};
-		return result;
-	}
-
 
 	@Override
 	public ExecutionReport getReport() {

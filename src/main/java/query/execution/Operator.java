@@ -1,5 +1,7 @@
 package query.execution;
 
+import java.util.Set;
+
 import dataset.IDataSet;
 import query.ImplementationProvider;
 import query.execution.operator.IOperatorArgs;
@@ -30,6 +32,12 @@ public abstract class Operator<F extends IOperatorFunction, A extends IOperatorA
 	}
 	
 	
+	public abstract IDataSet execOperator(IQueryExecutor executor) throws QueryExecutionException;
+	
+	
+	public  abstract void setInputData(IDataSet...inputData);
+	
+	
 	@Override
 	public void addRepresentation(ExecutionPlanNavigator printer) {
 		printer.appendLine("[OPERATOR] ");
@@ -42,7 +50,7 @@ public abstract class Operator<F extends IOperatorFunction, A extends IOperatorA
 	}
 	
 	
-	
+	@Override
 	public void addRepresentationWithReport(ExecutionPlanNavigator printer ) {
 		addRepresentation(printer);
 	}
