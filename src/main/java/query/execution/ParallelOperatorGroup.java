@@ -7,17 +7,18 @@ import java.util.stream.Collectors;
 
 import dataset.IDataSet;
 import dispatcher.MeasurementType;
+import objectexplorer.MemoryMeasurer;
 import utils.ExecutionPlanNavigator;
-import utils.report.ExecutionReport;
+import utils.report.OperatorGroupReport;
 
 public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement{
 	
 	private List<OperatorGroup> subElements;
-	private ExecutionReport report;
-	private MaterializationOperator<?, ?> materializationOperator;
+	private OperatorGroupReport report;
+	private MaterializationOperator<?,?> materializationOperator;
 	
 	public ParallelOperatorGroup(MaterializationOperator<?,?> materializationOperator) {
-		this.report = new ExecutionReport();
+		this.report = new OperatorGroupReport();
 		this.subElements = new ArrayList<>();
 		this.materializationOperator = materializationOperator;
 	}
@@ -30,16 +31,7 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 	
 	@Override
 	public IResultHolder<IDataSet> execSubOperators(IQueryExecutor executor) {
-		List<IResultHolder<IDataSet>> partialResults = getPartialResults(executor);
-		List<IDataSet> partialResultList = partialResults.stream()
-				.map(datasetHolder->datasetHolder.getResult())
-				.collect(Collectors.toList());	
-		
-		IResultHolder<IDataSet> result = executor.submit(
-				getMaterializationCallable(partialResultList,executor)
-			);
-		
-		return result;
+		return execSubOperators(executor, MeasurementType.NONE);
 	}
 
 	
@@ -53,19 +45,35 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 				.collect(Collectors.toList());	
 		report.setExecutionEndTime();
 
-		IResultHolder<IDataSet> result = executor.submit(
-			getMaterializationCallable(partialResultList,executor)
-		);
+		report.setMaterializationStartTime();
+		IDataSet result = executor
+				.submit(getMaterializationCallable(partialResultList,executor))
+				.getResult();
+		report.setMaterializationEndTime();
 		
 		
 		if (measurement == MeasurementType.EVALUATE_MEMORY_OCCUPATION) {
-			float totalMemoryOccupied = 0;
+			float subOperatorsMemOccupation = 0;
 			for(OperatorGroup op : subElements) {
-				totalMemoryOccupied += op.getReport().getMemoryOccupationMB();
+				subOperatorsMemOccupation += op.getReport().getMemoryOccupationMB();
 			}
-			report.setMemoryOccupationMByte(totalMemoryOccupied);
+			
+			long materializationMemOccupation = 
+					MemoryMeasurer.measureBytes(result);
+			System.out.println("Materialization Occupation : " + materializationMemOccupation);
+			System.out.println("SubOperators Occupation : " +subOperatorsMemOccupation);
+			float totalMemOccupation = 
+					(((float)materializationMemOccupation)/(1024*1024)) +
+					subOperatorsMemOccupation;
+			report.setMemoryOccupationMByte(totalMemOccupation);
 		}
-		return result;
+		
+		return new IResultHolder<IDataSet>() {
+			@Override
+			public IDataSet getResult() {
+				return result;
+			}
+		};
 	}
 
 
@@ -74,23 +82,6 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 		for(OperatorGroup operator : subElements) {
 			try {
 				partialResults.add(operator.execSubOperators(executor,measurement));
-			} catch (QueryExecutionException e) {
-				//TODO Manage exception
-				e.printStackTrace();
-			}
-		}
-		return partialResults;
-	}
-	
-	
-	private List<IResultHolder<IDataSet>> getPartialResults(IQueryExecutor executor) {
-		List<IResultHolder<IDataSet>> partialResults = new ArrayList<>();
-		for(OperatorGroup operator : subElements) {
-			
-			
-			
-			try {
-				partialResults.add(operator.execSubOperators(executor));
 			} catch (QueryExecutionException e) {
 				//TODO Manage exception
 				e.printStackTrace();
@@ -118,11 +109,17 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 	@Override
 	public void addRepresentation(ExecutionPlanNavigator printer) {
 		printer.appendLine("[PARALLEL GROUP]");
+		
 		for( ExecutionPlanElement e : subElements) {
 			printer.addIndentation();
 			e.addRepresentation(printer);
 			printer.removeIndentation();
 		}
+		
+		printer.addIndentation();
+		materializationOperator.addRepresentation(printer);
+		printer.removeIndentation();
+		
 		printer.appendLine("[END PARALLEL GROUP]");
 	}
 
@@ -130,11 +127,17 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 	@Override
 	public void addRepresentationWithReport(ExecutionPlanNavigator printer) {
 		printer.appendLine("[PARALLEL GROUP]");
+		
 		for( ExecutionPlanElement e : subElements) {
 			printer.addIndentation();
 			e.addRepresentationWithReport(printer);
 			printer.removeIndentation();
 		}
+		
+		printer.addIndentation();
+		materializationOperator.addRepresentationWithReport(printer);
+		printer.removeIndentation();
+		
 		report.addRepresentation(printer);
 		printer.appendLine("[END PARALLEL GROUP]");
 	}
@@ -142,7 +145,7 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 	
 
 	@Override
-	public ExecutionReport getReport() {
+	public OperatorGroupReport getReport() {
 		return report;
 	}
 

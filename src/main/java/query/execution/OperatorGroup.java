@@ -7,7 +7,7 @@ import dataset.IDataSet;
 import dispatcher.MeasurementType;
 import impl.base.BaseQueryExecutor;
 import utils.ExecutionPlanNavigator;
-import utils.report.ExecutionReport;
+import utils.report.OperatorGroupReport;
 
 public interface OperatorGroup extends ExecutionPlanElement{
 
@@ -15,7 +15,7 @@ public interface OperatorGroup extends ExecutionPlanElement{
 
 	public IResultHolder<IDataSet> execSubOperators(IQueryExecutor executor, MeasurementType measurement) throws QueryExecutionException;
 
-	public ExecutionReport getReport();
+	public OperatorGroupReport getReport();
 	
 }
 

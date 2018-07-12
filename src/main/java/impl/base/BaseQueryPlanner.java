@@ -26,7 +26,7 @@ import query.builder.statement.FilterStatement;
 import query.builder.statement.ProjectionStatement;
 import query.builder.statement.SelectionStatement;
 import query.execution.ExecutionPlan;
-import query.execution.IntermediateSequentialGroup;
+import query.execution.SequentialOperatorGroup;
 import query.execution.operator.filteroncolumn.FilterOnColumnArgs;
 import query.execution.operator.filteroncolumn.FilterOnColumnFunction;
 import query.execution.operator.filteroncolumn.FilterOnColumnOperator;
@@ -75,13 +75,15 @@ public class BaseQueryPlanner extends QueryPlanner {
 		setProjectionOperators(filterStatements, unfilteredFields);
 		setFilterOperators(filterStatements,filterClause);
 		
-		IntermediateSequentialGroup rootExecutable = new IntermediateSequentialGroup();
-		rootExecutable.addSubElement(filterStatements);
+		SequentialOperatorGroup rootExecutable = new SequentialOperatorGroup();
+		rootExecutable.queueSubElement(filterStatements);
 		
-		OrderByOperator orderByOp = new OrderByOperator(implementationProvider);
-		orderByOp.getArgs().setOrderingSequence(orderByClause.getOrderingSequence());
-		rootExecutable.addSubElement(orderByOp);
-		
+		if( ! (orderByClause.getOrderingSequence().isEmpty())) {
+			OrderByOperator orderByOp = new OrderByOperator(implementationProvider);
+			orderByOp.getArgs().setOrderingSequence(orderByClause.getOrderingSequence());
+			rootExecutable.queueSubElement(orderByOp);
+		}
+			
 		ExecutionPlan execPlan = new ExecutionPlan(rootExecutable);
 		return execPlan;
 		
@@ -110,7 +112,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 					FilterOnMultipleColumnArgs filterArgs = filterOperator.getArgs();
 					filterArgs.setFields(group.getFields());
 					filterArgs.setStatements(group.getStatements());
-					exSequence.queueOperator(filterOperator);
+					exSequence.queueSubElement(filterOperator);
 				}else if (group.getFields().size() == 1) {
 					FilterOnColumnOperator filterOperator = new FilterOnColumnOperator(implementationProvider);
 					FilterOnColumnArgs filterArgs = filterOperator.getArgs();
@@ -127,7 +129,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 					
 					
 					filterArgs.setStatements(castedStatements);
-					exSequence.queueOperator(filterOperator);
+					exSequence.queueSubElement(filterOperator);
 				}
 				
 				rootExecutable.addSubElement(exSequence);

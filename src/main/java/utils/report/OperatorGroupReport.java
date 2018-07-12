@@ -2,7 +2,7 @@ package utils.report;
 
 import utils.ExecutionPlanNavigator;
 
-public class ExecutionReport {
+public class OperatorGroupReport {
 	
 	private static final int MS_CONVERSION_FACTOR = 1000*1000;
 	private static final int MB_CONVERSION_FACTOR = 1024*1024;
@@ -11,16 +11,21 @@ public class ExecutionReport {
 	
 	private long executionStartTime;
 	private long executionEndTime;
+	
 	private long dataLoadingStartTIme;
 	private long dataLoadingEndTIme;
 	
+	private long materializationStartTime;
+	private long materializationEndTime;
+	
+	
 	private float memoryOccupation;
 	
-	public ExecutionReport() {
-		executionStartTime = executionEndTime = dataLoadingEndTIme = dataLoadingStartTIme = 0;
+	public OperatorGroupReport() {
+		executionStartTime = executionEndTime = dataLoadingEndTIme = dataLoadingStartTIme = materializationEndTime = materializationStartTime = 0;
 	}
 	
-	
+	/*Execution Time Measurements */
 	public void setExecutionStartTime() {
 		this.executionStartTime = System.nanoTime();
 	}
@@ -33,6 +38,16 @@ public class ExecutionReport {
 	public void setDataLoadingEndTIme() {
 		this.dataLoadingEndTIme = System.nanoTime();
 	}
+	public void setMaterializationStartTime() {
+		this.materializationStartTime = System.nanoTime();
+	}
+	public void setMaterializationEndTime() {
+		this.materializationEndTime = System.nanoTime();
+	}
+	/*_____________________________*/
+	
+	
+	/*Memory Occupation Measurements */
 	public void setMemoryOccupationByte(long memoryOccupation) {
 		this.memoryOccupation = convertToMb(memoryOccupation);
 	}
@@ -40,19 +55,16 @@ public class ExecutionReport {
 	public void setMemoryOccupationMByte(float memoryOccupation) {
 		this.memoryOccupation = memoryOccupation;
 	}
+	/*_____________________________*/
+
 	
-	
-	
-	
-	private String printExecutionTime() {
+	private void printExecutionTime(ExecutionPlanNavigator printer) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("DataSet Processing Time = ") ;
 		if((executionStartTime != 0) || (executionEndTime != 0)) {
-			sb.append(getExecutionTimeMs()).append(" ms");
-		}else {
-			sb.append(NOT_MEASURED_MSG);
+			sb.append("DataSet Processing Time = ") ;
+			sb.append( formatValue(getExecutionTimeMs()) ).append(" ms");
+			printer.appendLine(sb.toString());
 		}
-		return sb.toString();
 	}
 	
 	
@@ -61,33 +73,42 @@ public class ExecutionReport {
 	}
 	
 	
-	private String printDataSetLoadingTime() {
+	private void printDataSetLoadingTime(ExecutionPlanNavigator printer) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("DataSet Loading time = ");
 		if((dataLoadingStartTIme != 0) || (dataLoadingEndTIme != 0)) {
-			sb.append(getDataSetLoadingTimeMs()).append(" ms");
-		}else {
-			sb.append(NOT_MEASURED_MSG);
+			sb.append("DataSet Loading time = ");
+			sb.append( formatValue(getDataSetLoadingTimeMs()) ).append(" ms");
+			printer.appendLine(sb.toString());
 		}
-		return sb.toString();
 	}
-	
 	
 	public float getDataSetLoadingTimeMs() {
 		return convertToMs(dataLoadingEndTIme - dataLoadingStartTIme);
 	}
-
-
-	private String printMemoryOccupation() {
+	
+	
+	private void printMaterializationTime(ExecutionPlanNavigator printer) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("DataSet size = ");
-		if(memoryOccupation != 0) {
-			sb.append(getMemoryOccupationMB()).append(" MB");
-		}else {
-			sb.append(NOT_MEASURED_MSG);
+		if((materializationStartTime != 0) || (materializationEndTime != 0)) {
+			sb.append("Materialization time = ");
+			sb.append( formatValue(getMaterializationTimeMs()) ).append(" ms");
+			printer.appendLine(sb.toString());
 		}
-			
-		return sb.toString();
+	}
+	
+	public float getMaterializationTimeMs() {
+		return convertToMs(materializationEndTime - materializationStartTime);
+	}
+
+
+	private void printMemoryOccupation(ExecutionPlanNavigator printer) {
+		StringBuilder sb = new StringBuilder();
+		if(memoryOccupation != 0) {
+			sb.append("DataSet size = ")
+			.append(formatValue(getMemoryOccupationMB()))
+			.append(" MB");
+			printer.appendLine(sb.toString());
+		}
 	}
 	
 	
@@ -104,6 +125,11 @@ public class ExecutionReport {
 	private float convertToMb (long bytes) {
 		return Float.valueOf(bytes)/ MB_CONVERSION_FACTOR;
 	}
+	
+	
+	public String formatValue(float floatValue) {
+		return String.format("%.2f", floatValue);
+	}
 
 
 	public void addRepresentation(ExecutionPlanNavigator printer) {
@@ -111,10 +137,11 @@ public class ExecutionReport {
 		printer.appendLine("Execution Report : ");
 		printer.addIndentation();
 		
-		printer.appendLine(printDataSetLoadingTime());
-		printer.appendLine(printExecutionTime());
-		printer.appendLine(printMemoryOccupation());
-		
+		printDataSetLoadingTime(printer);
+		printExecutionTime(printer);
+		printMaterializationTime(printer);
+		printMemoryOccupation(printer);
+
 		printer.removeIndentation();
 	}
 

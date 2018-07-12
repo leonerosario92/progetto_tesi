@@ -1,7 +1,7 @@
 package query.execution;
 
 import utils.ExecutionPlanNavigator;
-import utils.report.ExecutionReport;
+import utils.report.OperatorGroupReport;
 
 public interface ExecutionPlanElement {
 	

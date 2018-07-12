@@ -10,7 +10,7 @@ import objectexplorer.MemoryMeasurer;
 import query.IQueryPlanner;
 import query.builder.Query;
 import query.execution.QueryExecutionException;
-import utils.report.ExecutionReport;
+import utils.report.OperatorGroupReport;
 import query.execution.ExecutionPlan;
 import query.execution.IQueryExecutor;
 
@@ -40,7 +40,7 @@ public class BaseQueryDispatcher extends QueryDispatcher {
 		String plan = queryPlan.toString();
 		
 		result = executor.executePlan(queryPlan,measurementType);
-		ExecutionReport report = queryPlan.getExecutionReport();
+		OperatorGroupReport report = queryPlan.getExecutionReport();
 		query.setExecutionTime(report.getExecutionTimeMs());
 		query.setMemoryOccupation(report.getMemoryOccupationMB());
 		query.setExecutionReport(queryPlan.printReport());

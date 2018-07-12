@@ -8,7 +8,7 @@ import query.execution.operator.IOperatorArgs;
 import query.execution.operator.IOperatorFunction;
 import query.execution.operator.RelOperatorType;
 import utils.ExecutionPlanNavigator;
-import utils.report.ExecutionReport;
+import utils.report.OperatorGroupReport;
 
 
 public abstract class Operator<F extends IOperatorFunction, A extends IOperatorArgs> implements ExecutionPlanElement{
@@ -16,7 +16,7 @@ public abstract class Operator<F extends IOperatorFunction, A extends IOperatorA
 	protected A args;
 	protected F function;
 	protected String operatorName;
-	protected ExecutionReport report;
+	protected OperatorGroupReport report;
 	
 	
 	public Operator(ImplementationProvider provider, RelOperatorType type) { }	
@@ -27,7 +27,7 @@ public abstract class Operator<F extends IOperatorFunction, A extends IOperatorA
 	}
 	
 	
-	public ExecutionReport getReport() {
+	public OperatorGroupReport getReport() {
 		return report;
 	}
 	

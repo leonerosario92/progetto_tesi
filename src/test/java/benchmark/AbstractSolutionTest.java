@@ -98,7 +98,7 @@ public abstract class AbstractSolutionTest {
 			
 			
 			/* RIPRSTINARE QUERY ORIGINALE */
-			query = getTestQuery(context);
+			query = getScanSmallDataSetQuery(context);
 			/*_____________________________*/
 			
 			
@@ -134,11 +134,11 @@ public abstract class AbstractSolutionTest {
 		
 		Query query = context.query()
 		.select(salesTable)
-//		.project(storeSales)
-//		.project(unitSales)
+		.project(storeSales)
+		.project(unitSales)
 		.project(storeCost)
 		.orderBy(storeCost
-//				,unitSales
+				,unitSales
 				)
 		.getQuery();
 		
@@ -197,13 +197,13 @@ public abstract class AbstractSolutionTest {
 		StringBuilder sb = new StringBuilder();
 		sb.append("TEST RESULT : ");
 		if(query.getExecutionTime() != 0) {
-			sb.append(LINE_SEPARATOR).append("Query execution time : " +query.getExecutionTime() + " ms");
+			sb.append(LINE_SEPARATOR).append("Overall execution time : " +query.getExecutionTime() + " ms");
 		}
 		if(query.getResultIterationTime() != 0) {
 			sb.append(LINE_SEPARATOR).append("ResultSet iteration time : " + query.getResultIterationTime() + " ms");
 		}
 		if(query.getMemoryOccupation() != 0) {
-			sb.append(LINE_SEPARATOR).append("Query execution caused an occupation of " + query.getMemoryOccupation() + " MByte in main memory");
+			sb.append(LINE_SEPARATOR).append("Oveall main memory occupation : " + query.getMemoryOccupation() + " MByte");
 		}
 		if(! query.getExecutionReport().isEmpty()) {
 			sb.append(LINE_SEPARATOR).append("EXECUTION DETAILS : ").append(LINE_SEPARATOR).append(query.getExecutionReport());
