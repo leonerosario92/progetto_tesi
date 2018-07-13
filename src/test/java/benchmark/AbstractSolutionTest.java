@@ -77,19 +77,19 @@ public abstract class AbstractSolutionTest {
 		
 	}
 	
+	
+	@Test
+	public void TestScanSmallDataSetMemoryOccupation(){
+		executeTest(MeasurementType.EVALUATE_MEMORY_OCCUPATION);
+	}
+	
+	
 	@Test
 	public void TestScanSmallDataSetExecutionTime(){
 		executeTest(MeasurementType.EVALUATE_EXECUTION_TIME);
 	}
 	
 	
-	@Test
-	public void TestScanSmallDataSetMemoryOccupation(){
-		executeTest(MeasurementType.EVALUATE_MEMORY_OCCUPATION);
-	}
-		
-		
-
 	private void executeTest(MeasurementType measurementType) {
 		String testReport = new String();
 		Query query = null;

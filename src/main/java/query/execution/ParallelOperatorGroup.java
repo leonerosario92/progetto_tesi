@@ -23,7 +23,6 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 	private boolean executed;
 	private long executionStartTime;
 	private long executionEndTime;
-	private long materializedDatesetSize;
 	
 	
 	public ParallelOperatorGroup(MaterializationOperator<?,?> materializationOperator) {
@@ -33,7 +32,6 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 		this.generatesNewDataSet = false;
 		
 		executionStartTime = executionEndTime = 0;
-		materializedDatesetSize = 0;
 		
 		executed = false;
 	}
@@ -67,12 +65,10 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 
 //		report.setMaterializationStartTime();
 		IDataSet result = executor
-				.submit(getMaterializationCallable(partialResultList,executor))
+				.submit(getMaterializationCallable(partialResultList,executor,measurement))
 				.getResult();
 		
-		if(measurement.equals(MeasurementType.EVALUATE_MEMORY_OCCUPATION)) {
-			this.materializedDatesetSize = MemoryMeasurer.measureBytes(result);
-		}
+
 //		report.setMaterializationEndTime();
 		
 		
@@ -114,7 +110,11 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 	}
 	
 
-	private Callable<IDataSet> getMaterializationCallable(List<IDataSet> partialResultList, IQueryExecutor executor) {
+	private Callable<IDataSet> getMaterializationCallable(
+			List<IDataSet> partialResultList,
+			IQueryExecutor executor,
+			MeasurementType measurement
+	){
 		
 		IDataSet[] inputDataSets = partialResultList.toArray(new IDataSet[partialResultList.size()]);
 		materializationOperator.setInputData(inputDataSets);
@@ -122,7 +122,7 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 			new Callable<IDataSet>() {
 				@Override
 				public IDataSet call() throws Exception {
-					return materializationOperator.execOperator(executor);
+					return materializationOperator.execOperator(executor,measurement);
 				}
 			};
 		return result;
@@ -179,9 +179,9 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 			printer.removeIndentation();
 		}
 		
-//		printer.addIndentation();
-//		materializationOperator.addRepresentationWithReport(printer);
-//		printer.removeIndentation();
+		printer.addIndentation();
+		materializationOperator.addRepresentationWithReport(printer);
+		printer.removeIndentation();
 //		
 //		report.addRepresentation(printer);
 		printer.appendLine("[END PARALLEL GROUP]");
@@ -197,7 +197,7 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 		}
 		
 		ReportAggregator result = new ReportAggregator();
-		result.setMemoryOccupationByte(materializedDatesetSize);
+		result.sumMemoryOccupationMByte(materializationOperator.getReport().getMemoryOccupationMB());
 		for(OperatorGroup op : subElements) {
 			if(op.generatesNewDataSet()) {
 				result.sumMemoryOccupationMByte(
