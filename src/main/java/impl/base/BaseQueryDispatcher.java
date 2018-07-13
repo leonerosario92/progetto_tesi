@@ -1,18 +1,13 @@
 package impl.base;
 
 import dataset.IDataSet;
-import dataset.IRecordIterator;
-import datasource.IDataSource;
 import datasource.IRecordScanner;
 import dispatcher.MeasurementType;
 import dispatcher.QueryDispatcher;
-import objectexplorer.MemoryMeasurer;
-import query.IQueryPlanner;
 import query.builder.Query;
 import query.execution.QueryExecutionException;
-import utils.report.OperatorGroupReport;
+import utils.report.IExecutionReport;
 import query.execution.ExecutionPlan;
-import query.execution.IQueryExecutor;
 
 public class BaseQueryDispatcher extends QueryDispatcher {
 	
@@ -40,7 +35,7 @@ public class BaseQueryDispatcher extends QueryDispatcher {
 		String plan = queryPlan.toString();
 		
 		result = executor.executePlan(queryPlan,measurementType);
-		OperatorGroupReport report = queryPlan.getExecutionReport();
+		IExecutionReport report = queryPlan.getExecutionReport();
 		query.setExecutionTime(report.getExecutionTimeMs());
 		query.setMemoryOccupation(report.getMemoryOccupationMB());
 		query.setExecutionReport(queryPlan.printReport());

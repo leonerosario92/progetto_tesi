@@ -1,18 +1,14 @@
 package query.execution;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 import dataset.IDataSet;
 import dispatcher.MeasurementType;
 import objectexplorer.MemoryMeasurer;
-import query.execution.operator.DataSetProcessingFunction;
-import query.execution.operator.DatasetLoadingFunction;
-import query.execution.operator.filteronmultiplecolumn.FilterOnMultipleColumnOperator;
 import utils.ExecutionPlanNavigator;
+import utils.report.IExecutionReport;
 import utils.report.OperatorGroupReport;
 
 public class SequentialOperatorGroup implements OperatorGroup {
@@ -21,11 +17,13 @@ public class SequentialOperatorGroup implements OperatorGroup {
 	private OperatorGroupReport report; 
 	private IDataSet inputDataSet;
 	private LoadDataSetOperator dataLoader;
+	private boolean generatesNewDataSet;
 	
 
 	public SequentialOperatorGroup() {
 			this.report = new OperatorGroupReport();
 			this.subElements = new LinkedList<>();
+			this.generatesNewDataSet = false;
 	}
 	
 	
@@ -38,15 +36,22 @@ public class SequentialOperatorGroup implements OperatorGroup {
 	public SequentialOperatorGroup(LoadDataSetOperator dataLoader) {
 		this();
 		this.dataLoader = dataLoader;
+		this.generatesNewDataSet = true;
 	}
 	
 	
 	public void addSubElement(ExecutionPlanElement subElement, int position) {
+		if(subElement.generatesNewDataSet()) {
+			this.generatesNewDataSet = true;
+		}
 		subElements.add(position,subElement);
 	}
 
 	
 	public void queueSubElement(ExecutionPlanElement subElement) {
+		if(subElement.generatesNewDataSet()) {
+			this.generatesNewDataSet = true;
+		}
 		subElements.addLast(subElement);
 	}
 	
@@ -60,8 +65,23 @@ public class SequentialOperatorGroup implements OperatorGroup {
 	@Override
 	public IResultHolder<IDataSet> execSubOperators(IQueryExecutor executor, MeasurementType measurement) {
 		Callable<IDataSet> callable = getCallable(executor,measurement);
-		IResultHolder<IDataSet> result = executor.submit(callable);
-		return result;
+		
+		IDataSet result = executor.submit(callable).getResult();
+//		IResultHolder<IDataSet> result = result = executor.submit(callable);
+		for(ExecutionPlanElement subElement : subElements) {
+			if(subElement.generatesNewDataSet()) {
+				this.report.sumMemoryOccupationMByte(
+						subElement.getReport().getMemoryOccupationMB());
+			}
+		}
+		
+		return new IResultHolder<IDataSet>() {
+			@Override
+			public IDataSet getResult() {
+				return result;
+			}
+		};
+//		return result;
 	}
 		
 		
@@ -72,15 +92,13 @@ public class SequentialOperatorGroup implements OperatorGroup {
 				
 				if(dataLoader != null) {
 					report.setDataLoadingStartTIme();
-					inputDataSet = dataLoader.execOperator(executor);
+					inputDataSet = dataLoader.execOperator(executor,measurement);
 					report.setDataLoadingEndTIme();
+					report.sumMemoryOccupationMByte(
+							dataLoader.getReport().getMemoryOccupationMB());
 				}
 				
 				IDataSet result = execOperatorSequence(executor,measurement);
-				
-				if(measurement.equals(MeasurementType.EVALUATE_MEMORY_OCCUPATION)) {
-					report.setMemoryOccupationByte(MemoryMeasurer.measureBytes(result));
-				}
 				return result;
 			}
 		};
@@ -101,7 +119,7 @@ public class SequentialOperatorGroup implements OperatorGroup {
 						.execSubOperators(executor,measurement).getResult();
 			}else if(nextOperator instanceof Operator) {
 				((Operator)nextOperator).setInputData(currentDataSet);
-				currentDataSet = ((Operator) nextOperator).execOperator(executor);
+				currentDataSet = ((Operator) nextOperator).execOperator(executor,measurement);
 			}
 		}
 		report.setExecutionEndTime();
@@ -149,11 +167,14 @@ public class SequentialOperatorGroup implements OperatorGroup {
 
 
 		@Override
-		public OperatorGroupReport getReport() {
+		public IExecutionReport getReport() {
 			return report;
 		}
 
 
-
-		
+		@Override
+		public boolean generatesNewDataSet() {
+			return this.generatesNewDataSet;
+		}
+	
 }

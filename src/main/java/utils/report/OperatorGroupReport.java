@@ -2,12 +2,10 @@ package utils.report;
 
 import utils.ExecutionPlanNavigator;
 
-public class OperatorGroupReport {
+public class OperatorGroupReport implements IExecutionReport {
 	
 	private static final int MS_CONVERSION_FACTOR = 1000*1000;
 	private static final int MB_CONVERSION_FACTOR = 1024*1024;
-	
-	private static final String NOT_MEASURED_MSG = "NOT MEASURED";
 	
 	private long executionStartTime;
 	private long executionEndTime;
@@ -26,9 +24,11 @@ public class OperatorGroupReport {
 	}
 	
 	/*Execution Time Measurements */
+	@Override
 	public void setExecutionStartTime() {
 		this.executionStartTime = System.nanoTime();
 	}
+	@Override
 	public void setExecutionEndTime() {
 		this.executionEndTime = System.nanoTime();
 	}
@@ -48,12 +48,21 @@ public class OperatorGroupReport {
 	
 	
 	/*Memory Occupation Measurements */
+	@Override
 	public void setMemoryOccupationByte(long memoryOccupation) {
 		this.memoryOccupation = convertToMb(memoryOccupation);
 	}
 	
+	public void sumMemoryOccupationByte(long memoryOccupation) {
+		this.memoryOccupation += convertToMb(memoryOccupation);
+	}
+	
 	public void setMemoryOccupationMByte(float memoryOccupation) {
 		this.memoryOccupation = memoryOccupation;
+	}
+	
+	public void sumMemoryOccupationMByte(float memoryOccupation) {
+		this.memoryOccupation += memoryOccupation;
 	}
 	/*_____________________________*/
 
@@ -67,7 +76,7 @@ public class OperatorGroupReport {
 		}
 	}
 	
-	
+	@Override
 	public float getExecutionTimeMs() {
 		return convertToMs(executionEndTime - executionStartTime);
 	}
@@ -111,7 +120,7 @@ public class OperatorGroupReport {
 		}
 	}
 	
-	
+	@Override
 	public float getMemoryOccupationMB() {
 		return memoryOccupation;
 	}

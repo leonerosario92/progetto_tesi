@@ -13,7 +13,7 @@ public abstract class LoadDataSetOperator<F extends DatasetLoadingFunction, A ex
 	
 	
 	public LoadDataSetOperator(ImplementationProvider provider, RelOperatorType type) {
-		super(provider, type);
+		super(provider, type, true);
 	}
 	
 	

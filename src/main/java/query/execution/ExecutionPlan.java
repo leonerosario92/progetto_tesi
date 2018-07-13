@@ -1,6 +1,7 @@
 package query.execution;
 
 import utils.ExecutionPlanNavigator;
+import utils.report.IExecutionReport;
 import utils.report.OperatorGroupReport;
 
 public class ExecutionPlan {
@@ -28,7 +29,7 @@ public class ExecutionPlan {
 		return navigator.toString();
 	}
 	
-	public OperatorGroupReport getExecutionReport() {
+	public IExecutionReport getExecutionReport() {
 		return rootExecutable.getReport();
 	}
 	

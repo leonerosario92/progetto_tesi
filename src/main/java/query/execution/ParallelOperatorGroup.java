@@ -9,6 +9,7 @@ import dataset.IDataSet;
 import dispatcher.MeasurementType;
 import objectexplorer.MemoryMeasurer;
 import utils.ExecutionPlanNavigator;
+import utils.report.IExecutionReport;
 import utils.report.OperatorGroupReport;
 
 public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement{
@@ -16,15 +17,20 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 	private List<OperatorGroup> subElements;
 	private OperatorGroupReport report;
 	private MaterializationOperator<?,?> materializationOperator;
+	private boolean generatesNewDataSet;
 	
 	public ParallelOperatorGroup(MaterializationOperator<?,?> materializationOperator) {
 		this.report = new OperatorGroupReport();
 		this.subElements = new ArrayList<>();
 		this.materializationOperator = materializationOperator;
+		this.generatesNewDataSet = false;
 	}
 	
 	
 	public void addSubElement(OperatorGroup subElement) {
+		if(subElement.generatesNewDataSet()) {
+			this.generatesNewDataSet = true;
+		}
 		subElements.add(subElement);
 	}
 	
@@ -57,15 +63,11 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 			for(OperatorGroup op : subElements) {
 				subOperatorsMemOccupation += op.getReport().getMemoryOccupationMB();
 			}
+			report.setMemoryOccupationMByte(subOperatorsMemOccupation);
 			
 			long materializationMemOccupation = 
 					MemoryMeasurer.measureBytes(result);
-			System.out.println("Materialization Occupation : " + materializationMemOccupation);
-			System.out.println("SubOperators Occupation : " +subOperatorsMemOccupation);
-			float totalMemOccupation = 
-					(((float)materializationMemOccupation)/(1024*1024)) +
-					subOperatorsMemOccupation;
-			report.setMemoryOccupationMByte(totalMemOccupation);
+			report.sumMemoryOccupationByte(materializationMemOccupation);
 		}
 		
 		return new IResultHolder<IDataSet>() {
@@ -145,8 +147,14 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 	
 
 	@Override
-	public OperatorGroupReport getReport() {
+	public IExecutionReport getReport() {
 		return report;
+	}
+
+
+	@Override
+	public boolean generatesNewDataSet() {
+		return generatesNewDataSet;
 	}
 
 

@@ -12,7 +12,7 @@ public abstract class ProcessDataSetOperator<F extends DataSetProcessingFunction
 	private IDataSet inputDataSet;
 	
 	public ProcessDataSetOperator(ImplementationProvider provider, RelOperatorType type) {
-		super(provider, type);
+		super(provider, type, false);
 		hasInputDataSet = false;
 	}
 	
@@ -34,5 +34,5 @@ public abstract class ProcessDataSetOperator<F extends DataSetProcessingFunction
 		
 		return function.apply(inputDataSet, args);
 	}
-	
+		
 }

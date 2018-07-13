@@ -17,7 +17,7 @@ public abstract class MaterializationOperator <F extends MaterializationFunction
 	
 	
 	public MaterializationOperator(ImplementationProvider provider, RelOperatorType type) {
-		super(provider, type);
+		super(provider, type, true);
 		inputDataSets = new ArrayList<>();
 	}
 	
@@ -37,5 +37,5 @@ public abstract class MaterializationOperator <F extends MaterializationFunction
 		ILayoutManager layoutManager = executor.getlayoutManager();
 		return function.apply(inputDataSets,layoutManager,args);
 	}
-
+	
 }

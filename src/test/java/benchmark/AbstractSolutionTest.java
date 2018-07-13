@@ -10,6 +10,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -76,7 +77,7 @@ public abstract class AbstractSolutionTest {
 		
 	}
 	
-	
+	@Ignore
 	@Test
 	public void TestScanSmallDataSetExecutionTime(){
 		executeTest(MeasurementType.EVALUATE_EXECUTION_TIME);
@@ -203,7 +204,7 @@ public abstract class AbstractSolutionTest {
 			sb.append(LINE_SEPARATOR).append("ResultSet iteration time : " + query.getResultIterationTime() + " ms");
 		}
 		if(query.getMemoryOccupation() != 0) {
-			sb.append(LINE_SEPARATOR).append("Oveall main memory occupation : " + query.getMemoryOccupation() + " MByte");
+			sb.append(LINE_SEPARATOR).append("Overall main memory occupation : " + query.getMemoryOccupation() + " MByte");
 		}
 		if(! query.getExecutionReport().isEmpty()) {
 			sb.append(LINE_SEPARATOR).append("EXECUTION DETAILS : ").append(LINE_SEPARATOR).append(query.getExecutionReport());

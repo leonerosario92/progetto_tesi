@@ -31,6 +31,10 @@ public class ExecutionPlanNavigator {
 			.append(line);
 	}
 	
+	public void append(String line) {
+		builder.append(TABULATION).append(line);
+	}
+	
 	@Override
 	public String toString() {
 		return builder.toString();

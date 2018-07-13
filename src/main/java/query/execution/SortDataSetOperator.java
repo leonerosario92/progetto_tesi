@@ -17,7 +17,7 @@ public abstract class SortDataSetOperator<F extends SortDataSetFunction, A exten
 	
 	
 	public SortDataSetOperator(ImplementationProvider provider, RelOperatorType type) {
-		super(provider, type);
+		super(provider, type, true);
 		hasInputDataSet = false;
 	}
 	
