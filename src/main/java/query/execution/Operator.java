@@ -49,9 +49,9 @@ public abstract class Operator<F extends IOperatorFunction, A extends IOperatorA
 		report.setExecutionEndTime();
 		if(measurement.equals(MeasurementType.EVALUATE_MEMORY_OCCUPATION)) {
 			if(this.generatesNewDataSet) {
-//				long memoryOccupation = MemoryMeasurer.measureBytes(result);
-//				report.setMemoryOccupationByte(memoryOccupation);
-				report.setMemoryOccupationByte(20 *1024 *1024);
+				long memoryOccupation = MemoryMeasurer.measureBytes(result);
+				report.setMemoryOccupationByte(memoryOccupation);
+//				report.setMemoryOccupationByte(20 *1024 *1024);
 			}
 		}
 		return result;

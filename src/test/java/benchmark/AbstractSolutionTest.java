@@ -77,7 +77,6 @@ public abstract class AbstractSolutionTest {
 		
 	}
 	
-	@Ignore
 	@Test
 	public void TestScanSmallDataSetExecutionTime(){
 		executeTest(MeasurementType.EVALUATE_EXECUTION_TIME);
@@ -99,7 +98,7 @@ public abstract class AbstractSolutionTest {
 			
 			
 			/* RIPRSTINARE QUERY ORIGINALE */
-			query = getScanSmallDataSetQuery(context);
+			query = getTestQuery(context);
 			/*_____________________________*/
 			
 			

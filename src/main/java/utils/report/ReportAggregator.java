@@ -1,44 +1,46 @@
 package utils.report;
 
-import utils.ExecutionPlanNavigator;
-
-public class OperatorReport implements IExecutionReport {
+public class ReportAggregator implements IExecutionReport{
 	
 	private static final int MS_CONVERSION_FACTOR = 1000*1000;
 	private static final int MB_CONVERSION_FACTOR = 1024*1024;
-	
-	private long executionStartTime;
-	private long executionEndTime;
-	
+
+	private float executionTime;
 	private float memoryOccupation;
 	
-	public OperatorReport() {
-		executionEndTime = executionStartTime = 0;
+	public ReportAggregator() {
+		executionTime = 0;
 		memoryOccupation = 0;
 	}
-
-	public void setExecutionStartTime() {
-		this.executionStartTime = System.nanoTime();
+	
+	
+	public void setExecutionTmeMs(float executionTimeMs) {
+		this.executionTime = executionTimeMs;
 	}
-
-	public void setExecutionEndTime() {
-		this.executionEndTime = System.nanoTime();
+	
+	public void setMemoryOccupationByte(long memoryOccupationBytes) {
+		this.memoryOccupation = convertToMb(memoryOccupationBytes);
 	}
-
-	public void setMemoryOccupationByte(long memoryOccupation) {
-		this.memoryOccupation = convertToMb(memoryOccupation);	
+	
+	public void sumMemoryOccupationByte(long memoryOccupation) {
+		this.memoryOccupation += convertToMb(memoryOccupation);
 	}
-
+	
+	
+	public void sumMemoryOccupationMByte(float memoryOccupation) {
+		this.memoryOccupation += memoryOccupation;
+	}
+	
+	
 	@Override
 	public float getExecutionTimeMs() {
-		return convertToMs(executionEndTime - executionStartTime);
+		return executionTime;
 	}
 
 	@Override
 	public float getMemoryOccupationMB() {
 		return memoryOccupation;
 	}
-	
 	
 	/*TODO Move those methods in utility classes*/
 	private float convertToMs(long nanoSecond) {
@@ -57,9 +59,10 @@ public class OperatorReport implements IExecutionReport {
 	
 	private String printExecutionTime() {
 		StringBuilder sb = new StringBuilder();
-		if((executionStartTime != 0) || (executionEndTime != 0)) {
+		if(executionTime != 0) {
 			sb.append("Execution Time : ") ;
-			sb.append( formatValue(getExecutionTimeMs()) ).append(" ms");
+			sb.append( formatValue(getExecutionTimeMs()) )
+			.append(" ms");
 		}
 		return sb.toString();
 	}
@@ -80,4 +83,5 @@ public class OperatorReport implements IExecutionReport {
 	public String toString() {
 		return printExecutionTime() + "  " + printMemoryOccupation() ;
 	}
+	
 }

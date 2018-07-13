@@ -24,11 +24,9 @@ public class OperatorGroupReport implements IExecutionReport {
 	}
 	
 	/*Execution Time Measurements */
-	@Override
 	public void setExecutionStartTime() {
 		this.executionStartTime = System.nanoTime();
 	}
-	@Override
 	public void setExecutionEndTime() {
 		this.executionEndTime = System.nanoTime();
 	}
@@ -48,7 +46,6 @@ public class OperatorGroupReport implements IExecutionReport {
 	
 	
 	/*Memory Occupation Measurements */
-	@Override
 	public void setMemoryOccupationByte(long memoryOccupation) {
 		this.memoryOccupation = convertToMb(memoryOccupation);
 	}
