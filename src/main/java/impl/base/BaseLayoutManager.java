@@ -45,11 +45,11 @@ public class BaseLayoutManager extends LayoutManager {
 		 */
 		Object value;
 		int columnIndex = 0;
-		
 		while(recordScanner.next()) {
 			for(int index = 1; index <= fieldsCount; index++) {
 				value = recordScanner.getValueByColumnIndex(index);
 				columns[index].storeValueAt(value, columnIndex);
+				columnIndex ++;
 			}
 		}
 		
@@ -88,20 +88,6 @@ public class BaseLayoutManager extends LayoutManager {
 		return mergedValidityBitSet;
 	}
 
-
-//	private IDataSet buildDataSet(Iterable<IDataSet> dataSets, BitSet bitSet) {
-//		int length = bitSet.cardinality();
-//		BaseDataSet newDataSet = new BaseDataSet(length);
-//		
-//		for(IDataSet dataSet : dataSets) {
-//			for(IColumn<?> column : dataSet.getAllColumns()) {
-//				BaseColumn<?> newColumn = 
-//						((BaseColumn<?>)column).getFilteredInstance(bitSet);
-//				newDataSet.addColumn( newColumn);
-//			}
-//		}
-//		return newDataSet;
-//	}
 	
 	
 	private IDataSet buildDataSet(Iterable<IDataSet> dataSets, BitSet bitSet) {

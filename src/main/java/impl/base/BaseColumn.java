@@ -11,46 +11,45 @@ import dataset.IColumn;
 /*==== IColumn implementation ====*/
 public class BaseColumn<T> implements IColumn<T>{
 	
-	private ArrayList<T> values;
+	private Object[] values;
 	private ColumnDescriptor descriptor;
 	private int length;
 	
 	public BaseColumn(ColumnDescriptor descriptor,int length) {
 		this.descriptor = descriptor;
 		this.length = length;
-		this.values = new ArrayList<>(length);
+		this.values = new Object[length];
 	}
 	
 	public BaseColumn(ColumnDescriptor descriptor, ArrayList<T> values) {
 		this.descriptor = descriptor;
 		this.length = values.size();
-		this.values = values;
+		this.values = values.toArray(new Object[length]);
 	}
 
 	@Override
 	public Iterator<T> getColumnIterator() {
-		return values.iterator();
-	}
-
-	@Override
-	public Stream<T> getColumnStream() {
-		return values.stream();
+		return new BaseColumnIterator<T>(this);
 	}
 
 	@Override
 	public T getValueAt(int index) {
-		return values.get(index);
+		return (T)values[index];
 	}
 
 	@Override
 	public void storeValueAt(Object value, int index) {
-		T typedValue = (T) value;
-		values.add(index,typedValue);
+		values[index] = value;
 	}
 	
 	@Override
 	public ColumnDescriptor getDescriptor() {
 		return descriptor;
+	}
+	
+	@Override
+	public int getLength() {
+		return this.length;
 	}
 	
 	public BaseColumn<T> getFilteredInstance (BitSet bitSet) {

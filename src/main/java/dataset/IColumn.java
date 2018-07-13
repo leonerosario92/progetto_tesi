@@ -9,7 +9,7 @@ public interface IColumn<T> {
 
 	public Iterator<T> getColumnIterator();
 	
-	public Stream<T> getColumnStream();
+//	public Stream<T> getColumnStream();
 	
 	public T getValueAt(int index);
 	
@@ -17,4 +17,5 @@ public interface IColumn<T> {
 	
 	public ColumnDescriptor getDescriptor();
 	
+	public int getLength();
 }

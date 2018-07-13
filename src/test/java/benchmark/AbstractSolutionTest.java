@@ -37,10 +37,11 @@ public abstract class AbstractSolutionTest {
 	
 	@Rule public TestName name = new TestName();
 	
-	public static final String LOG_FILE_PATH = "log4j.xml";
+	public static final String REPORT_LOG_FILE_PATH = "log4j.xml";
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	private static final String TABULATION = "    ";
-	private static Logger LOGGER;
+	private static Logger REPORT_LOGGER;
+	private static Logger RESULT_LOGGER;
 	private static StringBuilder benchmarkReport;
 	protected ContextFactory factory;
 	protected IDataSource dataSource;
@@ -52,16 +53,16 @@ public abstract class AbstractSolutionTest {
 	@BeforeClass
 	public static void setupBeforeClass() {
 		benchmarkReport = new StringBuilder();
-		String logFilePath = LOG_FILE_PATH;
+		String logFilePath = REPORT_LOG_FILE_PATH;
 		DOMConfigurator.configure(logFilePath);
-		LOGGER = Logger.getLogger("SolutionTest");
+		REPORT_LOGGER = Logger.getLogger("SolutionTest");
 	}
 	
 	
 	@AfterClass
 	public static void tearDownAfterClass() {
 		benchmarkReport.append(LINE_SEPARATOR);
-		LOGGER.info(benchmarkReport.toString());
+		REPORT_LOGGER.info(benchmarkReport.toString());
 	}
 	
 	
@@ -98,7 +99,7 @@ public abstract class AbstractSolutionTest {
 			
 			
 			/* RIPRSTINARE QUERY ORIGINALE */
-			query = getTestQuery(context);
+			query = getScanSmallDataSetQuery(context);
 			/*_____________________________*/
 			
 			
@@ -163,6 +164,7 @@ public abstract class AbstractSolutionTest {
 			.project(storeCost)
 			.filter(storeCost, FilterStatementType.GREATER_THAN, new Integer(2))
 			.filter(unitSales, FilterStatementType.DIFFERENT_FROM, new Integer(5))
+			.orderBy(storeSales,unitSales)
 			.getQuery();
 		
 		return query;
