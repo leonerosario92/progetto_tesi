@@ -4,9 +4,11 @@ package query.builder;
 import model.FieldDescriptor;
 import model.TableDescriptor;
 import query.builder.clause.FilterClause;
+import query.builder.clause.GroupByClause;
 import query.builder.clause.OrderByClause;
 import query.builder.clause.ProjectionClause;
 import query.builder.clause.SelectionClause;
+import query.builder.statement.AggregateFilterStatement;
 import query.builder.statement.CFilterStatement;
 import query.builder.statement.FilterStatement;
 import query.builder.statement.ProjectionStatement;
@@ -18,6 +20,7 @@ public class Query {
 	private ProjectionClause projectionClause;
 	private FilterClause filterClause;
 	private OrderByClause orderByClause;
+	private GroupByClause groupByClause;
 	
 	private float executionTime;
 	private float resultIterationTime;
@@ -30,6 +33,7 @@ public class Query {
 		this.projectionClause = new ProjectionClause();
 		this.filterClause = new FilterClause();
 		this.orderByClause = new OrderByClause();
+		this.groupByClause = new GroupByClause();
 		
 		this.executionTime = this.resultIterationTime = this.memoryOccupation = 0;
 		this.executionReport = "";
@@ -60,6 +64,13 @@ public class Query {
 		orderByClause.addStatement(fields);
 	}
 	
+	public void groupBy(FieldDescriptor...fields) {
+		groupByClause.addStatement(fields);
+	}
+	
+	public void aggregateFilter(AggregateFilterStatement statement) {
+		groupByClause.addAggregateFilter(statement);
+	}
 	
 	public SelectionClause getSelectionClause() {
 		return selectionClause;
@@ -75,6 +86,10 @@ public class Query {
 	
 	public OrderByClause getOrderByClause() {
 		return orderByClause;
+	}
+	
+	public GroupByClause getGroupByClause() {
+		return groupByClause;
 	}
 
 
@@ -94,9 +109,17 @@ public class Query {
 		sb.append(QueryConstants.NEWLINE);
 		sb.append(selectionClause.writeSql());
 		
-		if( ! (filterClause.getStatements().isEmpty())) {
+		if( ! ( 
+				(filterClause.getStatements().isEmpty()) && 
+				(filterClause.getComposedStatements().isEmpty())
+			) ) {
 			sb.append(QueryConstants.NEWLINE);
 			sb.append(filterClause.writeSql());
+		}
+		
+		if( ! (groupByClause.getGroupingSequence().isEmpty())) {
+			sb.append(QueryConstants.NEWLINE);
+			sb.append(groupByClause.writeSql());
 		}
 		
 		if( ! (orderByClause.getOrderingSequence().isEmpty())) {
@@ -139,6 +162,8 @@ public class Query {
 	public String getExecutionReport() {
 		return this.executionReport;
 	}
+
+
 
 }
 	

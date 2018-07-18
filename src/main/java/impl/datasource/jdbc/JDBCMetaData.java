@@ -45,6 +45,10 @@ public class JDBCMetaData implements IMetaData {
 					int columnTypeIndex = columns.getInt("DATA_TYPE");
 					DataType columnType = typeFactory.toDataType(columnTypeIndex);
 					boolean isKey = primaryKeys.contains(columnName);
+					
+					
+					
+					
 					FieldDescriptor newField = new FieldDescriptor(newTable, columnName, columnType,isKey);
 					fields.add(newField);
 					newTable.addFields(fields);

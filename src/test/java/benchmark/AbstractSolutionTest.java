@@ -1,9 +1,6 @@
 package benchmark;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static query.builder.predicate.FilterStatementType.GREATER_THAN;
-import static query.builder.predicate.FilterStatementType.LESS_THAN;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -18,7 +15,6 @@ import org.junit.rules.TestName;
 import context.Context;
 import context.ContextFactory;
 import context.ContextFactoryException;
-import dataset.IRecordIterator;
 import datasource.IDataSource;
 import datasource.IRecordScanner;
 import dispatcher.MeasurementType;
@@ -28,8 +24,8 @@ import model.FieldDescriptor;
 import model.IMetaData;
 import model.TableDescriptor;
 import query.builder.Query;
+import query.builder.predicate.AggregateFunctionType;
 import query.builder.predicate.FilterStatementType;
-import query.builder.statement.CFilterStatement;
 import query.execution.QueryExecutionException;
 import utils.comparator.QueryResultComparator;
 
@@ -37,11 +33,13 @@ public abstract class AbstractSolutionTest {
 	
 	@Rule public TestName name = new TestName();
 	
-	public static final String REPORT_LOG_FILE_PATH = "log4j.xml";
-	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
-	private static final String TABULATION = "    ";
+	public static final String REPORT_LOG_FILE_PATH = "log4j-report-conf.xml";
+	public static final String RESULT_LOG_FILE_PATH = "log4j-result-conf.xml";
+	
 	private static Logger REPORT_LOGGER;
-	private static Logger RESULT_LOGGER;
+//	private static Logger RESULT_LOGGER;
+	
+	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	private static StringBuilder benchmarkReport;
 	protected ContextFactory factory;
 	protected IDataSource dataSource;
@@ -56,6 +54,10 @@ public abstract class AbstractSolutionTest {
 		String logFilePath = REPORT_LOG_FILE_PATH;
 		DOMConfigurator.configure(logFilePath);
 		REPORT_LOGGER = Logger.getLogger("SolutionTest");
+		
+//		logFilePath = RESULT_LOG_FILE_PATH;
+//		DOMConfigurator.configure(logFilePath);
+//		RESULT_LOGGER = Logger.getLogger("QueryResult");
 	}
 	
 	
@@ -75,7 +77,6 @@ public abstract class AbstractSolutionTest {
 			fail();
 		}
 		this.factory = getContextFactoryImpl();
-		
 	}
 	
 	
@@ -83,7 +84,6 @@ public abstract class AbstractSolutionTest {
 	public void TestScanSmallDataSetMemoryOccupation(){
 		executeTest(MeasurementType.EVALUATE_MEMORY_OCCUPATION);
 	}
-	
 	
 	@Test
 	public void TestScanSmallDataSetExecutionTime(){
@@ -99,7 +99,7 @@ public abstract class AbstractSolutionTest {
 			
 			
 			/* RIPRSTINARE QUERY ORIGINALE */
-			query = getScanSmallDataSetQuery(context);
+			query = getTestQuery(context);
 			/*_____________________________*/
 			
 			
@@ -107,13 +107,25 @@ public abstract class AbstractSolutionTest {
 			IRecordScanner resultScanner = context.executeQuery
 					(query, measurementType);	
 
-			long resultIterationStartTime = System.nanoTime();
-			boolean correctness = testQueryResult(query, resultScanner);		
-			long resultIterationEndTime = System.nanoTime();
-			assertTrue("Error : Query execution returned a result that differs from the expected one.", correctness);
+//			long resultIterationStartTime = System.nanoTime();
+//			boolean correctness = testQueryResult(query, resultScanner);		
+//			long resultIterationEndTime = System.nanoTime();
+//			assertTrue("Error : Query execution returned a result that differs from the expected one.", correctness);
+//			
+//			long iterationNanos = (resultIterationEndTime - resultIterationStartTime);
+//			query.setResultIterationTime(Float.valueOf(iterationNanos)/ (1000*1000));
+//			
+//			
 			
-			long iterationNanos = (resultIterationEndTime - resultIterationStartTime);
-			query.setResultIterationTime(Float.valueOf(iterationNanos)/ (1000*1000));
+			resultScanner.resetToFirstRecord();
+			while(resultScanner.next()) {
+				StringBuilder sb = new StringBuilder();
+				for(int i=1; i<=resultScanner.getFieldsCount(); i++) {
+					sb.append("    "+resultScanner.getValueByColumnIndex(i));
+				}
+//				RESULT_LOGGER.info(sb.toString());
+			}
+			
 			
 			testReport = writeTestReport(query);
 		} 
@@ -128,22 +140,33 @@ public abstract class AbstractSolutionTest {
 	
 	private Query getTestQuery(Context context) {
 		IMetaData metaData = context.getMetadata();
-		TableDescriptor salesTable = metaData.getTable("sales_fact_1998");
-		FieldDescriptor storeSales = salesTable.getField("store_sales");
-		FieldDescriptor unitSales = salesTable.getField("unit_sales");
-		FieldDescriptor storeCost = salesTable.getField("store_cost");
+		TableDescriptor testTable = metaData.getTable("test_table");
+		FieldDescriptor storeSales = testTable.getField("store_sales");
+		FieldDescriptor unitSales = testTable.getField("unit_sales");
+		FieldDescriptor storeCost = testTable.getField("store_cost");
+		
+		FieldDescriptor productName = testTable.getField("product_name");
+		FieldDescriptor quarter = testTable.getField("quarter");
 		
 		Query query = context.query()
-		.select(salesTable)
-		.project(storeSales)
+		.select(testTable)
+		.project(productName)
+//		.project(storeSales)
 		.project(unitSales)
-		.project(storeCost)
-		.orderBy(storeCost
-				,unitSales
-				)
+//		.project(storeCost)
+		.filter(quarter, FilterStatementType.EQUALS_TO, new String("Q1"))
+		.groupBy(productName)
+		.aggregateFilter(
+				AggregateFunctionType.SUM, 
+				unitSales, 
+				FilterStatementType.GREATER_THAN, 
+				new Integer(135)
+		)
+//		.orderBy(productName)
+		
 		.getQuery();
 		
-		String sqlRepresentation = query.writeSql();
+		query.writeSql();
 		
 		return query;
 	}
@@ -151,7 +174,7 @@ public abstract class AbstractSolutionTest {
 
 	private Query getScanSmallDataSetQuery(Context context) {
 		IMetaData metaData = context.getMetadata();
-		TableDescriptor salesTable = metaData.getTable("sales_fact_1998");
+		TableDescriptor salesTable = metaData.getTable("test_table");
 		FieldDescriptor storeSales = salesTable.getField("store_sales");
 		FieldDescriptor unitSales = salesTable.getField("unit_sales");
 		FieldDescriptor storeCost = salesTable.getField("store_cost");
@@ -169,6 +192,21 @@ public abstract class AbstractSolutionTest {
 		
 		return query;
 	} 
+	
+	
+	private Query getScanBigDataSetQuery(Context context) {
+		IMetaData metaData = context.getMetadata();
+		TableDescriptor messageTable = metaData.getTable("message");
+		FieldDescriptor sender = messageTable.getField("sender");
+		Query query =
+		context.query()
+			.select(messageTable)
+			.project(sender)
+			.orderBy(sender)
+			.getQuery();
+	
+		return query;
+	}
 	
 	
 	private boolean testQueryResult(Query query, IRecordScanner result) {

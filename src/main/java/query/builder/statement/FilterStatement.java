@@ -40,9 +40,6 @@ public abstract class FilterStatement implements CFNode {
 
 	public void setOperand(Object operand) {
 		this.rightOperand = operand;
-		if(operand instanceof FieldDescriptor) {
-			
-		}
 	}
 	
 	public Object getRightOperand() {

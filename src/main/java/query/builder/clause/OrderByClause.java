@@ -12,7 +12,7 @@ public class OrderByClause {
 	
 	private List<FieldDescriptor> orderingSequence;
 	
-	public OrderByClause(FieldDescriptor...fields) {
+	public OrderByClause() {
 		orderingSequence = new LinkedList<>();
 	}
 	
@@ -38,17 +38,22 @@ public class OrderByClause {
 		FieldDescriptor field;
 		if(it.hasNext()) {
 			field = it.next();
-			sb.append(field.getName());
+			appendField(sb, field);
 		}
 		while (it.hasNext()) {
 			field = it.next();
 			sb.append(QueryConstants.WHITESPACE_CHAR)
 			.append(QueryConstants.COMMA_CHAR)
-			.append(QueryConstants.WHITESPACE_CHAR)
-			.append(field.getName());
+			.append(QueryConstants.WHITESPACE_CHAR);
+			appendField(sb, field);
 		}
 		
 		return sb.toString();
+	}
+	
+	
+	public StringBuilder appendField (StringBuilder sb,FieldDescriptor field) {
+		return 	sb.append(field.getTable().getName() +"."+ field.getName());
 	}
 
 }

@@ -18,6 +18,15 @@ public class QueryConstants {
 	public static final String PROJECTION_CLAUSE = "SELECT";
 	public static final String FILTER_CLAUSE = "WHERE";
 	public static final String ORDER_BY_CLAUSE = "ORDER BY";
+	public static final String GROUP_BY_CLAUSE = "GROUP BY";
+	public static final String AGGREGATE_FILTER_CLAUSE = "HAVING";
+	
+	public static final String 	SUM = "SUM";
+	public static final String 	AVG = "AVG";
+	public static final String 	COUNT = "COUNT";
+	public static final String 	MIN	= "MIN";
+	public static final String 	MAX = "MAX";
+	public static final String 	DISTINCT = "DISTINCT";
 	
 	public static final String JOIN = "JOIN";
 	public static final String ON = "ON";

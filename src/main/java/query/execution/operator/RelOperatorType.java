@@ -6,5 +6,6 @@ public enum RelOperatorType {
 	LOAD_COLUMN,
 	LOAD_VERTICAL_PARTITION,
 	ORDER_BY,
+	GROUP_BY,
 	MERGE_ON_BITSETS
 }

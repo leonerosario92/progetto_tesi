@@ -12,6 +12,7 @@ import impl.base.BaseQueryExecutor;
 import impl.base.BaseQueryPlanner;
 import impl.query.execution.operator.filteroncolumn.FilterOnColumnImpl;
 import impl.query.execution.operator.filteronmultiplecolumn.FilterOnMultipleColumnImpl;
+import impl.query.execution.operator.groupBy.GroupByImpl;
 import impl.query.execution.operator.loadcolumn.LoadColumnImpl;
 import impl.query.execution.operator.loadverticalpartition.LoadVerticalPartitionImpl;
 import impl.query.execution.operator.mergeonbitsets.MergeOnBitSetsImpl;
@@ -24,7 +25,7 @@ import query.execution.QueryExecutor;
 public class ContextFactory {
 	
 	private IDataSource dataSource;
-	private ImplementationProvider queryProvider;
+	private ImplementationProvider implementationProvider;
 
 	private Class<? extends LayoutManager> layoutManagerImpl;
 	private Class<? extends DataProvisioner> dataProvisionerImpl;
@@ -35,13 +36,14 @@ public class ContextFactory {
 	private ContextFactory(IDataSource dataSource) {
 		
 		this.dataSource = dataSource;
-		this.queryProvider = new ImplementationProvider();
-			this.queryProvider.setFilterOnColumnImpl(FilterOnColumnImpl.class);
-			this.queryProvider.setLoadColumnImpl(LoadColumnImpl.class);
-			this.queryProvider.setLoadVerticalPartitionImpl(LoadVerticalPartitionImpl.class);
-			this.queryProvider.setFilterOnMultipleColumnImpl(FilterOnMultipleColumnImpl.class);
-			this.queryProvider.setMergeOnBitSetsImpl(MergeOnBitSetsImpl.class);
-			this.queryProvider.setOrderByImpl(OrderByImpl.class);
+		this.implementationProvider = new ImplementationProvider();
+			this.implementationProvider.setFilterOnColumnImpl(FilterOnColumnImpl.class);
+			this.implementationProvider.setLoadColumnImpl(LoadColumnImpl.class);
+			this.implementationProvider.setLoadVerticalPartitionImpl(LoadVerticalPartitionImpl.class);
+			this.implementationProvider.setFilterOnMultipleColumnImpl(FilterOnMultipleColumnImpl.class);
+			this.implementationProvider.setMergeOnBitSetsImpl(MergeOnBitSetsImpl.class);
+			this.implementationProvider.setOrderByImpl(OrderByImpl.class);
+			this.implementationProvider.setGroupByImpl(GroupByImpl.class);
 		
 		this.layoutManagerImpl = BaseLayoutManager.class;
 		this.dataProvisionerImpl = BaseDataProvisioner.class;
@@ -77,7 +79,7 @@ public class ContextFactory {
 			queryExecutor.setDataProvisioner(dataProvisioner);
 			queryExecutor.setLayoutManager(layoutManager);
 			
-			queryPlanner.setQueryProvider(queryProvider);
+			queryPlanner.setQueryProvider(implementationProvider);
 			
 			queryDispatcher.setDataSource(dataSource);
 			queryDispatcher.setQueryPlanner(queryPlanner);
@@ -88,7 +90,7 @@ public class ContextFactory {
 					layoutManager,
 					dataProvisioner,
 					queryExecutor,
-					queryProvider,
+					implementationProvider,
 					queryPlanner,
 					queryDispatcher
 					);

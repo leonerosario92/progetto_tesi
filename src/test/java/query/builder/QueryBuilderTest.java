@@ -106,8 +106,46 @@ public class QueryBuilderTest {
 		
 		String sqlRepresentation = query.writeSql();
 		assertTrue(StringUtils.equalsIgnoreNewlines(EXPECTED_QUERY, sqlRepresentation));
-		
 	}
+	
+	
+	@Test
+	public void testOrderByQuery() {
+		
+		final String EXPECTED_QUERY = 
+			"SELECT"
+			+ System.getProperty("line.separator")
+			+ "sales_fact_1998.store_sales, sales_fact_1998.unit_sales, sales_fact_1998.store_cost"
+			+ System.getProperty("line.separator")
+			+ "FROM sales_fact_1998"
+			+ System.getProperty("line.separator")
+			+ System.getProperty("line.separator")
+			+ "WHERE sales_fact_1998.store_cost > 2"
+			+ System.getProperty("line.separator")
+			+"ORDER BY sales_fact_1998.unit_sales";
+		
+		Query query = 
+		queryBuilder
+			.select(salesTable)
+			.project(storeSales)
+			.project(unitSales)
+			.project(storeCost)
+			.filter(storeCost, GREATER_THAN,new Integer(2))
+			.orderBy(unitSales)
+			.getQuery();
+		
+		String sqlRepresentation = query.writeSql();
+		assertTrue(StringUtils.equalsIgnoreNewlines(EXPECTED_QUERY, sqlRepresentation));
+	}
+	
+	
+	
+	/*
+	 * TODO
+	 * Write test cases that attempts to build "wrong" queries 
+	 * and verify if the correct exception is thrown.
+	*/
+	
 	
 	
 	private static Context getMockedContext() {

@@ -4,8 +4,12 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Map;
+import java.util.Set;
 
 import org.omg.Messaging.SYNC_WITH_TRANSPORT;
+
+import com.google.common.collect.Maps;
 
 import dataset.IRecordIterator;
 import datasource.IRecordScanner;
@@ -15,6 +19,7 @@ import dispatcher.QueryDispatcher;
 import impl.datasource.jdbc.JDBCDataSource;
 import impl.datasource.jdbc.JDBCDataSourceException;
 import impl.datasource.jdbc.JDBCRecordScanner;
+import model.FieldDescriptor;
 import query.builder.Query;
 import query.execution.QueryExecutionException;
 
@@ -38,8 +43,18 @@ public class NativeQueryDispatcher extends QueryDispatcher {
 		try {
 			statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery(sqlStatement);
-			//TODO spostare getRecord count in una utility class
+			
+			//TODO Create getRecordCount() utility instead of passing 0
 			IRecordScanner result = new JDBCRecordScanner(rs,0);
+
+			
+			/*This is needed due to the fact that if the source table is a view, the ResultSet
+			 * returned by JDBC will refer to the single underlying tables, therefore is not possible
+			 * to correlate the result of the "native" execution with the one returned by the solution.
+			 */
+			fixNameIndexMapping(query, result);
+			
+			
 			return result;
 		} catch (SQLException | JDBCDataSourceException e) {
 			throw new QueryExecutionException("An Exception occurred while executing query on native data source : "+ e.getMessage());
@@ -47,6 +62,22 @@ public class NativeQueryDispatcher extends QueryDispatcher {
 	}
 
 	
+	private void fixNameIndexMapping(Query query, IRecordScanner result) {
+		Set<FieldDescriptor> referencedFields = query.getProjectionClause().getReferencedFields();
+		Map <String,Integer> fixedMapping = Maps.newHashMap();
+		for(int i=1; i<=result.getFieldsCount(); i++) {
+			String columnName = result.getColumnName(i);
+			for(FieldDescriptor field : referencedFields) {
+				if (field.getName().equals(columnName)) {
+					fixedMapping.put(field.getKey(),i);
+					break;
+				}
+			}
+		}
+		((JDBCRecordScanner)result).setColumnIndexMapping(fixedMapping);
+	}
+
+
 	@Override
 	public IRecordScanner dispatchQuery(Query query, MeasurementType measurementType) throws QueryExecutionException {
 		switch(measurementType) {

@@ -17,9 +17,12 @@ import query.QueryPlanner;
 import query.ImplementationProvider;
 import query.builder.Query;
 import query.builder.clause.FilterClause;
+import query.builder.clause.GroupByClause;
 import query.builder.clause.OrderByClause;
 import query.builder.clause.ProjectionClause;
 import query.builder.clause.SelectionClause;
+import query.builder.predicate.AggregateFunctionType;
+import query.builder.statement.AggregateFilterStatement;
 import query.builder.statement.CFNode;
 import query.builder.statement.CFilterStatement;
 import query.builder.statement.FilterStatement;
@@ -32,6 +35,8 @@ import query.execution.operator.filteroncolumn.FilterOnColumnFunction;
 import query.execution.operator.filteroncolumn.FilterOnColumnOperator;
 import query.execution.operator.filteronmultiplecolumn.FilterOnMultipleColumnArgs;
 import query.execution.operator.filteronmultiplecolumn.FilterOnMultipleColumnOperator;
+import query.execution.operator.groupby.GroupByArgs;
+import query.execution.operator.groupby.GroupByOperator;
 import query.execution.operator.loadcolumn.LoadColumnArgs;
 import query.execution.operator.loadcolumn.LoadColumnFunction;
 import query.execution.operator.loadcolumn.LoadColumnOperator;
@@ -64,6 +69,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 		SelectionClause selectionClause = query.getSelectionClause();
 		ProjectionClause projectionClause = query.getProjectionClause();
 		FilterClause filterClause = query.getFilterClause();
+		GroupByClause groupByClause = query.getGroupByClause();
 		OrderByClause orderByClause = query.getOrderByClause();
 		
 		MergeOnBitesetsOperator materializator = new MergeOnBitesetsOperator(implementationProvider);
@@ -78,13 +84,29 @@ public class BaseQueryPlanner extends QueryPlanner {
 		SequentialOperatorGroup rootExecutable = new SequentialOperatorGroup();
 		rootExecutable.queueSubElement(filterStatements);
 		
+		if( ! (groupByClause.getGroupingSequence().isEmpty())) {
+			GroupByOperator groupByOp = new GroupByOperator(implementationProvider);
+			GroupByArgs gbArgs = groupByOp.getArgs();
+			gbArgs.setGroupingSequence(groupByClause.getGroupingSequence());
+			
+			for(AggregateFilterStatement statement : groupByClause.getAggregateFilterStatements()) {
+				AggregateFunctionType functionType = statement.getAggregateFunctionType();
+				gbArgs.addAggregateFilter(functionType, statement);
+			}
+			
+			rootExecutable.queueSubElement(groupByOp);
+		}
+		
+		
 		if( ! (orderByClause.getOrderingSequence().isEmpty())) {
 			OrderByOperator orderByOp = new OrderByOperator(implementationProvider);
 			orderByOp.getArgs().setOrderingSequence(orderByClause.getOrderingSequence());
 			rootExecutable.queueSubElement(orderByOp);
 		}
-			
+		
+		
 		ExecutionPlan execPlan = new ExecutionPlan(rootExecutable);
+		String plan = execPlan.toString();
 		return execPlan;
 		
 	}

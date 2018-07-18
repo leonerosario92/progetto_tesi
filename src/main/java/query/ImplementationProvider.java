@@ -5,6 +5,7 @@ import java.util.HashMap;
 import query.execution.operator.RelOperatorType;
 import query.execution.operator.filteroncolumn.FilterOnColumnFunction;
 import query.execution.operator.filteronmultiplecolumn.FilterOnMultipleColumnFunction;
+import query.execution.operator.groupby.GroupByFunction;
 import query.execution.operator.loadcolumn.LoadColumnFunction;
 import query.execution.operator.loadverticalpartition.LoadVerticalPartitionFunction;
 import query.execution.operator.mergeonbitsets.MergeOnBitSetsFunction;
@@ -74,6 +75,14 @@ public class ImplementationProvider  {
 	
 	public MergeOnBitSetsFunction getMergeOnBitsetsImpl() {
 		return (MergeOnBitSetsFunction) getImplementationInstance(RelOperatorType.MERGE_ON_BITSETS);
+	}
+	
+	public void setGroupByImpl(Class<? extends GroupByFunction> class1) {
+		setImplementation(RelOperatorType.GROUP_BY, class1);
+	}
+	
+	public GroupByFunction getGroupByImpl() {
+		return (GroupByFunction) getImplementationInstance(RelOperatorType.GROUP_BY);
 	}
 	
 	

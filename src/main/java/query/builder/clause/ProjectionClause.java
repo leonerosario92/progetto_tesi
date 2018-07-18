@@ -14,17 +14,21 @@ public class ProjectionClause  {
 
 	private ArrayList<ProjectionStatement> statements;
 	private HashSet<FieldDescriptor> referencedFields;
+ 	private HashSet<FieldDescriptor> aggregateFields;
 	
 	public ProjectionClause() {
 		this.statements = new ArrayList<>();
-		referencedFields = new HashSet<>();
+		this.referencedFields = new HashSet<>();
+		this.aggregateFields = new HashSet<>();
 	}
+	
 
 	public void addStatement(ProjectionStatement statement) {
 		statements.add(statement);
 		FieldDescriptor field = statement.getField();
 		referencedFields.add(field);
 	}
+	
 	
 	public String writeSql() {
 		StringBuilder sb = new StringBuilder();
@@ -66,5 +70,8 @@ public class ProjectionClause  {
 	}
 	
 	
+	public Set<FieldDescriptor> getAggregateFields(){
+		return aggregateFields;
+	}
 	
 }

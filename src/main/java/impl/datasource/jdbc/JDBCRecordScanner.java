@@ -21,7 +21,7 @@ public class JDBCRecordScanner implements IRecordScanner {
 	private int fieldsCount;
 	private Map<String,Integer>columnIndexMapping;
 
-	
+
 	public JDBCRecordScanner(ResultSet resultSet, int recordCount) throws JDBCDataSourceException {
 		this.recordCount = recordCount;
 		this.resultSet = resultSet;
@@ -47,21 +47,8 @@ public class JDBCRecordScanner implements IRecordScanner {
 				tableName+"_"+columnName, 
 				index
 			);
-			
 		}
 	}
-
-
-
-//	@Override
-//	public boolean hasNext() {
-//		try {
-//			return (!resultSet.isLast());
-//		} catch (SQLException e) {
-//			manageSqlException();
-//		}
-//		return false;
-//	}
 
 
 	@Override
@@ -206,6 +193,15 @@ public class JDBCRecordScanner implements IRecordScanner {
 		}
 		int index = columnIndexMapping.get(columnId);
 		return getValueByColumnIndex(index);
+	}
+	
+	
+	public Map<String, Integer> getColumnIndexMapping() {
+		return columnIndexMapping;
+	}
+
+	public void setColumnIndexMapping(Map<String, Integer> columnIndexMapping) {
+		this.columnIndexMapping = columnIndexMapping;
 	}
 
 }

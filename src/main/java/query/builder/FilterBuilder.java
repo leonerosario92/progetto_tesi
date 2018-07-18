@@ -4,6 +4,7 @@ import context.Context;
 import model.FieldDescriptor;
 import query.builder.predicate.FilterStatementType;
 import query.builder.statement.FilterStatement;
+import query.builder.statement.ProjectionStatement;
 import utils.TypeUtils;
 
 public class FilterBuilder {
@@ -19,8 +20,7 @@ public class FilterBuilder {
 	
 	public FilterBuilder filter (FieldDescriptor field,FilterStatementType type, Object operand) {
 		if(! checkField(field)) {
-			//TODO manage exception properly
-			throw new IllegalArgumentException("Filter statements can only contain fields specified in projection clause");
+			query.project(new ProjectionStatement(field));
 		}
 		Object rightOperand = TypeUtils.parseOperand(operand,field.getType());
 		FilterStatement statement = type.getInstance(field, rightOperand);
@@ -42,6 +42,17 @@ public class FilterBuilder {
 		Object rightOperand = TypeUtils.parseOperand(operand,field.getType());
 		FilterStatement statement = type.getInstance(field, rightOperand);
 		return new ComposedFilterBuilder(context,query, statement);
+	}
+	
+	
+	public GroupByBuilder groupBy(FieldDescriptor...fields) {
+		for(int i=0; i<fields.length; i++) {
+			if(! checkField(fields[i])) {
+				throw new IllegalArgumentException("Group By statements can only contain fields specified in projection clause");
+			}
+		}
+		query.groupBy(fields);
+		return new GroupByBuilder(context,query);
 	}
 	
 	

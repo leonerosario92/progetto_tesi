@@ -143,9 +143,7 @@ public class SequentialOperatorGroup implements OperatorGroup {
 		printer.appendLine("[SEQUENTIAL GROUP]");
 		printer.addIndentation();
 
-		for (ExecutionPlanElement op : subElements) {
-			op.addRepresentation(printer);
-		}
+		addOperatorsRepresentation(printer);
 
 		printer.removeIndentation();
 		printer.appendLine("[END SEQUENTIAL GROUP]");
@@ -156,21 +154,33 @@ public class SequentialOperatorGroup implements OperatorGroup {
 		printer.appendLine("[SEQUENTIAL GROUP " + getReport().toString() + " ]");
 		printer.addIndentation();
 
-		addOperatorsRepresentation(printer);
+		addOperatorsRepresentationWithReport(printer);
 		// report.addRepresentation(printer);
 
 		printer.removeIndentation();
 		printer.appendLine("[END SEQUENTIAL GROUP]");
 	}
 
-	private void addOperatorsRepresentation(ExecutionPlanNavigator printer) {
-
+	
+	private void addOperatorsRepresentationWithReport(ExecutionPlanNavigator printer) {
 		if (!(dataLoader == null)) {
 			dataLoader.addRepresentationWithReport(printer);
 		}
 
 		for (ExecutionPlanElement op : subElements) {
 			op.addRepresentationWithReport(printer);
+		}
+	}
+	
+	
+	private void addOperatorsRepresentation(ExecutionPlanNavigator printer) {
+
+		if (!(dataLoader == null)) {
+			dataLoader.addRepresentation(printer);
+		}
+
+		for (ExecutionPlanElement op : subElements) {
+			op.addRepresentation(printer);
 		}
 	}
 
