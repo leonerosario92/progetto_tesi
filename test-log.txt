@@ -1,0 +1,51 @@
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-19 10:06:46,868 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-19 10:33:08,304 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-19 13:32:26,806 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+
+TEST NAME: TestScanSmallDataSetMemoryOccupation
+
+
+

@@ -3,16 +3,17 @@ package impl.base;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import dataset.ColumnDescriptor;
 import dataset.IColumn;
 import dataset.IDataSet;
 import dataset.IRecordIterator;
 import datasource.IRecordScanner;
-import datatype.DataType;
 import model.FieldDescriptor;
 
 public class MaterializedDataSet implements IDataSet {
@@ -108,7 +109,6 @@ public class MaterializedDataSet implements IDataSet {
 	}
 	
 	
-
 	@Override
 	public IRecordScanner getRecordScanner() {
 		return new MaterializedRecordScanner(this);
@@ -136,7 +136,6 @@ public class MaterializedDataSet implements IDataSet {
 			this.validityBitset.and(validityBits);
 		}
 	}
-
 	
 	@Override
 	public BitSet getValidityBitSet() {
@@ -144,9 +143,6 @@ public class MaterializedDataSet implements IDataSet {
 	}
 
 	
-	public List<Object[]> getRecordList() {
-		return recordList;
-	}
 
 	@Override
 	public ColumnDescriptor getColumnDescriptor(int index) {
@@ -163,4 +159,19 @@ public class MaterializedDataSet implements IDataSet {
 		return nameIndexMapping;
 	}
 
+	
+	public List<Object[]> getRecordList() {
+		return recordList;
+	}
+
+	
+	@Override
+	public Stream<Object[]> getRecordStream() {
+		Stream<Object[]> recordStream = StreamSupport.stream
+				(
+					Spliterators.spliterator(getRecordIterator(),recordCount, 0)
+					,false
+				);
+		return recordStream;
+	}
 }

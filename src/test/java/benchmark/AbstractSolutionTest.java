@@ -107,11 +107,11 @@ public abstract class AbstractSolutionTest {
 			IRecordScanner resultScanner = context.executeQuery
 					(query, measurementType);	
 
-//			long resultIterationStartTime = System.nanoTime();
-//			boolean correctness = testQueryResult(query, resultScanner);		
-//			long resultIterationEndTime = System.nanoTime();
-//			assertTrue("Error : Query execution returned a result that differs from the expected one.", correctness);
-//			
+			long resultIterationStartTime = System.nanoTime();
+			boolean correctness = testQueryResult(query, resultScanner);		
+			long resultIterationEndTime = System.nanoTime();
+			assertTrue("Error : Query execution returned a result that differs from the expected one.", correctness);
+			
 //			long iterationNanos = (resultIterationEndTime - resultIterationStartTime);
 //			query.setResultIterationTime(Float.valueOf(iterationNanos)/ (1000*1000));
 //			
@@ -147,20 +147,22 @@ public abstract class AbstractSolutionTest {
 		
 		FieldDescriptor productName = testTable.getField("product_name");
 		FieldDescriptor quarter = testTable.getField("quarter");
+		FieldDescriptor city = testTable.getField("city");
 		
 		Query query = context.query()
 		.select(testTable)
 		.project(productName)
+		.project(city)
 //		.project(storeSales)
 		.project(unitSales)
 //		.project(storeCost)
 		.filter(quarter, FilterStatementType.EQUALS_TO, new String("Q1"))
-		.groupBy(productName)
+		.groupBy(productName,city)
 		.aggregateFilter(
 				AggregateFunctionType.SUM, 
 				unitSales, 
 				FilterStatementType.GREATER_THAN, 
-				new Integer(135)
+				new Integer(22)
 		)
 //		.orderBy(productName)
 		
@@ -174,7 +176,7 @@ public abstract class AbstractSolutionTest {
 
 	private Query getScanSmallDataSetQuery(Context context) {
 		IMetaData metaData = context.getMetadata();
-		TableDescriptor salesTable = metaData.getTable("test_table");
+		TableDescriptor salesTable = metaData.getTable("sales_fact_1998");
 		FieldDescriptor storeSales = salesTable.getField("store_sales");
 		FieldDescriptor unitSales = salesTable.getField("unit_sales");
 		FieldDescriptor storeCost = salesTable.getField("store_cost");

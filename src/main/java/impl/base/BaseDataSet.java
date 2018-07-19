@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
 import com.google.common.collect.Lists;
 
 import dataset.ColumnDescriptor;
@@ -137,6 +141,17 @@ public class BaseDataSet implements IDataSet,Iterable<Object[]> {
 	@Override
 	public Map<String, Integer> getNameIndexMapping() {
 		return nameindexMapping;
+	}
+
+
+	@Override
+	public Stream<Object[]> getRecordStream() {
+		Stream<Object[]> recordStream = StreamSupport.stream
+				(
+					Spliterators.spliterator(getRecordIterator(),recordCount, 0)
+					,false
+				);
+		return recordStream;
 	}
 
 }

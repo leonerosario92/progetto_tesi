@@ -33,8 +33,7 @@ public class OrderByImpl extends OrderByFunction {
 			columnSequence.add(inputSet.getColumnDescriptor(i));
 		}
 				
-		Stream<Object[]> recordStream = 
-				getRecordStream(iterator,recordCount);
+		Stream<Object[]> recordStream = inputSet.getRecordStream();
 		
 		List<FieldDescriptor> orderingSequence = args.getOrderingSequence();
 		
@@ -50,20 +49,10 @@ public class OrderByImpl extends OrderByFunction {
 	}		
 	
 
-	private Stream<Object[]> getRecordStream(IRecordIterator recordIterator, int recordCount) {
-		Stream<Object[]> result = StreamSupport.stream
-		(
-			Spliterators.spliterator(recordIterator,recordCount, 0)
-			,false
-		);
-		return result;
-	}
-	
-	
 	private Comparator<Object[]> getRecordComparator(
 			IDataSet inputSet, 
-			List<FieldDescriptor> orderingSequence
-	){
+			List<FieldDescriptor> orderingSequence)
+	{
 		TypeComparator[] comparators = new TypeComparator [orderingSequence.size()];
 		int [] indexes = new int[orderingSequence.size()];
 		for(int i=0; i<orderingSequence.size(); i++) {
@@ -75,7 +64,7 @@ public class OrderByImpl extends OrderByFunction {
 		}
 		
 		Comparator<Object[]> recordComparator = (r,o)-> comparators[0].compare(r[indexes[0]], o[indexes[0]]);
-		IntStream.range(0, orderingSequence.size())
+		IntStream.range(1, orderingSequence.size())
 		.forEach
 		(
 			i -> recordComparator.thenComparing

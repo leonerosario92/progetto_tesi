@@ -24,6 +24,9 @@ public interface IDataSet {
 	
 	public IRecordScanner getRecordScanner();
 	
+	public Stream<Object[]> getRecordStream();
+	
+	
 	public int getRecordCount();
 	
 	public int getFieldsCount();

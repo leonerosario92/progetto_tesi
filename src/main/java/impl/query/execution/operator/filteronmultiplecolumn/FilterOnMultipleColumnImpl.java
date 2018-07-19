@@ -44,15 +44,6 @@ public class FilterOnMultipleColumnImpl extends FilterOnMultipleColumnFunction {
 		return inputSet;
 	}
 	
-//
-//	public Map<String,Integer> getNameIndexMapper(IDataSet inputSet, int fieldsCount){
-//		Map<String,Integer> mapper = new HashMap<>();
-//		for(int index = 1; index <= fieldsCount; index++) {
-//			mapper.put(inputSet.getColumnName(index),index);
-//		}
-//		return mapper;
-//	}
-	
 }
 
 
