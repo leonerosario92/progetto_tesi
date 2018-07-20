@@ -24,7 +24,7 @@ import model.FieldDescriptor;
 import model.IMetaData;
 import model.TableDescriptor;
 import query.builder.Query;
-import query.builder.predicate.AggregateFunctionType;
+import query.builder.predicate.AggregateFunction;
 import query.builder.predicate.FilterStatementType;
 import query.execution.QueryExecutionException;
 import utils.comparator.QueryResultComparator;
@@ -107,7 +107,7 @@ public abstract class AbstractSolutionTest {
 			IRecordScanner resultScanner = context.executeQuery
 					(query, measurementType);	
 
-			long resultIterationStartTime = System.nanoTime();
+//			long resultIterationStartTime = System.nanoTime();
 			boolean correctness = testQueryResult(query, resultScanner);		
 			long resultIterationEndTime = System.nanoTime();
 			assertTrue("Error : Query execution returned a result that differs from the expected one.", correctness);
@@ -159,7 +159,7 @@ public abstract class AbstractSolutionTest {
 		.filter(quarter, FilterStatementType.EQUALS_TO, new String("Q1"))
 		.groupBy(productName,city)
 		.aggregateFilter(
-				AggregateFunctionType.SUM, 
+				AggregateFunction.SUM, 
 				unitSales, 
 				FilterStatementType.GREATER_THAN, 
 				new Integer(22)

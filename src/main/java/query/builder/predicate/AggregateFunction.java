@@ -1,21 +1,23 @@
 package query.builder.predicate;
 
-import model.FieldDescriptor;
 import query.builder.QueryConstants;
 
-public enum AggregateFunctionType {
+public enum AggregateFunction {
 	
 	SUM(QueryConstants.SUM),
 	AVG(QueryConstants.AVG),
 	COUNT(QueryConstants.COUNT),
 	MIN(QueryConstants.MIN),
-	MAX(QueryConstants.MAX),
-	DISTINCT(QueryConstants.DISTINCT);
+	MAX(QueryConstants.MAX);
+//	DISTINCT(QueryConstants.DISTINCT);
 
-	public String representation;
+	private String representation;
 	
+	public String getRepresentation() {
+		return this.representation;
+	}
 	
-	AggregateFunctionType(String representation){
+	AggregateFunction(String representation){
 		this.representation = representation;
 	}
 	

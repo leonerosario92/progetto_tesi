@@ -1,23 +1,33 @@
 package datatype;
 
+import java.math.BigDecimal;
+import java.util.DoubleSummaryStatistics;
+import java.util.Optional;
 
 public enum DataType {
-	BOOLEAN(new BooleanComparator()),
-	BYTE(new ByteComparator()),
-	SHORT(new ShortComparator()),
-	INTEGER(new IntegerComparator()),
-	LONG(new LongComparator()),
-	DOUBLE(new DoubleComparator()),
-	FLOAT(new FloatComparator()),
-	BIG_DECIMAL(new BigDecimalComparator()),
-	STRING(new StringComparator());
+	BOOLEAN(null),
+	BYTE(null),
+	SHORT(null),
+	INTEGER(new IntegerDescriptor()),
+	LONG(new LongDescriptor()),
+	DOUBLE(new DoubleDescriptor()),
+	FLOAT(new FloatDescriptor()),
+	BIG_DECIMAL(new BigDecimalDescriptor()),
+	STRING(new StringDescriptor());
 	
-	private TypeComparator comparator;
-	private DataType(TypeComparator comparator) {
-		this.comparator = comparator;
+	private TypeDescriptor descriptor;
+	private DataType(TypeDescriptor descriptor) {
+		this.descriptor = descriptor;
 	}
 	
 	public TypeComparator getComparator() {
-		return this.comparator;
+		return this.descriptor.getTypeComparator().get();
 	}
+	
+	public TypeDescriptor getDescriptor() {
+		return this.descriptor;
+	}
+	
 }
+
+

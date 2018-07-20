@@ -8,7 +8,7 @@ import context.Context;
 import model.FieldDescriptor;
 import query.builder.clause.GroupByClause;
 import query.builder.clause.ProjectionClause;
-import query.builder.predicate.AggregateFunctionType;
+import query.builder.predicate.AggregateFunction;
 import query.builder.predicate.FilterStatementType;
 import query.builder.statement.AggregateFilterStatement;
 import query.builder.statement.FilterStatement;
@@ -40,7 +40,7 @@ public class GroupByBuilder {
 	}
 	
 	
-	public GroupByBuilder aggregateFilter( AggregateFunctionType aggregateFunction,
+	public GroupByBuilder aggregateFilter( AggregateFunction aggregateFunction,
 									FieldDescriptor field,
 									FilterStatementType filterType,
 									Object operand ){

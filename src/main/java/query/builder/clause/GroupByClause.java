@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
-
 import model.FieldDescriptor;
 import query.builder.QueryConstants;
 import query.builder.statement.AggregateFilterStatement;
@@ -15,12 +13,12 @@ import query.builder.statement.AggregateFilterStatement;
 public class GroupByClause {
 
 	private List<FieldDescriptor> groupingSequence;
-	private List<AggregateFilterStatement> aggregateFilterStatements;
+	private List<AggregateFilterStatement> aggregateFilters;
 
 	
 	public GroupByClause(FieldDescriptor...fields) {
 		groupingSequence = new ArrayList<>();
-		aggregateFilterStatements = new ArrayList<>();
+		aggregateFilters = new ArrayList<>();
 	}
 	
 	
@@ -46,12 +44,12 @@ public class GroupByClause {
 	
 	
 	public void addAggregateFilter(AggregateFilterStatement statement) {
-		aggregateFilterStatements.add(statement);
+		aggregateFilters.add(statement);
 	}
 	
 	
 	public  List<AggregateFilterStatement> getAggregateFilterStatements() {
-		return aggregateFilterStatements;
+		return aggregateFilters;
 	}
 	
 	
@@ -74,12 +72,12 @@ public class GroupByClause {
 			.append(field.getName());
 		}
 		
-		if(! aggregateFilterStatements.isEmpty()) {
+		if(! aggregateFilters.isEmpty()) {
 			sb.append(QueryConstants.NEWLINE)
 			.append(QueryConstants.AGGREGATE_FILTER_CLAUSE)
 			.append(QueryConstants.WHITESPACE_CHAR);
 			Iterator<AggregateFilterStatement> iterator = 
-					aggregateFilterStatements.iterator();
+					aggregateFilters.iterator();
 			if(iterator.hasNext()) {
 				AggregateFilterStatement next = iterator.next();
 				sb.append(next.writeSql());

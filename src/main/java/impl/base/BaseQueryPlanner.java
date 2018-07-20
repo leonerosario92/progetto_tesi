@@ -21,7 +21,7 @@ import query.builder.clause.GroupByClause;
 import query.builder.clause.OrderByClause;
 import query.builder.clause.ProjectionClause;
 import query.builder.clause.SelectionClause;
-import query.builder.predicate.AggregateFunctionType;
+import query.builder.predicate.AggregateFunction;
 import query.builder.statement.AggregateFilterStatement;
 import query.builder.statement.CFNode;
 import query.builder.statement.CFilterStatement;
@@ -90,8 +90,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 			gbArgs.setGroupingSequence(groupByClause.getGroupingSequence());
 			
 			for(AggregateFilterStatement statement : groupByClause.getAggregateFilterStatements()) {
-				AggregateFunctionType functionType = statement.getAggregateFunctionType();
-				gbArgs.addAggregateFilter(functionType, statement);
+				gbArgs.addAggregateFilter(statement);
 			}
 			
 			rootExecutable.queueSubElement(groupByOp);
