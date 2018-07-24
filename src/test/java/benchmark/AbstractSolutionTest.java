@@ -80,10 +80,12 @@ public abstract class AbstractSolutionTest {
 	}
 	
 	
+	@Ignore
 	@Test
 	public void TestScanSmallDataSetMemoryOccupation(){
 		executeTest(MeasurementType.EVALUATE_MEMORY_OCCUPATION);
 	}
+	
 	
 	@Test
 	public void TestScanSmallDataSetExecutionTime(){
@@ -157,7 +159,7 @@ public abstract class AbstractSolutionTest {
 		.project(unitSales)
 //		.project(storeCost)
 		.filter(quarter, FilterStatementType.EQUALS_TO, new String("Q1"))
-		.groupBy(productName,city)
+		.groupBy(city,productName)
 		.aggregateFilter(
 				AggregateFunction.SUM, 
 				unitSales, 
@@ -200,10 +202,14 @@ public abstract class AbstractSolutionTest {
 		IMetaData metaData = context.getMetadata();
 		TableDescriptor messageTable = metaData.getTable("message");
 		FieldDescriptor sender = messageTable.getField("sender");
+		FieldDescriptor subject = messageTable.getField("subject");
+		FieldDescriptor body = messageTable.getField("body");
+
 		Query query =
 		context.query()
 			.select(messageTable)
 			.project(sender)
+			
 			.orderBy(sender)
 			.getQuery();
 	

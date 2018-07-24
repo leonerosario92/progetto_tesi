@@ -1,14 +1,10 @@
 package impl.query.execution.operator.groupBy;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.LongSummaryStatistics;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.Spliterators;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -16,18 +12,13 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
-import com.google.common.collect.Lists;
-
-import dataset.ColumnDescriptor;
 import dataset.IDataSet;
 import dataset.ILayoutManager;
-import dataset.IRecordIterator;
 import model.FieldDescriptor;
 import query.builder.statement.AggregationDescriptor;
 import query.execution.operator.groupby.GroupByArgs;
 import query.execution.operator.groupby.GroupByFunction;
+import utils.RecordAggregator;
 
 public class GroupByImpl  extends GroupByFunction{
 
@@ -41,62 +32,28 @@ public class GroupByImpl  extends GroupByFunction{
 		int[] fieldSequenceIndexes = 
 				getGroupingSequenceIndexes(inputDataSet,groupingSequence);
 		
-		Long start = System.nanoTime();
-		Map<List<Object>, List<Object[]>> groupedRecords =
-				groupRecords(recordStream, fieldSequenceIndexes);
-		Long end = System.nanoTime();
-		Float timeMs = new Float((end - start) / (1000 * 1000));
+		if(aggregations.size() == 0) {
+			List<Object[]> groupedRecords =
+					groupRecords(recordStream, fieldSequenceIndexes);
+		}else {
+			Collector<Object[], RecordAggregator, Object[]> downStreamCollector = 
+					getDownStreamCollector(aggregations,inputDataSet);
+			List<Object[]> aggregateRecords =
+					aggregateRecords(recordStream,fieldSequenceIndexes,downStreamCollector);
+		}
 		
-		
-//		List<Object[]> aggregateRecords =
-//			groupedRecords.entrySet().stream()
-//			.map( 
-//				entry -> {
-//						Object[] aggregateRecord = new Object[3];
-//						aggregateRecord[0] = entry.getKey().get(0);
-//						aggregateRecord[1] = entry.getKey().get(1);
-//						
-//						RecordAggregator aggregator = new RecordAggregator(0);
-//						entry.getValue().forEach(
-//							record -> {
-//								aggregator.aggregateRecord(record);
-//							}
-//						);
-//						aggregateRecord[2] = aggregator.getSum();
-//						return aggregateRecord;
-//				}
-//			)
-//			.filter(record ->  {  return((long)record[2] > 22);  })
-//			.collect(Collectors.toList());
-//
-//		
-//		
-//		List<ColumnDescriptor> columnSequence = new ArrayList<>();
-//		//int newRecordCount = aggregateRecords.size();
-//		columnSequence.add(inputDataSet.getColumn(groupingSequence.get(0)).getDescriptor());
-//		columnSequence.add(inputDataSet.getColumn(groupingSequence.get(1)).getDescriptor());
-//		columnSequence.add(inputDataSet.getColumnDescriptor(1));
-//		
-//		
-//		
-//		IDataSet result = layoutManager.buildDataSet(newRecordCount, columnSequence, aggregateRecords.iterator());
-//		
-//		System.out.println("Result : ");
-//		aggregateRecords.stream()
-//		.forEach( 
-//				record ->{
-//					StringBuilder sb = new StringBuilder();
-//					for(int i=0; i<2; i++) {
-//						sb.append("\t\t"+record[i]);
-//					}
-//					
-//					System.out.println(sb.toString());
-//				}
-//		);
-			
 		return null;
 	}
 
+
+	private Collector<Object[], RecordAggregator, Object[]> getDownStreamCollector(Set<AggregationDescriptor> aggregations, IDataSet inputDataSet) {
+		Supplier<RecordAggregator> initializer = getInitializer(aggregations,inputDataSet);
+		BiConsumer<RecordAggregator, Object[]> aggregator = getAggregator();
+		BinaryOperator<RecordAggregator> combiner = getCombiner();
+		Function<RecordAggregator,Object[]> finalizer = getFinalizer();
+		
+		return Collector.of(initializer,aggregator,combiner ,finalizer);
+	}
 
 	private int[] getGroupingSequenceIndexes(IDataSet inputDataSet, List<FieldDescriptor> groupingSequence) {
 		int[] fieldSequenceIndexes = new int[groupingSequence.size()];
@@ -107,92 +64,96 @@ public class GroupByImpl  extends GroupByFunction{
 		}
 		return fieldSequenceIndexes;
 	}
-	
-	
-	
-	
-	private Map<List<Object>, List<Object[]>> groupRecords(Stream<Object[]> recordStream, int[] groupingSequenceIndexes) {
-		
-		Supplier<LongSummaryStatistics> initializer = new Supplier<LongSummaryStatistics>() {
+
+	private Supplier<RecordAggregator> getInitializer(Set<AggregationDescriptor> aggregations, IDataSet inputDataSet) {
+		return new Supplier<RecordAggregator>() {
 			@Override
-			public LongSummaryStatistics get() {
-				return new LongSummaryStatistics();
+			public RecordAggregator get() {
+				return new RecordAggregator(aggregations, inputDataSet);
 			}
 		};
-		
-		
-		BiConsumer<LongSummaryStatistics, Object[]> aggregator = new BiConsumer<LongSummaryStatistics, Object[]>() {
+	}	
+	
+	private BiConsumer<RecordAggregator, Object[]> getAggregator() {
+		return new BiConsumer<RecordAggregator, Object[]>() {
 			@Override
-			public void accept(LongSummaryStatistics aggregator, Object[] value) {
-				aggregator.accept( ((BigDecimal)value[0]).longValue() );
+			public void accept(RecordAggregator recordAggregator, Object[] record) {
+				recordAggregator.aggregateRecord(record);
 			}
 		};
-		
-		
-		BinaryOperator<LongSummaryStatistics> combiner = new BinaryOperator<LongSummaryStatistics>() {
-			@Override
-			public LongSummaryStatistics apply(LongSummaryStatistics arg0, LongSummaryStatistics arg1) {
-				 arg0.combine(arg1);
-				 return arg0;
-			}
-		};
-		
-		
-		Function<LongSummaryStatistics,Long> finalizer = new Function<LongSummaryStatistics, Long>() {
-			@Override
-			public Long apply(LongSummaryStatistics aggregator) {
-				return aggregator.getSum();
-			}
-		};
-		
-		Collector <Object[],LongSummaryStatistics, Long> collector = Collector.of(initializer,aggregator,combiner,finalizer);
-		
-//		 Stream<Entry<List<Object>, Long>> result = 
-			recordStream.collect
-				(
-						Collectors.groupingByConcurrent( 
-							record -> 
-								{
-									List<Object> groupingKey = new ArrayList<>();
-									for(int i=0; i<groupingSequenceIndexes.length; i++) {
-										groupingKey.add(record[groupingSequenceIndexes[i]]);
-									} 
-									return groupingKey;
-								}
-						,collector
-						)
-				)
-			.entrySet()
-			.stream()
-			.filter(
-				(entry) -> entry.getValue() > 22
-			)
-			.forEach(
-				(entry) -> System.out.println("Key : " +entry.getKey()+ "\t value : " + entry.getValue())
-			);
-			return null;
-		 
 	}
-
-
-//	private class RecordAggregator{
-//		
-//		private long sum;
-//		private int index;
-//		
-//		public RecordAggregator(int indexToAggregate) {
-//			sum = 0;
-//			index = indexToAggregate;
-//		}
-//		
-//		public void aggregateRecord(Object[] record) {
-//			sum += ((BigDecimal)record[index]).longValue();
-//		}
-//		
-//		public long getSum() {
-//			return sum;
-//		}
-//		
-//	}
+	
+	private BinaryOperator<RecordAggregator> getCombiner() {
+		return new BinaryOperator<RecordAggregator>() {
+			@Override
+			public RecordAggregator apply(RecordAggregator aggregator, RecordAggregator other) {
+				RecordAggregator combinedAggregator = aggregator.combine(other);
+				return combinedAggregator;
+			}
+		};
+	}
+	
+	private Function<RecordAggregator, Object[]> getFinalizer() {
+		return new Function<RecordAggregator, Object[]>() {
+			@Override
+			public Object[] apply(RecordAggregator aggregator) {
+				return aggregator.getAggregationResult();
+			}
+		};
+	}
+	
+	
+	
+	private List<Object[]> groupRecords(Stream<Object[]> recordStream, int[] fieldSequenceIndexes) {
+		
+		Map<Object, List<Object[]>> resultMap =
+		recordStream
+		.collect(
+			Collectors.groupingBy (
+				record -> {
+					List<Object> groupingKey = new ArrayList<>();
+					for(int i=0; i<fieldSequenceIndexes.length; i++) {
+						groupingKey.add(record[fieldSequenceIndexes[i]]);
+					} 
+					return groupingKey;
+				},
+				LinkedHashMap::new,
+				Collectors.toList()
+			)
+		);
+	
+		List<Object[]> result = new ArrayList<>();
+		for(List<Object[]> partialResult : resultMap.values()) {
+			result.addAll(partialResult);
+		}
+		
+		return result;
+	}
+	
+	
+	private List<Object[]> aggregateRecords(Stream<Object[]> recordStream, int[] fieldSequenceIndexes,
+			Collector<Object[], RecordAggregator, Object[]> downStreamCollector) {
+		Map<Object, Object[]> resultMap =
+			recordStream
+			.collect(
+				Collectors.groupingBy (
+					record -> {
+						List<Object> groupingKey = new ArrayList<>();
+						for(int i=0; i<fieldSequenceIndexes.length; i++) {
+							groupingKey.add(record[fieldSequenceIndexes[i]]);
+						} 
+						return groupingKey;
+					},
+					downStreamCollector
+					)
+			);
+			
+			List<Object[]> result = new ArrayList<>();
+			for(Object[] partialResult : resultMap.values()) {
+				result.add(partialResult);
+			}
+			
+			return result;
+	}
 
 }

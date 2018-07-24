@@ -9,7 +9,6 @@ public enum AggregateFunction {
 	COUNT(QueryConstants.COUNT),
 	MIN(QueryConstants.MIN),
 	MAX(QueryConstants.MAX);
-//	DISTINCT(QueryConstants.DISTINCT);
 
 	private String representation;
 	

@@ -1,0 +1,102 @@
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-24 11:04:36,711 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+TEST RESULT : 
+Overall execution time : 614.0 ms
+EXECUTION DETAILS : 
+
+[SEQUENTIAL GROUP Execution Time : 614,00 ms   ]
+    [PARALLEL GROUP   ]
+        [SEQUENTIAL GROUP Execution Time : 470,00 ms   ]
+            [OPERATOR Execution Time : 470,14 ms  ]
+                TYPE : LOAD_COLUMN
+                ARGS : { Column = sender , Loading Type = LOAD_DATASET }
+            [END OPERATOR]
+        [END SEQUENTIAL GROUP]
+        [OPERATOR Execution Time : 50,74 ms  ]
+            TYPE : MERGE_ON_BITSETS
+            ARGS : {  }
+        [END OPERATOR]
+    [END PARALLEL GROUP]
+    [OPERATOR Execution Time : 74,72 ms  ]
+        TYPE : ORDER_BY
+        ARGS : { orderingSequence = [ sender ] }
+    [END OPERATOR]
+[END SEQUENTIAL GROUP]
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-24 14:39:50,937 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+TEST RESULT : 
+Overall execution time : 681.0 ms
+EXECUTION DETAILS : 
+
+[SEQUENTIAL GROUP Execution Time : 681,00 ms   ]
+    [PARALLEL GROUP   ]
+        [SEQUENTIAL GROUP Execution Time : 550,00 ms   ]
+            [OPERATOR Execution Time : 550,88 ms  ]
+                TYPE : LOAD_COLUMN
+                ARGS : { Column = sender , Loading Type = LOAD_DATASET }
+            [END OPERATOR]
+        [END SEQUENTIAL GROUP]
+        [OPERATOR Execution Time : 49,11 ms  ]
+            TYPE : MERGE_ON_BITSETS
+            ARGS : {  }
+        [END OPERATOR]
+    [END PARALLEL GROUP]
+    [OPERATOR Execution Time : 77,13 ms  ]
+        TYPE : ORDER_BY
+        ARGS : { orderingSequence = [ sender ] }
+    [END OPERATOR]
+[END SEQUENTIAL GROUP]
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-24 14:41:42,179 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-24 16:11:11,669 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
+ 
+ 
+ 
+ BENCHMARK EXECUTION 
+ Performed at :  2018-07-24 16:13:16,078 
+  
+
+
+TEST NAME: TestScanSmallDataSetExecutionTime
+
+
+
