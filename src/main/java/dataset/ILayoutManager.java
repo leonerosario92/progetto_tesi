@@ -15,7 +15,7 @@ public interface ILayoutManager {
 	public IDataSet buildDataSet(
 			int recordCount, 
 			List<ColumnDescriptor> columnSequence, 
-			Iterator<Object[]> orderedRecords
+			Iterator<Object[]> records
 	);
 	
 }

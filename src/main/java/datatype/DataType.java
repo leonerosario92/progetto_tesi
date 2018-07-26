@@ -21,7 +21,10 @@ public enum DataType {
 	}
 	
 	public TypeComparator getComparator() {
-		return this.descriptor.getTypeComparator().get();
+		if(this.descriptor instanceof ComparableTypeDescriptor) {
+			return ComparableTypeDescriptor.class.cast(this.descriptor).getTypeComparator();
+		}
+		throw new IllegalArgumentException("Attempt to retrieve comparator for non-comparable data type.");
 	}
 	
 	public TypeDescriptor getDescriptor() {

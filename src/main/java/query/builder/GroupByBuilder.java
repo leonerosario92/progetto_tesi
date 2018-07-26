@@ -52,7 +52,7 @@ public class GroupByBuilder {
 					aggregateFunction, 
 					field, 
 					filterType, 
-					rightOperand
+					Double.valueOf(operand.toString())
 				);
 		
 		query.aggregateFilter(statement);

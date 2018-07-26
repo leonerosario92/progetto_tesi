@@ -44,13 +44,13 @@ public class BaseLayoutManager extends LayoutManager {
 		 * For each position, fill each column with corresponding value
 		 */
 		Object value;
-		int columnIndex = 0;
+		int recordIndex = 0;
 		while(recordScanner.next()) {
-			for(int index = 1; index <= fieldsCount; index++) {
-				value = recordScanner.getValueByColumnIndex(index);
-				columns[index].storeValueAt(value, columnIndex);
-				columnIndex ++;
+			for(int columnIndex = 1; columnIndex <= fieldsCount; columnIndex++) {
+				value = recordScanner.getValueByColumnIndex(columnIndex);
+				columns[columnIndex].storeValueAt(value, recordIndex);
 			}
+			recordIndex ++;
 		}
 		
 		/*

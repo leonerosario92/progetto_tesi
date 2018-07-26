@@ -1,6 +1,8 @@
 package benchmark;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static query.builder.predicate.FilterStatementType.GREATER_THAN;
+import static query.builder.predicate.FilterStatementType.LESS_THAN;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -26,6 +28,7 @@ import model.TableDescriptor;
 import query.builder.Query;
 import query.builder.predicate.AggregateFunction;
 import query.builder.predicate.FilterStatementType;
+import query.builder.statement.CFilterStatement;
 import query.execution.QueryExecutionException;
 import utils.comparator.QueryResultComparator;
 
@@ -109,15 +112,14 @@ public abstract class AbstractSolutionTest {
 			IRecordScanner resultScanner = context.executeQuery
 					(query, measurementType);	
 
-//			long resultIterationStartTime = System.nanoTime();
+			long resultIterationStartTime = System.nanoTime();
 			boolean correctness = testQueryResult(query, resultScanner);		
 			long resultIterationEndTime = System.nanoTime();
 			assertTrue("Error : Query execution returned a result that differs from the expected one.", correctness);
 			
-//			long iterationNanos = (resultIterationEndTime - resultIterationStartTime);
-//			query.setResultIterationTime(Float.valueOf(iterationNanos)/ (1000*1000));
-//			
-//			
+			long iterationNanos = (resultIterationEndTime - resultIterationStartTime);
+			query.setResultIterationTime(Float.valueOf(iterationNanos)/ (1000*1000));
+			
 			
 			resultScanner.resetToFirstRecord();
 			while(resultScanner.next()) {
@@ -127,7 +129,6 @@ public abstract class AbstractSolutionTest {
 				}
 //				RESULT_LOGGER.info(sb.toString());
 			}
-			
 			
 			testReport = writeTestReport(query);
 		} 
@@ -158,7 +159,7 @@ public abstract class AbstractSolutionTest {
 //		.project(storeSales)
 		.project(unitSales)
 //		.project(storeCost)
-		.filter(quarter, FilterStatementType.EQUALS_TO, new String("Q1"))
+//		.filter(quarter, FilterStatementType.EQUALS_TO, new String("Q1"))
 		.groupBy(city,productName)
 		.aggregateFilter(
 				AggregateFunction.SUM, 

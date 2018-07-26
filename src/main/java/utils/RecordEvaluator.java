@@ -1,15 +1,16 @@
 package utils;
 
-import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import datatype.DoubleComparator;
 import datatype.TypeComparator;
 import model.FieldDescriptor;
 import query.builder.LogicalOperand;
 import query.builder.predicate.FilterStatementType;
+import query.builder.statement.AggregateFilterStatement;
 import query.builder.statement.CFNode;
 import query.builder.statement.CFilterStatement;
 import query.builder.statement.FilterStatement;
@@ -60,17 +61,30 @@ public class RecordEvaluator {
 		Object rightOperand = statement.getRightOperand();
 		FilterStatementType type = statement.getFilterType();
 		FieldDescriptor field = statement.getField();
-		TypeComparator comparator = field.getType().getComparator();
+		TypeComparator comparator;
 		Predicate<Integer> comparisonEvaluator = type.getComparisonEvaluator();
-		int fieldIndex = nameIndexMapping.get(field.getKey());
+		
+		/*====TODO: Make a "IDescriptor" interface implemented by both FieldDescriptor and AggregationDescriptor===*/
+		String fieldKey = null;
+		if(statement instanceof AggregateFilterStatement) {
+			fieldKey = ((AggregateFilterStatement)statement).getAggregationDescriptor().getKey();
+			comparator = new DoubleComparator();
+		}else if(statement instanceof FilterStatement) {
+			fieldKey = statement.getField().getKey();
+			comparator = field.getType().getComparator();
+		}else {
+			comparator = null;
+		}
+		/*====================================================================*/
 
+		int fieldIndex = nameIndexMapping.get(fieldKey);
 		Predicate<Object[]> evaluator = null;
 		if(rightOperand instanceof FieldDescriptor) {
 			int operandIndex = nameIndexMapping.get( ((FieldDescriptor)rightOperand).getKey());
 			evaluator = new Predicate<Object[]>() {
 				@Override
 				public boolean test(Object[] record) {
-					int comparisonResult = comparator.compare(record[fieldIndex - 1], record[operandIndex -1]);
+					int comparisonResult = comparator.compare(record[fieldIndex ], record[operandIndex]);
 					return comparisonEvaluator.test(comparisonResult);
 				}
 			};
@@ -79,7 +93,7 @@ public class RecordEvaluator {
 			evaluator = new Predicate<Object[]>() {
 				@Override
 				public boolean test(Object[] record) {
-					int comparisonResult = comparator.compare(record[fieldIndex - 1], rightOperand);
+					int comparisonResult = comparator.compare(record[fieldIndex], rightOperand);
 					return comparisonEvaluator.test(comparisonResult);
 				}
 			};

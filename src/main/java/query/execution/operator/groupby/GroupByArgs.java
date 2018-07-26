@@ -79,18 +79,20 @@ public class GroupByArgs implements IOperatorArgs {
 		
 		sb.append(" , ");
 		
-		sb.append("Aggregate Filter Statements = [ ");
-		int size = aggregateFilters.size();
-		int count = 0;
-		for(AggregateFilterStatement statement : aggregateFilters) {
-			sb.append(statement.writeSql());
-			count ++;
-			if(count < size) {
-				sb.append(" , ");
+		if(aggregateFilters.size() != 0) {
+			sb.append("aggregateFilterStatements = [ ");
+			int size = aggregateFilters.size();
+			int count = 0;
+			for(AggregateFilterStatement statement : aggregateFilters) {
+				sb.append(statement.writeSql());
+				count ++;
+				if(count < size) {
+					sb.append(" , ");
+				}
 			}
+			sb.append(" ]");
 		}
 		
-		sb.append(" ]");
 		
 		return sb.toString();
 	}

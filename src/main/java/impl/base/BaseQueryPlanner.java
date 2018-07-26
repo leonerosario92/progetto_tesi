@@ -1,12 +1,10 @@
 package impl.base;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -14,40 +12,32 @@ import com.google.common.collect.Sets;
 import dataprovisioner.LoadingType;
 import model.FieldDescriptor;
 import query.QueryPlanner;
-import query.ImplementationProvider;
 import query.builder.Query;
 import query.builder.clause.FilterClause;
 import query.builder.clause.GroupByClause;
 import query.builder.clause.OrderByClause;
 import query.builder.clause.ProjectionClause;
 import query.builder.clause.SelectionClause;
-import query.builder.predicate.AggregateFunction;
 import query.builder.statement.AggregateFilterStatement;
 import query.builder.statement.CFNode;
 import query.builder.statement.CFilterStatement;
 import query.builder.statement.FilterStatement;
-import query.builder.statement.ProjectionStatement;
-import query.builder.statement.SelectionStatement;
 import query.execution.ExecutionPlan;
 import query.execution.SequentialOperatorGroup;
 import query.execution.operator.filteroncolumn.FilterOnColumnArgs;
-import query.execution.operator.filteroncolumn.FilterOnColumnFunction;
 import query.execution.operator.filteroncolumn.FilterOnColumnOperator;
 import query.execution.operator.filteronmultiplecolumn.FilterOnMultipleColumnArgs;
 import query.execution.operator.filteronmultiplecolumn.FilterOnMultipleColumnOperator;
 import query.execution.operator.groupby.GroupByArgs;
 import query.execution.operator.groupby.GroupByOperator;
 import query.execution.operator.loadcolumn.LoadColumnArgs;
-import query.execution.operator.loadcolumn.LoadColumnFunction;
 import query.execution.operator.loadcolumn.LoadColumnOperator;
 import query.execution.operator.loadverticalpartition.LoadVerticalPartitionArgs;
 import query.execution.operator.loadverticalpartition.LoadVerticalPartitionOperator;
 import query.execution.operator.mergeonbitsets.MergeOnBitesetsOperator;
 import query.execution.operator.orderby.OrderByOperator;
 import query.execution.LoadDataSetOperator;
-import query.execution.ProcessDataSetOperator;
 import query.execution.ParallelOperatorGroup;
-import query.execution.SequentialOperatorGroup;
 
 public class BaseQueryPlanner extends QueryPlanner {
 	

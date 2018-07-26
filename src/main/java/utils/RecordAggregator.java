@@ -1,6 +1,7 @@
 package utils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -8,7 +9,9 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 
 import dataset.IDataSet;
+import datatype.AggregableTypeDescriptor;
 import datatype.TypeAggregator;
+import datatype.TypeDescriptor;
 import model.FieldDescriptor;
 import query.builder.predicate.AggregateFunction;
 import query.builder.statement.AggregationDescriptor;
@@ -21,15 +24,19 @@ public class RecordAggregator {
 	
 	
 	public RecordAggregator(
-		Set<AggregationDescriptor> aggregations, 
+		List<AggregationDescriptor> aggregations, 
 		IDataSet inputDataSet
 	){
 		this.aggregations = Lists.newArrayList(aggregations);
 		this.mapping = inputDataSet.getNameIndexMapping();
 		this.aggregators = new ArrayList<>();
 		for(AggregationDescriptor aggregation : this.aggregations) {
-			FieldDescriptor aggregationField = aggregation.getField();
-			this.aggregators.add(aggregationField.getType().getDescriptor().getTypeAggregator().get());
+			TypeDescriptor fieldType =  aggregation.getField().getType().getDescriptor();
+			if(fieldType instanceof AggregableTypeDescriptor) {
+				this.aggregators.add(
+						AggregableTypeDescriptor.class.cast(fieldType).getTypeAggregator()
+				);
+			}
 		}
 	}
 	
@@ -37,7 +44,7 @@ public class RecordAggregator {
 	public void aggregateRecord(Object[] record) {
 		int resultIndex = 0;
 		for(AggregationDescriptor aggregation : aggregations) {
-			int fieldIndex = mapping.get(aggregation.getField());
+			int fieldIndex = mapping.get(aggregation.getField().getKey());
 			aggregators.get(resultIndex).addValue(record[fieldIndex]);
 		}
 	}
@@ -48,9 +55,20 @@ public class RecordAggregator {
 		Object[] result = new Object[resultSize];
 		for( int i=0; i<resultSize; i++) {
 			AggregateFunction aggrType = aggregations.get(i).getFunction();
-			result[i] = aggregators.get(i).getSum();
+			result[i] = aggregators.get(i).getAggregationResult(aggrType);
 		}
 		return result;
+	}
+
+
+	public RecordAggregator combine(RecordAggregator other) {
+		List<TypeAggregator<?>> otherAggregators = other.aggregators;
+		Iterator<TypeAggregator<?>>otherIt = otherAggregators.iterator();
+		Iterator<TypeAggregator<?>>thisIt = aggregators.iterator();
+		while(thisIt.hasNext() && otherIt.hasNext()) {
+			thisIt.next().combine(otherIt.next());
+		}
+		return this;
 	}
 	
 }

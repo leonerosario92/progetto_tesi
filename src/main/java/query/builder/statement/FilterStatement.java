@@ -10,11 +10,11 @@ import query.builder.predicate.FilterStatementType;
 
 public abstract class FilterStatement implements CFNode {
 	
-	private final FilterStatementType TYPE;
-	private final String SQL_REPRESENTATION;
-	private FieldDescriptor field; 
-	private Object rightOperand;
-	private LogicalOperand chainingOperand;
+	protected final FilterStatementType TYPE;
+	protected final String SQL_REPRESENTATION;
+	protected FieldDescriptor field; 
+	protected Object rightOperand;
+	protected  LogicalOperand chainingOperand;
 	
 	private boolean hasNextStatement;
 	

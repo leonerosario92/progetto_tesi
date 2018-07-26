@@ -2,11 +2,13 @@ package datatype;
 
 import java.math.BigDecimal;
 import java.util.DoubleSummaryStatistics;
-import java.util.Optional;
+
+
+import query.builder.predicate.AggregateFunction;
 
 
 
-	public class BigDecimalDescriptor implements TypeDescriptor{
+	public class BigDecimalDescriptor implements NumericTypeDescriptor{
 
 		@Override
 		public boolean isComparable() {
@@ -14,8 +16,8 @@ import java.util.Optional;
 		}
 
 		@Override
-		public Optional<TypeComparator> getTypeComparator() {
-			return Optional.of(new BigDecimalComparator());
+		public TypeComparator getTypeComparator() {
+			return new BigDecimalComparator();
 		}
 
 		@Override
@@ -24,28 +26,14 @@ import java.util.Optional;
 		}
 
 		@Override
-		public Optional<TypeAggregator> getTypeAggregator() {
-			return Optional.of(new BigDecimalAggregator());
+		public TypeAggregator getTypeAggregator() {
+			return new BigDecimalAggregator();
 		}
 
-		@Override
-		public boolean isNumber() {
-			return true;
-		}
 
 		@Override
-		public Optional<Number> getValueAsNumber(Object value) {
-			return Optional.of(BigDecimal.class.cast(value));
-		}
-
-		@Override
-		public boolean isString() {
-			return false;
-		}
-
-		@Override
-		public Optional<String> getValueAsString(Object value) {
-			return Optional.empty();
+		public Number getValueAsNumber(Object value) {
+			return BigDecimal.class.cast(value);
 		}
 		
 	
@@ -59,39 +47,41 @@ import java.util.Optional;
 		}
 		
 		@Override
-		public BigDecimal getMax() {
-			return BigDecimal.valueOf(aggregator.getMax());
-		}
-
-		@Override
-		public BigDecimal getMin() {
-			return BigDecimal.valueOf(aggregator.getMin());
-		}
-
-		@Override
-		public Double getSum() {
-			return aggregator.getSum();
-		}
-
-		@Override
-		public Double getAverage() {
-			return aggregator.getAverage();
-		}
-
-		@Override
-		public Long getCount() {
-			return aggregator.getCount();
-		}
-
-		@Override
 		public void addValue(Object value) {
 			aggregator.accept(BigDecimal.class.cast(value).doubleValue());
 		}
 
 		@Override
-		public void combine(TypeAggregator<BigDecimal> other) {
-			 aggregator.combine( BigDecimalAggregator.class.cast(other).aggregator );
+		public void combine(TypeAggregator<?> other) {
+			this.aggregator.combine(BigDecimalAggregator.class.cast(other).aggregator);
 		}
+
+		@Override
+		public Double getAggregationResult(AggregateFunction aggrType) {
+			Number result = null;
+			switch(aggrType) {
+			case AVG:
+				result = aggregator.getAverage();
+				break;
+			case COUNT:
+				result = aggregator.getCount();
+				break;
+			case MAX:
+				result = aggregator.getMax();
+				break;
+			case MIN:
+				result = aggregator.getMin();
+				break;
+			case SUM: 
+				result = aggregator.getSum();
+				break;
+			default:
+				throw new IllegalArgumentException();
+			}
+			return (double) result;
+		}
+
+		
 		
 	}
 }

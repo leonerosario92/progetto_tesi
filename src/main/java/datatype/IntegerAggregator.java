@@ -3,37 +3,14 @@ package datatype;
 import java.util.IntSummaryStatistics;
 import java.util.Optional;
 
+import query.builder.predicate.AggregateFunction;
+
 public class IntegerAggregator implements TypeAggregator<Integer> {
 
 	private IntSummaryStatistics aggregator;
 	
 	public IntegerAggregator() {
 		aggregator = new IntSummaryStatistics();
-	}
-	
-	@Override
-	public Integer getMax() {
-		return aggregator.getMax();
-	}
-
-	@Override
-	public Integer getMin() {
-		return aggregator.getMin();
-	}
-
-	@Override
-	public Double getSum() {
-		return Double.valueOf( aggregator.getSum());
-	}
-	
-	@Override
-	public Double getAverage() {
-		return Double.valueOf( aggregator.getAverage());
-	}
-
-	@Override
-	public Long getCount() {
-		return Long.valueOf(aggregator.getCount());
 	}
 
 	@Override
@@ -42,8 +19,33 @@ public class IntegerAggregator implements TypeAggregator<Integer> {
 	}
 
 	@Override
-	public void combine(TypeAggregator<Integer> other) {
+	public void combine(TypeAggregator<?> other) {
 		aggregator.combine(IntegerAggregator.class.cast(other).aggregator);
+	}
+
+	@Override
+	public Double getAggregationResult(AggregateFunction aggrType) {
+		Number result = null;
+		switch(aggrType) {
+		case AVG:
+			result = aggregator.getAverage();
+			break;
+		case COUNT:
+			result = aggregator.getCount();
+			break;
+		case MAX:
+			result = aggregator.getMax();
+			break;
+		case MIN:
+			result = aggregator.getMin();
+			break;
+		case SUM: 
+			result = aggregator.getSum();
+			break;
+		default:
+			throw new IllegalArgumentException();
+		}
+		return (double) result;
 	}
 
 }

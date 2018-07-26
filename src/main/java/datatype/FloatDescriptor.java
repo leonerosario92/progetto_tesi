@@ -2,46 +2,38 @@ package datatype;
 
 import java.util.Optional;
 
-public class FloatDescriptor implements TypeDescriptor{
+public class FloatDescriptor implements NumericTypeDescriptor{
+
+
+
+	@Override
+	public TypeComparator getTypeComparator() {
+		return new FloatComparator();
+	}
+
+
+	@Override
+	public TypeAggregator<?> getTypeAggregator() {
+		return new FloatAggregator();
+	}
+
+
+	@Override
+	public Number getValueAsNumber(Object value) {
+		return Float.class.cast(value);
+	}
+
 
 	@Override
 	public boolean isComparable() {
 		return true;
 	}
 
-	@Override
-	public Optional<TypeComparator> getTypeComparator() {
-		return Optional.of(new FloatComparator());
-	}
 
 	@Override
 	public boolean isAggregable() {
 		return true;
 	}
 
-	@Override
-	public Optional<TypeAggregator> getTypeAggregator() {
-		return Optional.of(new FloatAggregator());
-	}
 
-	@Override
-	public boolean isNumber() {
-		return true;
-	}
-
-	@Override
-	public Optional<Number> getValueAsNumber(Object value) {
-		return Optional.of(Float.class.cast(value));
-	}
-
-	@Override
-	public boolean isString() {
-		return false;
-	}
-
-	@Override
-	public Optional<String> getValueAsString(Object value) {
-		return Optional.empty();
-	}
-	
 }

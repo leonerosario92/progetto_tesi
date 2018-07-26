@@ -2,7 +2,7 @@ package datatype;
 
 import java.util.Optional;
 
-public class LongDescriptor implements TypeDescriptor{
+public class LongDescriptor implements NumericTypeDescriptor{
 
 	@Override
 	public boolean isComparable() {
@@ -10,8 +10,8 @@ public class LongDescriptor implements TypeDescriptor{
 	}
 
 	@Override
-	public Optional<TypeComparator> getTypeComparator() {
-		return Optional.of(new LongComparator());
+	public TypeComparator getTypeComparator() {
+		return new LongComparator();
 	}
 
 	@Override
@@ -20,28 +20,13 @@ public class LongDescriptor implements TypeDescriptor{
 	}
 
 	@Override
-	public Optional<TypeAggregator> getTypeAggregator() {
-		return Optional.of(new LongAggregator());
+	public TypeAggregator<?> getTypeAggregator() {
+		return new LongAggregator();
 	}
 
 	@Override
-	public boolean isNumber() {
-		return true;
-	}
-
-	@Override
-	public Optional<Number> getValueAsNumber(Object value) {
-		return Optional.of(Long.class.cast(value));
-	}
-
-	@Override
-	public boolean isString() {
-		return false;
-	}
-
-	@Override
-	public Optional<String> getValueAsString(Object value) {
-		return Optional.empty();
+	public Number getValueAsNumber(Object value) {
+		return Long.class.cast(value);
 	}
 
 }
