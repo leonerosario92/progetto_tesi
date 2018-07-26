@@ -127,14 +127,6 @@ public class BaseLayoutManager extends LayoutManager {
 			Iterator<Object[]> recordIterator) 
 	{
 		MaterializedDataSet result = new MaterializedDataSet(recordCount, columnSequence);
-//		int columnCount = columnSequence.size();
-//		for(Object[] record : records) {
-//			Object[] newRecord = new Object[columnCount];
-//			for(int j=0; j<columnCount; j++) {
-//				newRecord[j] = record[j];
-//			}
-//			result.addRecord(newRecord);
-//		}
 		while(recordIterator.hasNext()) {
 			result.addRecord(recordIterator.next());
 		}

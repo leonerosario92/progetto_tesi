@@ -27,6 +27,7 @@ public class QueryResultComparator  {
 		
 		int fieldsCount = scanner0.getFieldsCount();
 		for(int index=1; index<=fieldsCount; index++) {
+			
 			TypeComparator fieldComparator = scanner0.getColumnType(index).getComparator();
 			
 			ArrayList<Object> col0 = new ArrayList<>();
@@ -72,7 +73,8 @@ public class QueryResultComparator  {
 		}
 		
 		for(int i=1; i<=fc0; i++) {
-			if(! (fields.contains(iterator1.getColumnName(i)))) {
+			String columnName = iterator1.getColumnName(i);
+			if(! (fields.contains(columnName))) {
 				return false;
 			}
 		}

@@ -104,7 +104,7 @@ public abstract class AbstractSolutionTest {
 			
 			
 			/* RIPRSTINARE QUERY ORIGINALE */
-			query = getTestQuery(context);
+			query = getScanSmallDataSetQuery(context);
 			/*_____________________________*/
 			
 			
@@ -112,23 +112,24 @@ public abstract class AbstractSolutionTest {
 			IRecordScanner resultScanner = context.executeQuery
 					(query, measurementType);	
 
-			long resultIterationStartTime = System.nanoTime();
-			boolean correctness = testQueryResult(query, resultScanner);		
-			long resultIterationEndTime = System.nanoTime();
-			assertTrue("Error : Query execution returned a result that differs from the expected one.", correctness);
+//			long resultIterationStartTime = System.nanoTime();
+//			boolean correctness = testQueryResult(query, resultScanner);		
+//			assertTrue("Error : Query execution returned a result that differs from the expected one.", correctness);
+//			long resultIterationEndTime = System.nanoTime();
 			
-			long iterationNanos = (resultIterationEndTime - resultIterationStartTime);
-			query.setResultIterationTime(Float.valueOf(iterationNanos)/ (1000*1000));
+//			long iterationNanos = (resultIterationEndTime - resultIterationStartTime);
+//			query.setResultIterationTime(Float.valueOf(iterationNanos)/ (1000*1000));
 			
 			
-			resultScanner.resetToFirstRecord();
-			while(resultScanner.next()) {
-				StringBuilder sb = new StringBuilder();
-				for(int i=1; i<=resultScanner.getFieldsCount(); i++) {
-					sb.append("    "+resultScanner.getValueByColumnIndex(i));
-				}
+//			resultScanner.resetToFirstRecord();
+//			while(resultScanner.next()) {
+//				StringBuilder sb = new StringBuilder();
+//				for(int i=1; i<=resultScanner.getFieldsCount(); i++) {
+//					sb.append("    "+resultScanner.getValueByColumnIndex(i));
+//				}
 //				RESULT_LOGGER.info(sb.toString());
-			}
+//			}
+			
 			
 			testReport = writeTestReport(query);
 		} 
@@ -159,7 +160,7 @@ public abstract class AbstractSolutionTest {
 //		.project(storeSales)
 		.project(unitSales)
 //		.project(storeCost)
-//		.filter(quarter, FilterStatementType.EQUALS_TO, new String("Q1"))
+		.filter(quarter, FilterStatementType.EQUALS_TO, new String("Q1"))
 		.groupBy(city,productName)
 		.aggregateFilter(
 				AggregateFunction.SUM, 
@@ -179,7 +180,8 @@ public abstract class AbstractSolutionTest {
 
 	private Query getScanSmallDataSetQuery(Context context) {
 		IMetaData metaData = context.getMetadata();
-		TableDescriptor salesTable = metaData.getTable("sales_fact_1998");
+//		TableDescriptor salesTable = metaData.getTable("sales_fact_1998");
+		TableDescriptor salesTable = metaData.getTable("test_table");
 		FieldDescriptor storeSales = salesTable.getField("store_sales");
 		FieldDescriptor unitSales = salesTable.getField("unit_sales");
 		FieldDescriptor storeCost = salesTable.getField("store_cost");

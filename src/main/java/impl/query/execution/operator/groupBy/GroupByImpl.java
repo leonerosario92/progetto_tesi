@@ -250,7 +250,7 @@ public class GroupByImpl  extends GroupByFunction{
 		for (AggregationDescriptor aggregateField : aggregations) {
 			ColumnDescriptor currentColumn = new ColumnDescriptor(
 					aggregateField.getField().getTable().getName(), 
-					aggregateField.toString(), 
+					aggregateField.getField().getName(), 
 					DataType.DOUBLE
 					);
 				sequence.add(currentColumn);

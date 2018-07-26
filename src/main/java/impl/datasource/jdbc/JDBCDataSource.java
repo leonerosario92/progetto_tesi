@@ -130,7 +130,7 @@ public abstract class JDBCDataSource implements IRemoteDataSource{
 		try {
 			statement.setString(1,table.getName());
 			ResultSet result = statement.executeQuery();
-			int recordCount = getRecordCount(table);
+			int recordCount = table.getRecordCount();
 			return new JDBCRecordScanner (result,recordCount);
 		} catch (SQLException e) {
 			throw new JDBCDataSourceException("An error occour while trying to retrieve table "+table.getName()+" from data source");
@@ -153,9 +153,14 @@ public abstract class JDBCDataSource implements IRemoteDataSource{
 			
 			String formattedQuery = MessageFormat.format(query, values);
 			Statement statement = connection.createStatement();
-			
+
 			ResultSet result = statement.executeQuery(formattedQuery);
-			int recordCount = getRecordCount(table);
+			result.setFetchSize(800);
+			long start = System.nanoTime();
+			int recordCount = table.getRecordCount();
+			long end = System.nanoTime();
+			float timeMs = new Float((end - start) / (1000 * 1000));
+			
 			return new JDBCRecordScanner(result,recordCount);
 		} catch (SQLException e) {
 			throw new DataSourceException("An error occour while trying to retrieve a set of column from remote data source");
@@ -163,17 +168,6 @@ public abstract class JDBCDataSource implements IRemoteDataSource{
 	}
 
 	
-	private Integer getRecordCount(TableDescriptor table) throws SQLException {
-		String query = "select count(*) from " +table.getName();
-		Statement statement = connection.createStatement();
-		ResultSet result = statement.executeQuery(query);
-		
-		Integer count = null;
-		if(result.next()) {
-			 count = result.getInt(1);
-		}
-		
-		return count;
-	}
+
 	
 }

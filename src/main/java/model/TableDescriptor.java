@@ -8,6 +8,7 @@ public class TableDescriptor {
 
 	private String name; 
 	private ArrayList<FieldDescriptor> fields;
+	private int recordCount;
 	
 	public TableDescriptor(String name) {
 		this.name = name;
@@ -36,6 +37,14 @@ public class TableDescriptor {
 			}
 		}
 		return null;
+	}
+	
+	public int getRecordCount() {
+		return recordCount;
+	}
+
+	public void setRecordCount(int recordCount) {
+		this.recordCount = recordCount;
 	}
 
 }

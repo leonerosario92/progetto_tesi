@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -50,6 +51,9 @@ public class JDBCMetaData implements IMetaData {
 					fields.add(newField);
 					newTable.addFields(fields);
 				}
+				
+				newTable.setRecordCount(getRecordCount(newTable));
+				
 				tables.add(newTable);
 			}
 	
@@ -70,6 +74,20 @@ public class JDBCMetaData implements IMetaData {
 			}
 		}
 		return null;
+	}
+	
+	
+	private Integer getRecordCount(TableDescriptor table) throws SQLException {
+		String query = "select count(1) from " +table.getName();
+		Statement statement = connection.createStatement();
+		ResultSet result = statement.executeQuery(query);
+		
+		Integer count = null;
+		if(result.next()) {
+			 count = result.getInt(1);
+		}
+		
+		return count;
 	}
 
 	

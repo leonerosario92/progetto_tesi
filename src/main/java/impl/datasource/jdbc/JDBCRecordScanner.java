@@ -32,9 +32,9 @@ public class JDBCRecordScanner implements IRecordScanner {
 		} catch (SQLException e) {
 			manageSqlException();
 		}
-		
 		initializeColumnIndexMapping();
 	}
+
 
 
 	private void initializeColumnIndexMapping() {
