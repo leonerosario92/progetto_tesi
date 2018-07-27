@@ -155,7 +155,7 @@ public abstract class JDBCDataSource implements IRemoteDataSource{
 			Statement statement = connection.createStatement();
 
 			ResultSet result = statement.executeQuery(formattedQuery);
-			result.setFetchSize(800);
+			result.setFetchSize(100);
 			long start = System.nanoTime();
 			int recordCount = table.getRecordCount();
 			long end = System.nanoTime();

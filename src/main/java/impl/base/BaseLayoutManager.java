@@ -19,7 +19,7 @@ public class BaseLayoutManager extends LayoutManager {
 	
 	
 	@Override
-	public IDataSet buildDataSet(IRecordScanner recordScanner) {
+	public IDataSet buildColumnarDataSet(IRecordScanner recordScanner) {
 		
 		int recordCount = recordScanner.getRecordCount();
 		BaseDataSet dataSet = new BaseDataSet(recordCount);
@@ -64,9 +64,9 @@ public class BaseLayoutManager extends LayoutManager {
 
 
 	@Override
-	public IDataSet mergeDatasets(Iterable<IDataSet> dataSets) {
+	public IDataSet mergeColumnarDatasets(Iterable<IDataSet> dataSets) {
 		BitSet mergedBitSet = mergeValidityBitsets(dataSets);
-		IDataSet mergedDataSet = buildDataSet(dataSets,mergedBitSet);
+		IDataSet mergedDataSet = materializeDataSet(dataSets,mergedBitSet);
 		return mergedDataSet;
 	}
 
@@ -90,7 +90,7 @@ public class BaseLayoutManager extends LayoutManager {
 
 	
 	
-	private IDataSet buildDataSet(Iterable<IDataSet> dataSets, BitSet bitSet) {
+	private IDataSet materializeDataSet(Iterable<IDataSet> dataSets, BitSet bitSet) {
 	
 		int recordCount = bitSet.cardinality();
 		List<Iterator<?>> columnIterators = new ArrayList<>();
@@ -118,10 +118,42 @@ public class BaseLayoutManager extends LayoutManager {
 		
 		return result;
 	}
-
-
+	
+	
 	@Override
-	public IDataSet buildDataSet(
+	public IDataSet buildMaterializedDataSet(IRecordScanner recordScanner) {
+		
+		int recordCount = recordScanner.getRecordCount();
+		List<ColumnDescriptor> columnSequence = new ArrayList<>();
+	
+		/*
+		 * For each field in iteraror metadata, create a new ColumnDescriptor
+		*/
+		int fieldsCount = recordScanner.getFieldsCount();
+		BaseColumn<?>[] columns = new BaseColumn<?>[fieldsCount+1];
+		for(int index = 1; index <= fieldsCount; index++) {
+			
+			DataType columnType = recordScanner.getColumnType(index);
+			String columnName = recordScanner.getColumnName(index);
+			String tableName = recordScanner.getTableName(index);
+			int columnLength = recordCount;
+			ColumnDescriptor descriptor  =
+					new ColumnDescriptor(tableName, columnName, columnType);
+			columnSequence.add(descriptor);
+		}
+		
+		MaterializedDataSet result = new MaterializedDataSet(recordCount, columnSequence);
+		while(recordScanner.next()) {
+			Object[] currentRecord = recordScanner.getCurrentRecord();
+			result.addRecord(currentRecord);
+		}
+		
+		return result;
+	}
+	
+	
+	@Override
+	public IDataSet buildMaterializedDataSet(
 			int recordCount, 
 			List<ColumnDescriptor> columnSequence, 
 			Iterator<Object[]> recordIterator) 

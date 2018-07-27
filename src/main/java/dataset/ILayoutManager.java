@@ -8,14 +8,17 @@ import datasource.IRecordScanner;
 
 public interface ILayoutManager {
 
-	public IDataSet mergeDatasets(Iterable<IDataSet> dataSets);
+	public IDataSet mergeColumnarDatasets(Iterable<IDataSet> dataSets);
 
-	public IDataSet buildDataSet(IRecordScanner it);
+	public IDataSet buildColumnarDataSet(IRecordScanner it);
+	
+	IDataSet buildMaterializedDataSet(IRecordScanner scanner);
 
-	public IDataSet buildDataSet(
+	public IDataSet buildMaterializedDataSet(
 			int recordCount, 
 			List<ColumnDescriptor> columnSequence, 
 			Iterator<Object[]> records
 	);
+
 	
 }

@@ -11,9 +11,11 @@ import model.TableDescriptor;
 
 public interface IDataProvisioner {
 
-	public IDataSet loadColumns(Set<FieldDescriptor> fields) throws DataSourceException;
+	public IDataSet loadColumnarDataSet(Set<FieldDescriptor> fields) throws DataSourceException;
 
-	public IDataSet loadColumn(FieldDescriptor field) throws DataSourceException;
+	public IDataSet loadSingleColumnDataset(FieldDescriptor field) throws DataSourceException;
+
+	public IDataSet loadMaterializedDataSet(Set<FieldDescriptor> columns) throws DataSourceException;
 
 }
 

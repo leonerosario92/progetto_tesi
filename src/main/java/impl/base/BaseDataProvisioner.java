@@ -22,25 +22,23 @@ public class BaseDataProvisioner extends DataProvisioner  {
 		super();
 	}
 
-	
 	@Override
-	public IDataSet loadColumn(FieldDescriptor field) throws DataSourceException {
+	public IDataSet loadSingleColumnDataset(FieldDescriptor field) throws DataSourceException {
 	// Here will be performed the search of requested data in the cache
 		
 		//Retrieve from dataSource the data that has not been found in the cache
 		
 		IRecordScanner it = 
 				dataSource.getTableProjection(field.getTable(), field);
-		IDataSet result = layoutManager.buildDataSet(it);
+		IDataSet result = layoutManager.buildColumnarDataSet(it);
 				
 		//Merge data found in cache with data retrieved from dataSource 
 		
 		return result;
 	}
 
-	
 	@Override
-	public IDataSet loadColumns(Set<FieldDescriptor> fields) throws DataSourceException {
+	public IDataSet loadColumnarDataSet(Set<FieldDescriptor> fields) throws DataSourceException {
 		
 		// Here will be performed the search of requested data in the cache
 		
@@ -56,13 +54,30 @@ public class BaseDataProvisioner extends DataProvisioner  {
 			//TODO manage load from multiple Table if required
 		}
 		
-		IDataSet result = layoutManager.buildDataSet(rs);
+		IDataSet result = layoutManager.buildColumnarDataSet(rs);
 				
 		//Merge data found in cache with data retrieved from dataSource 
 		
 		return result;
 	}
 
+
+	@Override
+	public IDataSet loadMaterializedDataSet(Set<FieldDescriptor> columns) throws DataSourceException {
+		Map <TableDescriptor, Set<FieldDescriptor>> groupedFields = fieldsByTable(columns);
+		IRecordScanner rs = null;
+		if(groupedFields.keySet().size() == 1) {
+			TableDescriptor table =
+					groupedFields.entrySet().iterator().next().getKey();
+			rs = dataSource.getTableProjection(table, columns.toArray(new FieldDescriptor[columns.size()] ));
+		}else {
+			//TODO manage load from multiple Table if required
+		}
+		
+		IDataSet result = layoutManager.buildMaterializedDataSet(rs);
+		return result;
+	}
+	
 	
 	private HashMap<TableDescriptor, Set<FieldDescriptor>> fieldsByTable(Set<FieldDescriptor> fields)
 	{
@@ -79,8 +94,5 @@ public class BaseDataProvisioner extends DataProvisioner  {
 		}
 		return groupedFields;
 	}
-	
-
-
 
 }

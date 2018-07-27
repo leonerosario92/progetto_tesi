@@ -9,7 +9,7 @@ public class MergeOnBitSetsImpl extends MergeOnBitSetsFunction  {
 
 	@Override
 	public IDataSet apply(Iterable<IDataSet> inputDataSets, ILayoutManager layoutManager, MergeOnBitSetsArgs args) {
-		return layoutManager.mergeDatasets(inputDataSets);
+		return layoutManager.mergeColumnarDatasets(inputDataSets);
 	}
 
 }

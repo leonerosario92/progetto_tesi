@@ -7,6 +7,7 @@ import query.execution.operator.filteroncolumn.FilterOnColumnFunction;
 import query.execution.operator.filteronmultiplecolumn.FilterOnMultipleColumnFunction;
 import query.execution.operator.groupby.GroupByFunction;
 import query.execution.operator.loadcolumn.LoadColumnFunction;
+import query.execution.operator.loadmaterialized.LoadMaterializedFunction;
 import query.execution.operator.loadverticalpartition.LoadVerticalPartitionFunction;
 import query.execution.operator.mergeonbitsets.MergeOnBitSetsFunction;
 import query.execution.operator.orderby.OrderByFunction;
@@ -77,12 +78,21 @@ public class ImplementationProvider  {
 		return (MergeOnBitSetsFunction) getImplementationInstance(RelOperatorType.MERGE_ON_BITSETS);
 	}
 	
-	public void setGroupByImpl(Class<? extends GroupByFunction> class1) {
-		setImplementation(RelOperatorType.GROUP_BY, class1);
+	public void setGroupByImpl(Class<? extends GroupByFunction> function) {
+		setImplementation(RelOperatorType.GROUP_BY, function);
 	}
 	
 	public GroupByFunction getGroupByImpl() {
 		return (GroupByFunction) getImplementationInstance(RelOperatorType.GROUP_BY);
+	}
+	
+	
+	public void setLoadMaterializedImpl(Class<? extends LoadMaterializedFunction> function) {
+		setImplementation(RelOperatorType.LOAD_MATERIALIED, function);
+	}
+	
+	public LoadMaterializedFunction getLoadMaterializedImpl() {
+		return (LoadMaterializedFunction) getImplementationInstance(RelOperatorType.LOAD_MATERIALIED);
 	}
 	
 	

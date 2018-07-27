@@ -16,7 +16,7 @@ public abstract class JDBCMySqlSolutionTest extends AbstractSolutionTest{
 		connParams.setPassword("root");
 		connParams.setHost("localhost");
 		connParams.setPortNumber("3306");
-		connParams.setDbName("foodmart");
+		connParams.setDbName("enron");
 		
 		try {
 			return new MySqlJDBCDataSource(connParams);

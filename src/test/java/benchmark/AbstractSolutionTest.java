@@ -53,6 +53,10 @@ public abstract class AbstractSolutionTest {
 	
 	@BeforeClass
 	public static void setupBeforeClass() {
+		
+//		float maxMemoryMb = new Float (Runtime.getRuntime().maxMemory() / (1024 *1024));
+		float availableMemory = new Float (Runtime.getRuntime().freeMemory() / (1024 *1024));
+		
 		benchmarkReport = new StringBuilder();
 		String logFilePath = REPORT_LOG_FILE_PATH;
 		DOMConfigurator.configure(logFilePath);
@@ -83,13 +87,14 @@ public abstract class AbstractSolutionTest {
 	}
 	
 	
-	@Ignore
 	@Test
 	public void TestScanSmallDataSetMemoryOccupation(){
+		float availableMemory = new Float (Runtime.getRuntime().freeMemory() / (1024 *1024));
 		executeTest(MeasurementType.EVALUATE_MEMORY_OCCUPATION);
 	}
 	
 	
+	@Ignore
 	@Test
 	public void TestScanSmallDataSetExecutionTime(){
 		executeTest(MeasurementType.EVALUATE_EXECUTION_TIME);
@@ -97,6 +102,7 @@ public abstract class AbstractSolutionTest {
 	
 	
 	private void executeTest(MeasurementType measurementType) {
+		
 		String testReport = new String();
 		Query query = null;
 		try {
@@ -104,7 +110,7 @@ public abstract class AbstractSolutionTest {
 			
 			
 			/* RIPRSTINARE QUERY ORIGINALE */
-			query = getScanSmallDataSetQuery(context);
+			query = getTestQuery(context);
 			/*_____________________________*/
 			
 			
@@ -157,10 +163,8 @@ public abstract class AbstractSolutionTest {
 		.select(testTable)
 		.project(productName)
 		.project(city)
-//		.project(storeSales)
 		.project(unitSales)
-//		.project(storeCost)
-		.filter(quarter, FilterStatementType.EQUALS_TO, new String("Q1"))
+//		.filter(quarter, FilterStatementType.EQUALS_TO, new String("Q1"))
 		.groupBy(city,productName)
 		.aggregateFilter(
 				AggregateFunction.SUM, 
@@ -168,7 +172,7 @@ public abstract class AbstractSolutionTest {
 				FilterStatementType.GREATER_THAN, 
 				new Integer(22)
 		)
-//		.orderBy(productName)
+		.orderBy(city)
 		
 		.getQuery();
 		
@@ -181,7 +185,7 @@ public abstract class AbstractSolutionTest {
 	private Query getScanSmallDataSetQuery(Context context) {
 		IMetaData metaData = context.getMetadata();
 //		TableDescriptor salesTable = metaData.getTable("sales_fact_1998");
-		TableDescriptor salesTable = metaData.getTable("test_table");
+		TableDescriptor salesTable = metaData.getTable("sales_fact_1998");
 		FieldDescriptor storeSales = salesTable.getField("store_sales");
 		FieldDescriptor unitSales = salesTable.getField("unit_sales");
 		FieldDescriptor storeCost = salesTable.getField("store_cost");
@@ -207,13 +211,16 @@ public abstract class AbstractSolutionTest {
 		FieldDescriptor sender = messageTable.getField("sender");
 		FieldDescriptor subject = messageTable.getField("subject");
 		FieldDescriptor body = messageTable.getField("body");
+		FieldDescriptor messageId = messageTable.getField("message_id");
 
 		Query query =
 		context.query()
 			.select(messageTable)
-			.project(sender)
-			
-			.orderBy(sender)
+			.project(body)
+//			.project(sender)
+//			.project(subject)
+//			.project(messageId)
+			.orderBy(body)
 			.getQuery();
 	
 		return query;

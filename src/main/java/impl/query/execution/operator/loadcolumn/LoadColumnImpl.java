@@ -12,7 +12,7 @@ public class LoadColumnImpl extends LoadColumnFunction{
 	@Override
 	public IDataSet apply(IDataProvisioner provisioner, LoadColumnArgs args) throws DataSourceException {
 		FieldDescriptor field = args.getColumn();
-		 return provisioner.loadColumn(field);
+		 return provisioner.loadSingleColumnDataset(field);
 	}
 
 	

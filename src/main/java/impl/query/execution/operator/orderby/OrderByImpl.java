@@ -44,7 +44,7 @@ public class OrderByImpl extends OrderByFunction {
 				.collect(Collectors.toList())
 				.iterator();
 
-		IDataSet result = layoutManager.buildDataSet(recordCount, columnSequence, orderedRecords);
+		IDataSet result = layoutManager.buildMaterializedDataSet(recordCount, columnSequence, orderedRecords);
 		return result;
 	}		
 	

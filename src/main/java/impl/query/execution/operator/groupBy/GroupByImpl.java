@@ -63,7 +63,7 @@ public class GroupByImpl  extends GroupByFunction{
 		}
 		
 		List<ColumnDescriptor> columnSequence = getResultColumnSequence(groupingSequence,aggregations);
-		IDataSet result = layoutManager.buildDataSet(
+		IDataSet result = layoutManager.buildMaterializedDataSet(
 				resultRecords.size(),
 				columnSequence,
 				resultRecords.iterator()
