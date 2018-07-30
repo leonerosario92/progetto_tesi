@@ -19,7 +19,6 @@ public class FilterOnMultipleColumnImpl extends FilterOnMultipleColumnFunction {
 
 	@Override
 	public IDataSet apply(IDataSet inputSet, FilterOnMultipleColumnArgs args) throws QueryExecutionException {
-		Set<FieldDescriptor> columns = args.getFields();
 		IRecordIterator recordIterator = inputSet.getRecordIterator();
 		BitSet validityBitset = inputSet.getValidityBitSet();
 		Set<CFNode> statements = args.getStatements();

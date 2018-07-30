@@ -7,6 +7,7 @@ import java.util.List;
 import dataset.LayoutManager;
 import datasource.IRecordScanner;
 import datatype.DataType;
+import utils.RecordEvaluator;
 import dataset.ColumnDescriptor;
 import dataset.IColumn;
 import dataset.IDataSet;
@@ -91,7 +92,6 @@ public class BaseLayoutManager extends LayoutManager {
 	
 	
 	private IDataSet materializeDataSet(Iterable<IDataSet> dataSets, BitSet bitSet) {
-	
 		int recordCount = bitSet.cardinality();
 		List<Iterator<?>> columnIterators = new ArrayList<>();
 		List<ColumnDescriptor> descriptors = new ArrayList<>();
@@ -115,7 +115,6 @@ public class BaseLayoutManager extends LayoutManager {
 			}
 			result.addRecord(currentRecord);
 		}
-		
 		return result;
 	}
 	
@@ -124,11 +123,35 @@ public class BaseLayoutManager extends LayoutManager {
 	public IDataSet buildMaterializedDataSet(IRecordScanner recordScanner) {
 		
 		int recordCount = recordScanner.getRecordCount();
-		List<ColumnDescriptor> columnSequence = new ArrayList<>();
+		List<ColumnDescriptor> columnSequence = getColumnSequence(recordScanner);
+		
+		MaterializedDataSet result = new MaterializedDataSet(recordCount, columnSequence);
+		while(recordScanner.next()) {
+			Object[] currentRecord = recordScanner.getCurrentRecord();
+			result.addRecord(currentRecord);
+		}
+		return result;
+	}
+
+
+
+	public IDataSet buildMaterializedDataSet(IRecordScanner recordScanner,RecordEvaluator recordEvaluator) {
+		
+		int recordCount = recordScanner.getRecordCount();
+		List<ColumnDescriptor> columnSequence = getColumnSequence(recordScanner);
+		MaterializedDataSet result = new MaterializedDataSet(recordCount, columnSequence);
+		while(recordScanner.next()) {
+			Object[] currentRecord = recordScanner.getCurrentRecord();
+			if(recordEvaluator.evaluate(currentRecord)) {
+				result.addRecord(currentRecord);
+			}
+		}
+		return result;
+	}
 	
-		/*
-		 * For each field in iteraror metadata, create a new ColumnDescriptor
-		*/
+	
+	private List<ColumnDescriptor> getColumnSequence(IRecordScanner recordScanner) {
+		List<ColumnDescriptor> columnSequence = new ArrayList<>();
 		int fieldsCount = recordScanner.getFieldsCount();
 		BaseColumn<?>[] columns = new BaseColumn<?>[fieldsCount+1];
 		for(int index = 1; index <= fieldsCount; index++) {
@@ -136,19 +159,13 @@ public class BaseLayoutManager extends LayoutManager {
 			DataType columnType = recordScanner.getColumnType(index);
 			String columnName = recordScanner.getColumnName(index);
 			String tableName = recordScanner.getTableName(index);
-			int columnLength = recordCount;
+			int columnLength = recordScanner.getRecordCount();
 			ColumnDescriptor descriptor  =
 					new ColumnDescriptor(tableName, columnName, columnType);
 			columnSequence.add(descriptor);
 		}
 		
-		MaterializedDataSet result = new MaterializedDataSet(recordCount, columnSequence);
-		while(recordScanner.next()) {
-			Object[] currentRecord = recordScanner.getCurrentRecord();
-			result.addRecord(currentRecord);
-		}
-		
-		return result;
+		return columnSequence;
 	}
 	
 	

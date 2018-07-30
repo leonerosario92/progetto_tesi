@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import dataprovisioner.DataProvisioner;
@@ -15,13 +16,17 @@ import datasource.IDataSource;
 import datasource.IRecordScanner;
 import model.FieldDescriptor;
 import model.TableDescriptor;
+import query.builder.statement.CFNode;
+import utils.RecordEvaluator;
 
 public class BaseDataProvisioner extends DataProvisioner  {
+	
 	
 	public BaseDataProvisioner() {
 		super();
 	}
 
+	
 	@Override
 	public IDataSet loadSingleColumnDataset(FieldDescriptor field) throws DataSourceException {
 	// Here will be performed the search of requested data in the cache
@@ -37,6 +42,7 @@ public class BaseDataProvisioner extends DataProvisioner  {
 		return result;
 	}
 
+	
 	@Override
 	public IDataSet loadColumnarDataSet(Set<FieldDescriptor> fields) throws DataSourceException {
 		
@@ -77,6 +83,34 @@ public class BaseDataProvisioner extends DataProvisioner  {
 		IDataSet result = layoutManager.buildMaterializedDataSet(rs);
 		return result;
 	}
+
+	
+	@Override
+	public IDataSet loadFilteredMaterializedDataSet(Set<FieldDescriptor> columns, Set<CFNode> filterStatements)
+			throws DataSourceException {
+
+		Map <TableDescriptor, Set<FieldDescriptor>> groupedFields = fieldsByTable(columns);
+		IRecordScanner rs = null;
+		if(groupedFields.keySet().size() == 1) {
+			TableDescriptor table =
+					groupedFields.entrySet().iterator().next().getKey();
+			rs = dataSource.getTableProjection(table, columns.toArray(new FieldDescriptor[columns.size()] ));
+		}else {
+			//TODO manage load from multiple Table if required
+		}
+		
+		
+		/*===TODO differentiate mapping for recordScanner and recordIterator===*/
+		Map<String,Integer> mapping = new HashMap<>();
+		for ( Entry<String, Integer> entry : rs.getNameIndexMapping().entrySet()) {
+			mapping.put(entry.getKey(), entry.getValue()-1);
+		}
+		/*=====================================================================*/
+		
+		RecordEvaluator evaluator = new RecordEvaluator(mapping, filterStatements);
+		IDataSet result = layoutManager.buildMaterializedDataSet(rs,evaluator);
+		return result;
+	}
 	
 	
 	private HashMap<TableDescriptor, Set<FieldDescriptor>> fieldsByTable(Set<FieldDescriptor> fields)
@@ -94,5 +128,6 @@ public class BaseDataProvisioner extends DataProvisioner  {
 		}
 		return groupedFields;
 	}
+
 
 }

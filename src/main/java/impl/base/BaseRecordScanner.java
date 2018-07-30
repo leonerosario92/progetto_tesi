@@ -3,6 +3,7 @@ package impl.base;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import dataset.ColumnDescriptor;
 import dataset.IColumn;
@@ -142,6 +143,12 @@ public class BaseRecordScanner implements IRecordScanner {
 	public Object getValueByColumnID(String columnId) {
 		int index = nameIndexMapping.get(columnId);
 		return getValueByColumnIndex(index);
+	}
+
+
+	@Override
+	public Map<String, Integer> getNameIndexMapping() {
+		return nameIndexMapping;
 	}
 	
 }

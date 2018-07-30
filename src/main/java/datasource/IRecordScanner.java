@@ -1,5 +1,7 @@
 package datasource;
 
+import java.util.Map;
+
 import datatype.DataType;
 import model.FieldDescriptor;
 
@@ -28,6 +30,8 @@ public interface IRecordScanner {
 	public Object getValueByColumnDescriptor(FieldDescriptor field);
 	
 	public Object getValueByColumnID(String comulnId);
+	
+	public Map<String,Integer> getNameIndexMapping();
 	
 	
 	public int getFieldsCount();

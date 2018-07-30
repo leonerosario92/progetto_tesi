@@ -1,9 +1,5 @@
 package benchmark;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static query.builder.predicate.FilterStatementType.GREATER_THAN;
-import static query.builder.predicate.FilterStatementType.LESS_THAN;
-
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.junit.AfterClass;
@@ -28,7 +24,6 @@ import model.TableDescriptor;
 import query.builder.Query;
 import query.builder.predicate.AggregateFunction;
 import query.builder.predicate.FilterStatementType;
-import query.builder.statement.CFilterStatement;
 import query.execution.QueryExecutionException;
 import utils.comparator.QueryResultComparator;
 
@@ -37,7 +32,7 @@ public abstract class AbstractSolutionTest {
 	@Rule public TestName name = new TestName();
 	
 	public static final String REPORT_LOG_FILE_PATH = "log4j-report-conf.xml";
-	public static final String RESULT_LOG_FILE_PATH = "log4j-result-conf.xml";
+//	public static final String RESULT_LOG_FILE_PATH = "log4j-result-conf.xml";
 	
 	private static Logger REPORT_LOGGER;
 //	private static Logger RESULT_LOGGER;
@@ -87,14 +82,14 @@ public abstract class AbstractSolutionTest {
 	}
 	
 	
+	@Ignore
 	@Test
 	public void TestScanSmallDataSetMemoryOccupation(){
 		float availableMemory = new Float (Runtime.getRuntime().freeMemory() / (1024 *1024));
 		executeTest(MeasurementType.EVALUATE_MEMORY_OCCUPATION);
 	}
 	
-	
-	@Ignore
+
 	@Test
 	public void TestScanSmallDataSetExecutionTime(){
 		executeTest(MeasurementType.EVALUATE_EXECUTION_TIME);
@@ -164,7 +159,7 @@ public abstract class AbstractSolutionTest {
 		.project(productName)
 		.project(city)
 		.project(unitSales)
-//		.filter(quarter, FilterStatementType.EQUALS_TO, new String("Q1"))
+		.filter(quarter, FilterStatementType.EQUALS_TO, new String("Q1"))
 		.groupBy(city,productName)
 		.aggregateFilter(
 				AggregateFunction.SUM, 
@@ -185,7 +180,7 @@ public abstract class AbstractSolutionTest {
 	private Query getScanSmallDataSetQuery(Context context) {
 		IMetaData metaData = context.getMetadata();
 //		TableDescriptor salesTable = metaData.getTable("sales_fact_1998");
-		TableDescriptor salesTable = metaData.getTable("sales_fact_1998");
+		TableDescriptor salesTable = metaData.getTable("test_table");
 		FieldDescriptor storeSales = salesTable.getField("store_sales");
 		FieldDescriptor unitSales = salesTable.getField("unit_sales");
 		FieldDescriptor storeCost = salesTable.getField("store_cost");

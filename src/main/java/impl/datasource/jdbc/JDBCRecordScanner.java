@@ -19,7 +19,7 @@ public class JDBCRecordScanner implements IRecordScanner {
 	private ITypeFactory typeFactory;
 	private int recordCount;
 	private int fieldsCount;
-	private Map<String,Integer>columnIndexMapping;
+	private Map<String,Integer>nameIndexMapping;
 
 
 	public JDBCRecordScanner(ResultSet resultSet, int recordCount) throws JDBCDataSourceException {
@@ -38,12 +38,12 @@ public class JDBCRecordScanner implements IRecordScanner {
 
 
 	private void initializeColumnIndexMapping() {
-		columnIndexMapping = new HashMap<>();
+		nameIndexMapping = new HashMap<>();
 		for(int index=1; index<=fieldsCount; index++) {
 			String tableName = getTableName(index);
 			String columnName = getColumnName(index);
 			
-			columnIndexMapping.put(
+			nameIndexMapping.put(
 				tableName+"_"+columnName, 
 				index
 			);
@@ -188,20 +188,27 @@ public class JDBCRecordScanner implements IRecordScanner {
 
 	@Override
 	public Object getValueByColumnID(String columnId) {
-		if(! (columnIndexMapping.containsKey(columnId))) {
+		if(! (nameIndexMapping.containsKey(columnId))) {
 			throw new IllegalArgumentException("Attempt to retrieve value from an unknown column");
 		}
-		int index = columnIndexMapping.get(columnId);
+		int index = nameIndexMapping.get(columnId);
 		return getValueByColumnIndex(index);
 	}
 	
 	
 	public Map<String, Integer> getColumnIndexMapping() {
-		return columnIndexMapping;
+		return nameIndexMapping;
 	}
 
 	public void setColumnIndexMapping(Map<String, Integer> columnIndexMapping) {
-		this.columnIndexMapping = columnIndexMapping;
+		this.nameIndexMapping = columnIndexMapping;
+	}
+
+
+
+	@Override
+	public Map<String, Integer> getNameIndexMapping() {
+		return nameIndexMapping;
 	}
 
 }

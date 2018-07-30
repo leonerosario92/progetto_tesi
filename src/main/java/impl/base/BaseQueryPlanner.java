@@ -64,17 +64,17 @@ public class BaseQueryPlanner extends QueryPlanner {
 		GroupByClause groupByClause = query.getGroupByClause();
 		OrderByClause orderByClause = query.getOrderByClause();
 		
-		
-		
-//		MergeOnBitesetsOperator materializator = new MergeOnBitesetsOperator(implementationProvider);
-//		ParallelOperatorGroup filterStatements = new ParallelOperatorGroup(materializator);
 		LoadMaterializedOperator dataLoadingOperator = 
 				new LoadMaterializedOperator(implementationProvider);
 		LoadMaterializedArgs dataLoadingArgs = dataLoadingOperator.getArgs();
 		dataLoadingArgs.setColumns(projectionClause.getReferencedFields());
+		List<FilterStatement> filterStatements = filterClause.getStatements();
+		if(! (filterStatements.isEmpty())) {
+			dataLoadingArgs.setFilterStatements(Sets.newHashSet(filterStatements));
+		}
 		
-		
-		
+//		MergeOnBitesetsOperator materializator = new MergeOnBitesetsOperator(implementationProvider);
+//		ParallelOperatorGroup filterStatements = new ParallelOperatorGroup(materializator);
 //		Set<FieldDescriptor> unfilteredFields = 
 //			Sets.difference(projectionClause.getReferencedFields(), filterClause.getReferencedFields());
 //		
@@ -95,18 +95,15 @@ public class BaseQueryPlanner extends QueryPlanner {
 			rootExecutable.queueSubElement(groupByOp);
 		}
 		
-		
 		if( ! (orderByClause.getOrderingSequence().isEmpty())) {
 			OrderByOperator orderByOp = new OrderByOperator(implementationProvider);
 			orderByOp.getArgs().setOrderingSequence(orderByClause.getOrderingSequence());
 			rootExecutable.queueSubElement(orderByOp);
 		}
 		
-		
 		ExecutionPlan execPlan = new ExecutionPlan(rootExecutable);
 		String plan = execPlan.toString();
 		return execPlan;
-		
 	}
 	
 	
