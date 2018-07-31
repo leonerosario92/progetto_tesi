@@ -92,10 +92,13 @@ public class BaseQueryPlanner extends QueryPlanner {
 				gbArgs.addAggregateFilter(statement);
 			}
 			
+			if( ! (orderByClause.getOrderingSequence().isEmpty())) {
+				gbArgs.setOrderingSequence(orderByClause.getOrderingSequence());
+			}
+				
 			rootExecutable.queueSubElement(groupByOp);
 		}
-		
-		if( ! (orderByClause.getOrderingSequence().isEmpty())) {
+		else if( ! (orderByClause.getOrderingSequence().isEmpty())) {
 			OrderByOperator orderByOp = new OrderByOperator(implementationProvider);
 			orderByOp.getArgs().setOrderingSequence(orderByClause.getOrderingSequence());
 			rootExecutable.queueSubElement(orderByOp);

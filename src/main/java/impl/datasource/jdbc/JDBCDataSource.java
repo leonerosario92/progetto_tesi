@@ -8,8 +8,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
 
-import dataset.IColumnIterator;
-import dataset.IRecordIterator;
 import datasource.DataSourceException;
 import datasource.IRecordScanner;
 import datasource.IRemoteDataSource;
@@ -17,7 +15,7 @@ import model.FieldDescriptor;
 import model.TableDescriptor;
 
 public abstract class JDBCDataSource implements IRemoteDataSource{
-
+	
 	private Connection connection;
 	private JDBCMetaData metaData;
 	private JDBCConnectionParams params;
@@ -32,6 +30,11 @@ public abstract class JDBCDataSource implements IRemoteDataSource{
 		//TODO Manage exception properly
 		try {
 			this.connection = connect();
+			if(connection instanceof com.mysql.jdbc.Connection) {
+				((com.mysql.jdbc.Connection) connection).setUseCursorFetch(true);
+				((com.mysql.jdbc.Connection) connection).setUseServerPrepStmts(false);
+				((com.mysql.jdbc.Connection) connection).setDefaultFetchSize(Integer.MIN_VALUE);
+			}
 			this.getTableStatement = prepareGetTableStatement();
 			this.metaData = new JDBCMetaData(connection);
 		} catch (ClassNotFoundException e) {
@@ -152,14 +155,9 @@ public abstract class JDBCDataSource implements IRemoteDataSource{
 			values[fieldNum] = table.getName();
 			
 			String formattedQuery = MessageFormat.format(query, values);
-			Statement statement = connection.createStatement();
-
+			Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			ResultSet result = statement.executeQuery(formattedQuery);
-			result.setFetchSize(100);
-			long start = System.nanoTime();
 			int recordCount = table.getRecordCount();
-			long end = System.nanoTime();
-			float timeMs = new Float((end - start) / (1000 * 1000));
 			
 			return new JDBCRecordScanner(result,recordCount);
 		} catch (SQLException e) {

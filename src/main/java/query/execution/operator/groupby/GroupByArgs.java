@@ -11,6 +11,7 @@ import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Sets;
 
 import model.FieldDescriptor;
 import query.builder.predicate.AggregateFunction;
@@ -26,11 +27,13 @@ public class GroupByArgs implements IOperatorArgs {
 	private List<FieldDescriptor> groupingSequence;
 	private Set<AggregationDescriptor> aggregations;
 	private List<AggregateFilterStatement> aggregateFilters;
+	private List<FieldDescriptor> orderingSequence;
 	
 	public GroupByArgs() {
 		this.groupingSequence = new ArrayList<>(); 
 		this.aggregations = new HashSet<>(); 
 		this.aggregateFilters = new ArrayList<>();
+		this.orderingSequence = new ArrayList<>();
 	}
 	
 	
@@ -62,8 +65,20 @@ public class GroupByArgs implements IOperatorArgs {
 		return aggregateFilters;
 	}
 	
+	public List<FieldDescriptor> getOrderingSequence() {
+		return orderingSequence;
+	}
 	
+	public Set<FieldDescriptor> getColumns(){
+		return Sets.newHashSet(orderingSequence);
+	}
 
+	public void setOrderingSequence(List<FieldDescriptor> orderingSequence) {
+		this.orderingSequence.addAll(orderingSequence);
+	}
+
+	
+	
 
 	@Override
 	public String getStringRepresentation() {
@@ -79,20 +94,28 @@ public class GroupByArgs implements IOperatorArgs {
 		
 		sb.append(" , ");
 		
-		if(aggregateFilters.size() != 0) {
-			sb.append("aggregateFilterStatements = [ ");
-			int size = aggregateFilters.size();
-			int count = 0;
-			for(AggregateFilterStatement statement : aggregateFilters) {
-				sb.append(statement.writeSql());
-				count ++;
-				if(count < size) {
-					sb.append(" , ");
-				}
+		sb.append("aggregateFilterStatements = [ ");
+		int size = aggregateFilters.size();
+		int count = 0;
+		for(AggregateFilterStatement statement : aggregateFilters) {
+			sb.append(statement.writeSql());
+			count ++;
+			if(count < size) {
+				sb.append(" , ");
 			}
-			sb.append(" ]");
 		}
+		sb.append(" ]");
+
+		sb.append(" , ");
 		
+		sb.append("orderingSequence = [ ");
+		Iterator<FieldDescriptor> it = orderingSequence.iterator();
+		while(it.hasNext()) {
+			sb.append( it.next().getName());
+			if(it.hasNext()) {
+				sb.append(" , ");
+			}
+		}sb.append(" ]");
 		
 		return sb.toString();
 	}

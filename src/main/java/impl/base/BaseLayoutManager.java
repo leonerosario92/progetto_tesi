@@ -7,6 +7,7 @@ import java.util.List;
 import dataset.LayoutManager;
 import datasource.IRecordScanner;
 import datatype.DataType;
+import objectexplorer.MemoryMeasurer;
 import utils.RecordEvaluator;
 import dataset.ColumnDescriptor;
 import dataset.IColumn;

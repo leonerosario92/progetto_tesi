@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -37,7 +38,8 @@ public class OrderByImpl extends OrderByFunction {
 		
 		List<FieldDescriptor> orderingSequence = args.getOrderingSequence();
 		
-		Comparator<Object[]> recordComparator = getRecordComparator(inputSet,orderingSequence);
+		Comparator<Object[]> recordComparator =
+				getRecordComparator(inputSet.getNameIndexMapping(),orderingSequence);
 		
 		Iterator<Object[]> orderedRecords = recordStream
 				.sorted(recordComparator) 
@@ -50,20 +52,22 @@ public class OrderByImpl extends OrderByFunction {
 	
 
 	private Comparator<Object[]> getRecordComparator(
-			IDataSet inputSet, 
+			Map<String,Integer> nameIndexMapping, 
 			List<FieldDescriptor> orderingSequence)
 	{
 		TypeComparator[] comparators = new TypeComparator [orderingSequence.size()];
 		int [] indexes = new int[orderingSequence.size()];
-		for(int i=0; i<orderingSequence.size(); i++) {
-			indexes[i] = inputSet.getColumnIndex(orderingSequence.get(i));
-			comparators[i] = 
-					inputSet.getColumnDescriptor(indexes[i])
-					.getColumnType()
-					.getComparator();		
+		int fieldIndex=0;
+		for(FieldDescriptor field : orderingSequence) {
+			indexes[fieldIndex] = nameIndexMapping.get(field.getKey());
+			comparators[fieldIndex] = 
+					field
+					.getType()
+					.getComparator();
+			fieldIndex ++;
 		}
 		
-		Comparator<Object[]> recordComparator = (r,o)-> comparators[0].compare(r[indexes[0]], o[indexes[0]]);
+		Comparator<Object[]> recordComparator = (record,other)-> comparators[0].compare(record[indexes[0]], other[indexes[0]]);
 		IntStream.range(1, orderingSequence.size())
 		.forEach
 		(

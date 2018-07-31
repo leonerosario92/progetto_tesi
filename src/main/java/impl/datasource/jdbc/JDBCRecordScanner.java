@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import dataset.IRecordIterator;
 import datasource.IRecordScanner;
 import datatype.DataType;
 import datatype.ITypeFactory;
@@ -34,7 +33,6 @@ public class JDBCRecordScanner implements IRecordScanner {
 		}
 		initializeColumnIndexMapping();
 	}
-
 
 
 	private void initializeColumnIndexMapping() {
@@ -121,7 +119,12 @@ public class JDBCRecordScanner implements IRecordScanner {
 	@Override
 	public boolean next() {
 		try {
-			return resultSet.next();
+			boolean result = resultSet.next();
+			if( ! result) {
+				resultSet.close();
+			}
+			return result;
+			
 		} catch (SQLException e) {
 			manageSqlException();
 			return false;
@@ -171,7 +174,7 @@ public class JDBCRecordScanner implements IRecordScanner {
 			try {
 				result[i-1] = resultSet.getObject(i);
 			} catch (SQLException e) {
-				manageSqlException();;
+				manageSqlException();
 			}
 		}
 		return result;
@@ -203,7 +206,6 @@ public class JDBCRecordScanner implements IRecordScanner {
 	public void setColumnIndexMapping(Map<String, Integer> columnIndexMapping) {
 		this.nameIndexMapping = columnIndexMapping;
 	}
-
 
 
 	@Override

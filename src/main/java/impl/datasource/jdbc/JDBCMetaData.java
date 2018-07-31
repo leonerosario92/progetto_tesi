@@ -86,6 +86,7 @@ public class JDBCMetaData implements IMetaData {
 		if(result.next()) {
 			 count = result.getInt(1);
 		}
+		statement.close();
 		
 		return count;
 	}

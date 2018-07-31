@@ -18,10 +18,10 @@ public class TypeUtils {
 		case STRING :
 			return parseStringOperand (operand);
 		case BIG_DECIMAL:
-//		case DOUBLE:
-//		case FLOAT:
-//		case INTEGER:
-//		case LONG:
+		case DOUBLE:
+		case FLOAT:
+		case INTEGER:
+		case LONG:
 			return parseNumericOperand(operand,type);
 			
 		default :
@@ -46,14 +46,14 @@ public class TypeUtils {
 		switch (type) {
 		case BIG_DECIMAL:
 			return new BigDecimal(literalValue);
-//		case DOUBLE:
-//			return Double.parseDouble(literalValue);
-//		case FLOAT:
-//			return Float.parseFloat(literalValue);
-//		case INTEGER:
-//			return Integer.parseInt(literalValue);
-//		case LONG:
-//			return Long.parseLong(literalValue);
+		case DOUBLE:
+			return Double.parseDouble(literalValue);
+		case FLOAT:
+			return Float.parseFloat(literalValue);
+		case INTEGER:
+			return Integer.parseInt(literalValue);
+		case LONG:
+			return Long.parseLong(literalValue);
 		default:
 			return null;
 		}

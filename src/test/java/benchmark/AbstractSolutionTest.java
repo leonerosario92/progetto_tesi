@@ -48,10 +48,6 @@ public abstract class AbstractSolutionTest {
 	
 	@BeforeClass
 	public static void setupBeforeClass() {
-		
-//		float maxMemoryMb = new Float (Runtime.getRuntime().maxMemory() / (1024 *1024));
-		float availableMemory = new Float (Runtime.getRuntime().freeMemory() / (1024 *1024));
-		
 		benchmarkReport = new StringBuilder();
 		String logFilePath = REPORT_LOG_FILE_PATH;
 		DOMConfigurator.configure(logFilePath);
@@ -85,7 +81,6 @@ public abstract class AbstractSolutionTest {
 	@Ignore
 	@Test
 	public void TestScanSmallDataSetMemoryOccupation(){
-		float availableMemory = new Float (Runtime.getRuntime().freeMemory() / (1024 *1024));
 		executeTest(MeasurementType.EVALUATE_MEMORY_OCCUPATION);
 	}
 	
@@ -109,19 +104,24 @@ public abstract class AbstractSolutionTest {
 			/*_____________________________*/
 			
 			
+			float availableMemoryBefore = new Float (Runtime.getRuntime().freeMemory() / (1024 *1024));
+			
+			
 			String sql = query.writeSql();
 			IRecordScanner resultScanner = context.executeQuery
 					(query, measurementType);	
 
+			float availableMemoryAfter = new Float (Runtime.getRuntime().freeMemory() / (1024 * 1024));
+			
 //			long resultIterationStartTime = System.nanoTime();
 //			boolean correctness = testQueryResult(query, resultScanner);		
 //			assertTrue("Error : Query execution returned a result that differs from the expected one.", correctness);
 //			long resultIterationEndTime = System.nanoTime();
-			
+//			
 //			long iterationNanos = (resultIterationEndTime - resultIterationStartTime);
 //			query.setResultIterationTime(Float.valueOf(iterationNanos)/ (1000*1000));
 			
-			
+//			
 //			resultScanner.resetToFirstRecord();
 //			while(resultScanner.next()) {
 //				StringBuilder sb = new StringBuilder();
@@ -130,7 +130,6 @@ public abstract class AbstractSolutionTest {
 //				}
 //				RESULT_LOGGER.info(sb.toString());
 //			}
-			
 			
 			testReport = writeTestReport(query);
 		} 
@@ -167,10 +166,8 @@ public abstract class AbstractSolutionTest {
 				FilterStatementType.GREATER_THAN, 
 				new Integer(22)
 		)
-		.orderBy(city)
-		
+		.orderBy(city,productName)
 		.getQuery();
-		
 		query.writeSql();
 		
 		return query;
@@ -179,8 +176,8 @@ public abstract class AbstractSolutionTest {
 
 	private Query getScanSmallDataSetQuery(Context context) {
 		IMetaData metaData = context.getMetadata();
-//		TableDescriptor salesTable = metaData.getTable("sales_fact_1998");
-		TableDescriptor salesTable = metaData.getTable("test_table");
+		TableDescriptor salesTable = metaData.getTable("sales_fact_1998");
+//		TableDescriptor salesTable = metaData.getTable("test_table");
 		FieldDescriptor storeSales = salesTable.getField("store_sales");
 		FieldDescriptor unitSales = salesTable.getField("unit_sales");
 		FieldDescriptor storeCost = salesTable.getField("store_cost");
