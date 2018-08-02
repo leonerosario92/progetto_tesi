@@ -60,24 +60,26 @@ public class GroupByImpl  extends GroupByFunction{
 					aggregateRecords(recordStream,groupingSequenceIndexes,downStreamCollector);
 		}
 		
-		Stream<Object[]> aggregateRecordStream = aggregateRecords.stream();
-		Map<String,Integer> aggrNameIndexMapping = mapAggregateRecordsToIndexes(groupingSequence, aggregations);
-		List<ColumnDescriptor> columnSequence = getResultColumnSequence(groupingSequence,aggregations);
+		recordStream = aggregateRecords.stream();
+		Map<String,Integer> nameIndexMapping = mapAggregateRecordsToIndexes(groupingSequence, aggregations);
 		
 		if(aggregateFilters.size() != 0) {
-			aggregateRecordStream = 
-					filterRecords(aggrNameIndexMapping,aggregateFilters,aggregateRecordStream);
+			recordStream = 
+					filterRecords(nameIndexMapping,aggregateFilters,recordStream);
 		}
 		
+		recordStream = projectFields(projectionSequence,recordStream,nameIndexMapping);
+		
 		if(orderingSequence.size() !=0) {
-			aggregateRecordStream =
-					sortRecords(aggrNameIndexMapping,orderingSequence,aggregateRecordStream);
+			recordStream =
+					sortRecords(nameIndexMapping,orderingSequence,recordStream);
 		}
 		
 		aggregateRecords = 
-				aggregateRecordStream
+				recordStream
 				.collect(Collectors.toList());
 		
+		List<ColumnDescriptor> columnSequence = getResultColumnSequence(projectionSequence);
 		IDataSet result = layoutManager.buildMaterializedDataSet(
 				aggregateRecords.size(),
 				columnSequence,
@@ -254,27 +256,28 @@ public class GroupByImpl  extends GroupByFunction{
 	
 	
 	private List<ColumnDescriptor> getResultColumnSequence(
-			List<FieldDescriptor> groupingSequence,
-			List<AggregationDescriptor> aggregations
+			List<IDescriptor> projectionSequence
 	){
 		List<ColumnDescriptor> sequence = new ArrayList<>();
-		for (FieldDescriptor field : groupingSequence) {
-			ColumnDescriptor currentColumn = new ColumnDescriptor(
-				field.getTable().getName(), 
-				field.getName(), 
-				field.getType()
-				);
-			sequence.add(currentColumn);
+		for(IDescriptor descriptor : projectionSequence) {
+			if(descriptor instanceof FieldDescriptor) {
+				FieldDescriptor field = FieldDescriptor.class.cast(descriptor);
+				ColumnDescriptor currentColumn = new ColumnDescriptor(
+						field.getTable().getName(), 
+						field.getName(), 
+						field.getType()
+						);
+					sequence.add(currentColumn);
+			}else if(descriptor instanceof AggregationDescriptor) {
+				AggregationDescriptor aggregateField = AggregationDescriptor.class.cast(descriptor);
+				ColumnDescriptor currentColumn = new ColumnDescriptor(
+						aggregateField.getField().getTable().getName(), 
+						aggregateField.getName(), 
+						DataType.DOUBLE
+						);
+					sequence.add(currentColumn);
+			}
 		}
-		for (AggregationDescriptor aggregateField : aggregations) {
-			ColumnDescriptor currentColumn = new ColumnDescriptor(
-					aggregateField.getField().getTable().getName(), 
-					aggregateField.getName(), 
-					DataType.DOUBLE
-					);
-				sequence.add(currentColumn);
-		}
-		
 		return sequence;
 	}
 	
@@ -296,7 +299,8 @@ public class GroupByImpl  extends GroupByFunction{
 			fieldIndex ++;
 		}
 		
-		Comparator<Object[]> recordComparator = (record,other)-> comparators[0].compare(record[indexes[0]], other[indexes[0]]);
+		Comparator<Object[]> recordComparator = 
+				(record,other)-> comparators[0].compare(record[indexes[0]], other[indexes[0]]);
 
 		for(int i=1; i<size; i++ ) {
 			final int currentIndex = i;
@@ -304,7 +308,8 @@ public class GroupByImpl  extends GroupByFunction{
 				new Comparator<Object[]>() {
 					@Override
 					public int compare(Object[] record, Object[] other) {
-						return comparators[currentIndex].compare(record[indexes[currentIndex]], other[indexes[currentIndex]]);
+						return comparators[currentIndex].
+								compare(record[indexes[currentIndex]], other[indexes[currentIndex]]);
 					}
 				}
 			);
@@ -320,11 +325,42 @@ public class GroupByImpl  extends GroupByFunction{
 			List<FieldDescriptor> orderingSequence, 
 			Stream<Object[]> aggregateRecordStream
 	){
-		Comparator<Object[]> recordComparator = getRecordComparator(aggrNameIndexMapping, orderingSequence);
+		Comparator<Object[]> recordComparator = 
+				getRecordComparator(aggrNameIndexMapping, orderingSequence);
 		Stream<Object[]> sortedRecordStream =
 			aggregateRecordStream
 			.sorted(recordComparator);
 		return sortedRecordStream;
+	}
+	
+	
+	private Stream<Object[]> projectFields(
+			List<IDescriptor> projectionSequence, 
+			Stream<Object[]> recordStream,
+			Map<String, Integer> oldMapping
+	){
+		Map<String,Integer> newMapping = new HashMap<>();
+		
+		int index = 0;
+		for(IDescriptor field : projectionSequence) {
+			newMapping.put(field.getKey(),index);
+			index++;
+		}
+		
+		Stream<Object[]> result =
+		recordStream.map(
+			oldRecord ->{
+				Object[] projectedRecord = new Object[projectionSequence.size()];
+				int j = 0;
+				for(IDescriptor field : projectionSequence) {
+					projectedRecord[j] = oldRecord[oldMapping.get(field.getKey())];
+					j++;
+				}
+				return projectedRecord;
+ 			}
+		);
+		
+		return result;
 	}
 
 }

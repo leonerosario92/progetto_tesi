@@ -30,6 +30,9 @@ public class FilterBuilder {
 	
 	
 	public Query getQuery() {
+		if(! query.getProjectionClause().getAggregateFields().isEmpty()) {
+			throw new IllegalArgumentException("Non-aggregate queries cannot project aggregate fields.");
+		}
 		return query;
 	}
 	

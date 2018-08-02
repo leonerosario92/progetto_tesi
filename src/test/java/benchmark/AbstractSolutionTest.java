@@ -96,11 +96,7 @@ public abstract class AbstractSolutionTest {
 		try {
 			Context context = factory.getContext();
 			
-			
-			/* RIPRSTINARE QUERY ORIGINALE */
 			query = getTestQuery(context);
-			/*_____________________________*/
-			
 			String sql = query.writeSql();
 			IRecordScanner resultScanner = context.executeQuery (query, measurementType);	
 
@@ -127,17 +123,21 @@ public abstract class AbstractSolutionTest {
 		IMetaData metaData = context.getMetadata();
 		TableDescriptor testTable = metaData.getTable("test_table");
 		FieldDescriptor unitSales = testTable.getField("unit_sales");
+		FieldDescriptor storeSales = testTable.getField("store_sales");
 		FieldDescriptor productName = testTable.getField("product_name");
 		FieldDescriptor quarter = testTable.getField("quarter");
 		FieldDescriptor city = testTable.getField("city");
 		
 		AggregationDescriptor sumUnitSales = new AggregationDescriptor(unitSales, AVG);
+		AggregationDescriptor maxUnitSales = new AggregationDescriptor(unitSales, MAX);
 		
 		Query query = context.query()
 		.select(testTable)
 		.project(productName)
 		.project(city)
+		.project(quarter)
 		.project(sumUnitSales)
+		.project(maxUnitSales)
 		.filter(quarter, FilterStatementType.EQUALS_TO, new String("Q1"))
 		.groupBy(city,productName)
 		.aggregateFilter(

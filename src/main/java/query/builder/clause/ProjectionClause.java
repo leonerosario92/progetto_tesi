@@ -48,12 +48,12 @@ public class ProjectionClause  {
 		sb.append(QueryConstants.PROJECTION_CLAUSE);
 		sb.append(QueryConstants.NEWLINE);
 		
-		Iterator<ProjectionStatement> it = statements.iterator();  
-		ProjectionStatement currentStatement;
+		Iterator<IDescriptor> it = getProjectionSequence().iterator();  
+		IDescriptor currentField;
 		while(it.hasNext()) {
-			currentStatement = it.next();
+			currentField = it.next();
 			
-			sb.append(currentStatement.getField().toString());
+			sb.append(currentField.toString());
 			
 			if(it.hasNext()) {
 				sb.append(QueryConstants.COMMA_CHAR);
