@@ -10,6 +10,7 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import dataprovisioner.LoadingType;
+import model.AggregationDescriptor;
 import model.FieldDescriptor;
 import query.QueryPlanner;
 import query.builder.Query;
@@ -87,6 +88,10 @@ public class BaseQueryPlanner extends QueryPlanner {
 			GroupByOperator groupByOp = new GroupByOperator(implementationProvider);
 			GroupByArgs gbArgs = groupByOp.getArgs();
 			gbArgs.setGroupingSequence(groupByClause.getGroupingSequence());
+			
+			for(AggregationDescriptor aggrField : projectionClause.getAggregateFields()) {
+				gbArgs.addAggregation(aggrField);
+			}
 			
 			for(AggregateFilterStatement statement : groupByClause.getAggregateFilterStatements()) {
 				gbArgs.addAggregateFilter(statement);

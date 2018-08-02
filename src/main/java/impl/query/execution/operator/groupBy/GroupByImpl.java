@@ -25,10 +25,10 @@ import dataset.IDataSet;
 import dataset.ILayoutManager;
 import datatype.DataType;
 import datatype.TypeComparator;
+import model.AggregationDescriptor;
 import model.FieldDescriptor;
 import query.builder.predicate.AggregateFunction;
 import query.builder.statement.AggregateFilterStatement;
-import query.builder.statement.AggregationDescriptor;
 import query.builder.statement.CFNode;
 import query.execution.operator.groupby.GroupByArgs;
 import query.execution.operator.groupby.GroupByFunction;
@@ -271,7 +271,7 @@ public class GroupByImpl  extends GroupByFunction{
 		for (AggregationDescriptor aggregateField : aggregations) {
 			ColumnDescriptor currentColumn = new ColumnDescriptor(
 					aggregateField.getField().getTable().getName(), 
-					aggregateField.getField().getName(), 
+					aggregateField.getName(), 
 					DataType.DOUBLE
 					);
 				sequence.add(currentColumn);

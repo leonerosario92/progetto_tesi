@@ -13,10 +13,11 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
 
+import model.AggregationDescriptor;
 import model.FieldDescriptor;
+import model.IDescriptor;
 import query.builder.predicate.AggregateFunction;
 import query.builder.statement.AggregateFilterStatement;
-import query.builder.statement.AggregationDescriptor;
 import query.execution.ProcessDataSetOperator;
 import query.execution.operator.DataSetProcessingFunction;
 import query.execution.operator.IOperatorArgs;
@@ -28,15 +29,27 @@ public class GroupByArgs implements IOperatorArgs {
 	private Set<AggregationDescriptor> aggregations;
 	private List<AggregateFilterStatement> aggregateFilters;
 	private List<FieldDescriptor> orderingSequence;
+	private List<IDescriptor> projectionSequence;
 	
 	public GroupByArgs() {
 		this.groupingSequence = new ArrayList<>(); 
 		this.aggregations = new HashSet<>(); 
 		this.aggregateFilters = new ArrayList<>();
 		this.orderingSequence = new ArrayList<>();
+		this.projectionSequence = new ArrayList<>();
 	}
 	
 	
+	public List<IDescriptor> getProjectionSequence() {
+		return projectionSequence;
+	}
+
+
+	public void setProjectionSequence(List<IDescriptor> projectionSequence) {
+		this.projectionSequence = projectionSequence;
+	}
+
+
 	public List<FieldDescriptor> getGroupingSequence() {
 		return groupingSequence;
 	}

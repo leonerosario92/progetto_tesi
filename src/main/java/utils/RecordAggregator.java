@@ -12,9 +12,9 @@ import dataset.IDataSet;
 import datatype.AggregableTypeDescriptor;
 import datatype.TypeAggregator;
 import datatype.TypeDescriptor;
+import model.AggregationDescriptor;
 import model.FieldDescriptor;
 import query.builder.predicate.AggregateFunction;
-import query.builder.statement.AggregationDescriptor;
 
 public class RecordAggregator {
 	

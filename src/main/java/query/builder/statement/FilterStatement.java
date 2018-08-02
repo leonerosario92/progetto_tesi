@@ -55,8 +55,15 @@ public abstract class FilterStatement implements CFNode {
 		sb.append(tableName).append(QueryConstants.DOT_CHAR).append(fieldName)
 			.append(QueryConstants.WHITESPACE_CHAR)
 			.append(SQL_REPRESENTATION)
-			.append(QueryConstants.WHITESPACE_CHAR)
-			.append(rightOperand);
+			.append(QueryConstants.WHITESPACE_CHAR);
+		
+		if(rightOperand instanceof String) {
+			sb.append(QueryConstants.BACKTICK_CHAR)
+			.append(rightOperand)
+			.append(QueryConstants.BACKTICK_CHAR);
+		}else {
+			sb.append(rightOperand);
+		}
 			
 		return sb.toString();
 	}

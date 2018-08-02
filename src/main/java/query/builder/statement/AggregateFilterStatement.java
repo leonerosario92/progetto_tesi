@@ -3,6 +3,7 @@ package query.builder.statement;
 import java.util.HashSet;
 import java.util.Set;
 
+import model.AggregationDescriptor;
 import model.FieldDescriptor;
 import query.builder.LogicalOperand;
 import query.builder.QueryConstants;

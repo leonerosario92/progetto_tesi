@@ -2,7 +2,7 @@ package model;
 
 import datatype.DataType;
 
-public class FieldDescriptor {
+public class FieldDescriptor implements IDescriptor {
 	
 	private DataType type;
 	private String name;

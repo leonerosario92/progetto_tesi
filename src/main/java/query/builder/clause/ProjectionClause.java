@@ -3,30 +3,42 @@ package query.builder.clause;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
+
+import model.AggregationDescriptor;
 import model.FieldDescriptor;
+import model.IDescriptor;
 import query.builder.QueryConstants;
 import query.builder.statement.ProjectionStatement;
 
 
 public class ProjectionClause  {
 
-	private ArrayList<ProjectionStatement> statements;
+	private LinkedList<ProjectionStatement> statements;
 	private HashSet<FieldDescriptor> referencedFields;
- 	private HashSet<FieldDescriptor> aggregateFields;
+ 	private HashSet<AggregationDescriptor> aggregateFields;
 	
 	public ProjectionClause() {
-		this.statements = new ArrayList<>();
+		this.statements = new LinkedList();
 		this.referencedFields = new HashSet<>();
 		this.aggregateFields = new HashSet<>();
 	}
 	
 
 	public void addStatement(ProjectionStatement statement) {
-		statements.add(statement);
-		FieldDescriptor field = statement.getField();
-		referencedFields.add(field);
+		statements.addLast(statement);
+		IDescriptor field = statement.getField();
+		if(field instanceof AggregationDescriptor) {
+			AggregationDescriptor aggrField = AggregationDescriptor.class.cast(field);
+			referencedFields.add(aggrField.getField());
+			aggregateFields.add(aggrField);
+		}
+		else if (field instanceof FieldDescriptor) {
+			referencedFields.add(FieldDescriptor.class.cast(field));
+		}
 	}
 	
 	
@@ -60,7 +72,7 @@ public class ProjectionClause  {
 	}
 
 	
-	public ArrayList<ProjectionStatement> getStatements() {
+	public List<ProjectionStatement> getStatements() {
 		return statements;
 	}
 	
@@ -70,8 +82,17 @@ public class ProjectionClause  {
 	}
 	
 	
-	public Set<FieldDescriptor> getAggregateFields(){
+	public Set<AggregationDescriptor> getAggregateFields(){
 		return aggregateFields;
+	}
+	
+	
+	public List<IDescriptor> getProjectionSequence(){
+		List<IDescriptor> projectionSequence = new ArrayList<>();
+		for(ProjectionStatement statement : statements) {
+			projectionSequence.add(statement.getField());
+		}
+		return projectionSequence;
 	}
 	
 }

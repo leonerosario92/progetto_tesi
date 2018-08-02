@@ -12,6 +12,7 @@ public class QueryConstants {
 	public static final String DOT_CHAR = ".";
 	public static final String COMMA_CHAR = ",";
 	public static final String SEMICOLON_CHAR = ";";
+	public static final String BACKTICK_CHAR = "'";
 	public static final String NEWLINE = System.getProperty("line.separator");
 	
 	public static final String SELECTION_CLAUSE = "FROM";

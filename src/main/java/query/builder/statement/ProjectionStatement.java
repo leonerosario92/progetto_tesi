@@ -1,16 +1,34 @@
 package query.builder.statement;
 
+import model.AggregationDescriptor;
 import model.FieldDescriptor;
+import model.IDescriptor;
 
 public class ProjectionStatement {
 
-	private FieldDescriptor field;
+	private IDescriptor descriptor;
+	private boolean isAggregate = false;
 	
-	public ProjectionStatement(FieldDescriptor field) {
-		this.field = field;
+	
+	public ProjectionStatement(IDescriptor descriptor) {
+		this.descriptor = descriptor;
+		if(descriptor instanceof AggregationDescriptor) {
+			isAggregate = true;
+		}
+	}
+	
+	
+	public IDescriptor getDescriptor() {
+		return descriptor;
+	}
+	
+	
+	public boolean isAggregate() {
+		return isAggregate;
 	}
 
-	public FieldDescriptor getField() {
-		return field;
+
+	public IDescriptor getField() {
+		return descriptor;
 	}
 }

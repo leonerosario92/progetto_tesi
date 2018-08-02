@@ -2,6 +2,7 @@ package query.builder;
 
 import context.Context;
 import model.FieldDescriptor;
+import model.IDescriptor;
 import model.TableDescriptor;
 import query.builder.statement.ProjectionStatement;
 
@@ -17,8 +18,8 @@ public class SelectionBuilder {
 	}
 	
 	
-	public ProjectionBuilder project (FieldDescriptor...args) {
-		for(FieldDescriptor field : args) {
+	public ProjectionBuilder project (IDescriptor...args) {
+		for(IDescriptor field : args) {
 			if(! checkValidField(field)) {
 				//TODO Manage exception properly
 				throw new IllegalArgumentException("projection arguments can only be fields of selected tables");
@@ -27,13 +28,10 @@ public class SelectionBuilder {
 		}
 		return new ProjectionBuilder(context, query);
 	}
+
 	
-	
-	private boolean checkValidTable(TableDescriptor table) {
-		return query.referTable(table);
-	}
-	
-	private boolean checkValidField(FieldDescriptor field) {
+	private boolean checkValidField(IDescriptor field) {
 		return query.referTable(field.getTable());
 	}
+	
 }

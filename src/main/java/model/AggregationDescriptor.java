@@ -1,9 +1,8 @@
-package query.builder.statement;
+package model;
 
-import model.FieldDescriptor;
 import query.builder.predicate.AggregateFunction;
 
-public class AggregationDescriptor {
+public class AggregationDescriptor implements IDescriptor{
 	
 	private FieldDescriptor field;
 	private AggregateFunction function;
@@ -44,5 +43,15 @@ public class AggregationDescriptor {
 	@Override
 	public String toString() {
 		return function.getRepresentation() + "(" + field.toString() + ")";
+	}
+
+	@Override
+	public String getName() {
+		return function.getRepresentation() + "("+ field.getKey() + ")";
+	}
+
+	@Override
+	public TableDescriptor getTable() {
+		return field.getTable();
 	}
 }

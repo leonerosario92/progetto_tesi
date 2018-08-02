@@ -64,6 +64,18 @@
 	    <artifactId>object-explorer</artifactId>
 	    <version>1.0</version>
 	</dependency>
+		
+	<dependency>
+		<groupId>org.apache.arrow</groupId>
+		<artifactId>arrow-vector</artifactId>
+		<version>0.9.0</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>org.apache.arrow</groupId>
+		<artifactId>arrow-memory</artifactId>
+		<version>0.9.0</version>
+	</dependency>
 	
 	<!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
 	<dependency>
@@ -72,7 +84,7 @@
 	    <version>1.9.5</version>
 	    <scope>test</scope>
 	</dependency>
-	
+
 	
   </dependencies>
 

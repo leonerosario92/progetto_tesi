@@ -68,13 +68,13 @@ public class GroupByBuilder {
 					projectionClause.getReferencedFields(), 
 					projectionClause.getAggregateFields()
 			);
-//		for(FieldDescriptor field : nonAggregateFields) {
-//			if(! groupByClause.getReferencedFields().contains(field)) {
-//				//TODO : Manage exception properly
-//				throw new IllegalArgumentException(
-//						"Wrong Syntax : Non-aggregate field " + field.getName() + " cannot be selected for projection.");
-//			}
-//		}
+		for(FieldDescriptor field : nonAggregateFields) {
+			if(! groupByClause.getGroupingSequence().contains(field)) {
+				//TODO : Manage exception properly
+				throw new IllegalArgumentException(
+						"Wrong Syntax : Non-aggregate field " + field.getName() + " cannot be selected for projection.");
+			}
+		}
 		
 		return query;
 	}

@@ -1,5 +1,6 @@
 package benchmark;
 import static org.junit.Assert.fail;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.junit.AfterClass;
@@ -25,6 +26,7 @@ import query.builder.Query;
 import query.builder.predicate.AggregateFunction;
 import query.builder.predicate.FilterStatementType;
 import query.execution.QueryExecutionException;
+import utils.RecordScannerUtils;
 import utils.comparator.QueryResultComparator;
 
 public abstract class AbstractSolutionTest {
@@ -32,12 +34,11 @@ public abstract class AbstractSolutionTest {
 	@Rule public TestName name = new TestName();
 	
 	public static final String REPORT_LOG_FILE_PATH = "log4j-report-conf.xml";
-//	public static final String RESULT_LOG_FILE_PATH = "log4j-result-conf.xml";
-	
 	private static Logger REPORT_LOGGER;
-//	private static Logger RESULT_LOGGER;
 	
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+
+	private static final String RESULT_FILE_PATH = "result.txt";
 	private static StringBuilder benchmarkReport;
 	protected ContextFactory factory;
 	protected IDataSource dataSource;
@@ -52,10 +53,6 @@ public abstract class AbstractSolutionTest {
 		String logFilePath = REPORT_LOG_FILE_PATH;
 		DOMConfigurator.configure(logFilePath);
 		REPORT_LOGGER = Logger.getLogger("SolutionTest");
-		
-//		logFilePath = RESULT_LOG_FILE_PATH;
-//		DOMConfigurator.configure(logFilePath);
-//		RESULT_LOGGER = Logger.getLogger("QueryResult");
 	}
 	
 	
@@ -103,33 +100,16 @@ public abstract class AbstractSolutionTest {
 			query = getTestQuery(context);
 			/*_____________________________*/
 			
-			
-			float availableMemoryBefore = new Float (Runtime.getRuntime().freeMemory() / (1024 *1024));
-			
-			
 			String sql = query.writeSql();
-			IRecordScanner resultScanner = context.executeQuery
-					(query, measurementType);	
+			IRecordScanner resultScanner = context.executeQuery (query, measurementType);	
 
-			float availableMemoryAfter = new Float (Runtime.getRuntime().freeMemory() / (1024 * 1024));
-			
-//			long resultIterationStartTime = System.nanoTime();
 //			boolean correctness = testQueryResult(query, resultScanner);		
 //			assertTrue("Error : Query execution returned a result that differs from the expected one.", correctness);
-//			long resultIterationEndTime = System.nanoTime();
-//			
-//			long iterationNanos = (resultIterationEndTime - resultIterationStartTime);
-//			query.setResultIterationTime(Float.valueOf(iterationNanos)/ (1000*1000));
-			
-//			
-//			resultScanner.resetToFirstRecord();
-//			while(resultScanner.next()) {
-//				StringBuilder sb = new StringBuilder();
-//				for(int i=1; i<=resultScanner.getFieldsCount(); i++) {
-//					sb.append("    "+resultScanner.getValueByColumnIndex(i));
-//				}
-//				RESULT_LOGGER.info(sb.toString());
-//			}
+			long resultIterationStartTime = System.nanoTime();
+			RecordScannerUtils.printToFile(resultScanner, RESULT_FILE_PATH);
+			long resultIterationEndTime = System.nanoTime();			
+			long iterationNanos = (resultIterationEndTime - resultIterationStartTime);
+			query.setResultIterationTime(Float.valueOf(iterationNanos)/ (1000*1000));			
 			
 			testReport = writeTestReport(query);
 		} 
@@ -279,5 +259,5 @@ public abstract class AbstractSolutionTest {
 				.append(LINE_SEPARATOR);
 		}
 	}	
-
+	
 }

@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import context.Context;
 import datatype.DataType;
 import model.FieldDescriptor;
+import model.IDescriptor;
 import query.builder.predicate.FilterStatementType;
 import query.builder.statement.FilterStatement;
 import query.builder.statement.ProjectionStatement;
@@ -25,7 +26,7 @@ public class ProjectionBuilder {
 	}
 	
 	
-	public ProjectionBuilder project(FieldDescriptor field) {
+	public ProjectionBuilder project(IDescriptor field) {
 		if( ! checkTable(field)) {
 			//TODO Manage exception properly
 			throw new IllegalArgumentException("projection arguments can only be fields of selected tables");
@@ -85,7 +86,7 @@ public class ProjectionBuilder {
 	}
 
 	
-	private boolean checkTable(FieldDescriptor field) {
+	private boolean checkTable(IDescriptor field) {
 		return query.referTable(field.getTable());
 	}
 }

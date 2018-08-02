@@ -25,6 +25,6 @@ public class InitialBuilder {
 		
 		return new SelectionBuilder(context,query);
 	}
-
+	
 	
 }
