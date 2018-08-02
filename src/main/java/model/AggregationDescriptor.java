@@ -47,7 +47,7 @@ public class AggregationDescriptor implements IDescriptor{
 
 	@Override
 	public String getName() {
-		return function.getRepresentation() + "("+ field.getKey() + ")";
+		return function.getRepresentation() + "("+ field.getName() + ")";
 	}
 
 	@Override

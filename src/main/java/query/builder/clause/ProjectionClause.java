@@ -53,9 +53,7 @@ public class ProjectionClause  {
 		while(it.hasNext()) {
 			currentStatement = it.next();
 			
-			sb.append(currentStatement.getField().getTable().getName());
-			sb.append(QueryConstants.DOT_CHAR);
-			sb.append(currentStatement.getField().getName());
+			sb.append(currentStatement.getField().toString());
 			
 			if(it.hasNext()) {
 				sb.append(QueryConstants.COMMA_CHAR);
@@ -90,7 +88,9 @@ public class ProjectionClause  {
 	public List<IDescriptor> getProjectionSequence(){
 		List<IDescriptor> projectionSequence = new ArrayList<>();
 		for(ProjectionStatement statement : statements) {
-			projectionSequence.add(statement.getField());
+			if(statement.toSHow()) {
+				projectionSequence.add(statement.getField());
+			}
 		}
 		return projectionSequence;
 	}

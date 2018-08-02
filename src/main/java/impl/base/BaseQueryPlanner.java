@@ -88,6 +88,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 			GroupByOperator groupByOp = new GroupByOperator(implementationProvider);
 			GroupByArgs gbArgs = groupByOp.getArgs();
 			gbArgs.setGroupingSequence(groupByClause.getGroupingSequence());
+			gbArgs.setProjectionSequence(projectionClause.getProjectionSequence());
 			
 			for(AggregationDescriptor aggrField : projectionClause.getAggregateFields()) {
 				gbArgs.addAggregation(aggrField);

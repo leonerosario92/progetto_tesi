@@ -3,7 +3,6 @@ package impl.query.execution.operator.groupBy;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
@@ -27,7 +25,7 @@ import datatype.DataType;
 import datatype.TypeComparator;
 import model.AggregationDescriptor;
 import model.FieldDescriptor;
-import query.builder.predicate.AggregateFunction;
+import model.IDescriptor;
 import query.builder.statement.AggregateFilterStatement;
 import query.builder.statement.CFNode;
 import query.execution.operator.groupby.GroupByArgs;
@@ -45,6 +43,8 @@ public class GroupByImpl  extends GroupByFunction{
 		List<AggregationDescriptor> aggregations = Lists.newArrayList(args.getAggregations());
 		List<AggregateFilterStatement> aggregateFilters = args.getAggregateFIlters();
 		List<FieldDescriptor> orderingSequence = args.getOrderingSequence();
+		
+		List<IDescriptor> projectionSequence = args.getProjectionSequence();
 		
 		int[] groupingSequenceIndexes = 
 				getGroupingSequenceIndexes(inputDataSet,groupingSequence);
@@ -68,6 +68,7 @@ public class GroupByImpl  extends GroupByFunction{
 			aggregateRecordStream = 
 					filterRecords(aggrNameIndexMapping,aggregateFilters,aggregateRecordStream);
 		}
+		
 		if(orderingSequence.size() !=0) {
 			aggregateRecordStream =
 					sortRecords(aggrNameIndexMapping,orderingSequence,aggregateRecordStream);
@@ -180,40 +181,37 @@ public class GroupByImpl  extends GroupByFunction{
 			int[] fieldSequenceIndexes,
 			Collector<Object[], RecordAggregator, Object[]> downStreamCollector
 	){
-		Map<List<Object>, Object[]> resultMap =
-			recordStream
-			.collect(
-				Collectors.groupingBy (
-					record -> {
-						List<Object> groupingKey = new ArrayList<>();
-						for(int i=0; i<fieldSequenceIndexes.length; i++) {
-							groupingKey.add(record[fieldSequenceIndexes[i]]);
-						} 
-						return groupingKey;
-					},
-					downStreamCollector
-				)
-			);
 		
+		Map<List<Object>, Object[]> resultMap =
+		recordStream
+		.collect(
+			Collectors.groupingBy (
+				record -> {
+					List<Object> groupingKey = new ArrayList<>();
+					for(int i=0; i<fieldSequenceIndexes.length; i++) {
+						groupingKey.add(record[fieldSequenceIndexes[i]]);
+					} 
+					return groupingKey;
+				},
+				downStreamCollector
+			)
+		);
 			
-			List<Object[]> result = new ArrayList<>();
-			for(Map.Entry<List<Object>,Object[]> entry : resultMap.entrySet()) {
-				List<Object> key = entry.getKey();
-				Object[] value = entry.getValue();
-				Object[] currentRecord = new Object[key.size() + value.length];
-				for(int i=0; i<key.size(); i++) {
-					currentRecord[i] = key.get(i);
-				}
-				for(int i=key.size(); i < (key.size() + value.length); i++) {
-					currentRecord[i] = value[ i-key.size()];
-				}
-				
-				if((Double)currentRecord[key.size()] > 22) {
-					result.add(currentRecord);
-				}
+		List<Object[]> result = new ArrayList<>();
+		for(Map.Entry<List<Object>,Object[]> entry : resultMap.entrySet()) {
+			List<Object> key = entry.getKey();
+			Object[] value = entry.getValue();
+			Object[] currentRecord = new Object[key.size() + value.length];
+			for(int i=0; i<key.size(); i++) {
+				currentRecord[i] = key.get(i);
+			}
+			for(int i=key.size(); i < (key.size() + value.length); i++) {
+				currentRecord[i] = value[ i-key.size()];
 			}
 			
-			return result;
+			result.add(currentRecord);
+		}
+		return result;
 	}
 
 

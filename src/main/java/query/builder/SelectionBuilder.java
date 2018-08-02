@@ -24,7 +24,7 @@ public class SelectionBuilder {
 				//TODO Manage exception properly
 				throw new IllegalArgumentException("projection arguments can only be fields of selected tables");
 			}
-			query.project(new ProjectionStatement(field));
+			query.project(new ProjectionStatement(field,true));
 		}
 		return new ProjectionBuilder(context, query);
 	}

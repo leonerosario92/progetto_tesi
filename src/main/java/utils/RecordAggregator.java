@@ -42,10 +42,11 @@ public class RecordAggregator {
 	
 	
 	public void aggregateRecord(Object[] record) {
-		int resultIndex = 0;
+		int index = 0;
 		for(AggregationDescriptor aggregation : aggregations) {
 			int fieldIndex = mapping.get(aggregation.getField().getKey());
-			aggregators.get(resultIndex).addValue(record[fieldIndex]);
+			aggregators.get(index).addValue(record[fieldIndex]);
+			index ++;
 		}
 	}
 	

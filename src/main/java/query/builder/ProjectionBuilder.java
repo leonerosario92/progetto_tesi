@@ -31,14 +31,14 @@ public class ProjectionBuilder {
 			//TODO Manage exception properly
 			throw new IllegalArgumentException("projection arguments can only be fields of selected tables");
 		}
-		query.project(new ProjectionStatement(field));
+		query.project(new ProjectionStatement(field,true));
 		return this;
 	}
 	
 
 	public FilterBuilder filter (FieldDescriptor field,FilterStatementType type, Object operand) {
 		if(! checkField(field)) {
-			query.project(new ProjectionStatement(field));
+			query.project(new ProjectionStatement(field,false));
 		}
 		//TODO check if operand has same type of field 
 		Object rightOperand = TypeUtils.parseOperand(operand,field.getType());

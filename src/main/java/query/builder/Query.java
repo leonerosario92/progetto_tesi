@@ -70,6 +70,7 @@ public class Query {
 	
 	public void aggregateFilter(AggregateFilterStatement statement) {
 		groupByClause.addAggregateFilter(statement);
+		projectionClause.addStatement(new ProjectionStatement(statement.getAggregationDescriptor(), false));
 	}
 	
 	public SelectionClause getSelectionClause() {

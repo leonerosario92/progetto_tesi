@@ -20,7 +20,7 @@ public class FilterBuilder {
 	
 	public FilterBuilder filter (FieldDescriptor field,FilterStatementType type, Object operand) {
 		if(! checkField(field)) {
-			query.project(new ProjectionStatement(field));
+			query.project(new ProjectionStatement(field,false));
 		}
 		Object rightOperand = TypeUtils.parseOperand(operand,field.getType());
 		FilterStatement statement = type.getInstance(field, rightOperand);

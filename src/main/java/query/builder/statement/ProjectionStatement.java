@@ -8,10 +8,12 @@ public class ProjectionStatement {
 
 	private IDescriptor descriptor;
 	private boolean isAggregate = false;
+	private boolean toShow;
 	
 	
-	public ProjectionStatement(IDescriptor descriptor) {
+	public ProjectionStatement(IDescriptor descriptor, boolean toShow) {
 		this.descriptor = descriptor;
+		this.toShow = toShow;
 		if(descriptor instanceof AggregationDescriptor) {
 			isAggregate = true;
 		}
@@ -25,6 +27,11 @@ public class ProjectionStatement {
 	
 	public boolean isAggregate() {
 		return isAggregate;
+	}
+	
+	
+	public boolean toSHow() {
+		return this.toShow;
 	}
 
 

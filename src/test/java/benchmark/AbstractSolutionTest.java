@@ -1,5 +1,6 @@
 package benchmark;
 import static org.junit.Assert.fail;
+import static query.builder.predicate.AggregateFunction.*;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -19,6 +20,7 @@ import datasource.IRecordScanner;
 import dispatcher.MeasurementType;
 import impl.datasource.jdbc.JDBCDataSourceException;
 import impl.dispatcher.jdbc.NativeQueryDispatcher;
+import model.AggregationDescriptor;
 import model.FieldDescriptor;
 import model.IMetaData;
 import model.TableDescriptor;
@@ -34,11 +36,10 @@ public abstract class AbstractSolutionTest {
 	@Rule public TestName name = new TestName();
 	
 	public static final String REPORT_LOG_FILE_PATH = "log4j-report-conf.xml";
-	private static Logger REPORT_LOGGER;
-	
-	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
-
 	private static final String RESULT_FILE_PATH = "result.txt";
+	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+	private static Logger REPORT_LOGGER;
+
 	private static StringBuilder benchmarkReport;
 	protected ContextFactory factory;
 	protected IDataSource dataSource;
@@ -125,19 +126,18 @@ public abstract class AbstractSolutionTest {
 	private Query getTestQuery(Context context) {
 		IMetaData metaData = context.getMetadata();
 		TableDescriptor testTable = metaData.getTable("test_table");
-		FieldDescriptor storeSales = testTable.getField("store_sales");
 		FieldDescriptor unitSales = testTable.getField("unit_sales");
-		FieldDescriptor storeCost = testTable.getField("store_cost");
-		
 		FieldDescriptor productName = testTable.getField("product_name");
 		FieldDescriptor quarter = testTable.getField("quarter");
 		FieldDescriptor city = testTable.getField("city");
+		
+		AggregationDescriptor sumUnitSales = new AggregationDescriptor(unitSales, AVG);
 		
 		Query query = context.query()
 		.select(testTable)
 		.project(productName)
 		.project(city)
-		.project(unitSales)
+		.project(sumUnitSales)
 		.filter(quarter, FilterStatementType.EQUALS_TO, new String("Q1"))
 		.groupBy(city,productName)
 		.aggregateFilter(
