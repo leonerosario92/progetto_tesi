@@ -75,7 +75,6 @@ public abstract class AbstractSolutionTest {
 		this.factory = getContextFactoryImpl();
 	}
 	
-	
 	@Ignore
 	@Test
 	public void TestScanSmallDataSetMemoryOccupation(){
@@ -96,7 +95,7 @@ public abstract class AbstractSolutionTest {
 		try {
 			Context context = factory.getContext();
 			
-			query = getTestQuery(context);
+			query = getScanSmallDataSetQuery(context);
 			String sql = query.writeSql();
 			IRecordScanner resultScanner = context.executeQuery (query, measurementType);	
 
@@ -121,7 +120,7 @@ public abstract class AbstractSolutionTest {
 	
 	private Query getTestQuery(Context context) {
 		IMetaData metaData = context.getMetadata();
-		TableDescriptor testTable = metaData.getTable("test_table");
+		TableDescriptor testTable = metaData.getTable("test_table_3");
 		FieldDescriptor unitSales = testTable.getField("unit_sales");
 		FieldDescriptor storeSales = testTable.getField("store_sales");
 		FieldDescriptor productName = testTable.getField("product_name");
@@ -135,16 +134,15 @@ public abstract class AbstractSolutionTest {
 		.select(testTable)
 		.project(productName)
 		.project(city)
-		.project(quarter)
 		.project(sumUnitSales)
 		.project(maxUnitSales)
-		.filter(quarter, FilterStatementType.EQUALS_TO, new String("Q1"))
+//		.filter(quarter, FilterStatementType.EQUALS_TO, new String("Q1"))
 		.groupBy(city,productName)
 		.aggregateFilter(
 				AggregateFunction.SUM, 
 				unitSales, 
 				FilterStatementType.GREATER_THAN, 
-				new Integer(22)
+				new Integer(15)
 		)
 		.orderBy(city,productName)
 		.getQuery();
@@ -192,7 +190,7 @@ public abstract class AbstractSolutionTest {
 //			.project(sender)
 //			.project(subject)
 //			.project(messageId)
-			.orderBy(body)
+//			.orderBy(body)
 			.getQuery();
 	
 		return query;

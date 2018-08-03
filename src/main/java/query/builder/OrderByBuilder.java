@@ -28,7 +28,7 @@ public class OrderByBuilder {
 			ProjectionClause projectionClause = query.getProjectionClause();
 			Set<FieldDescriptor> nonAggregateFields = 
 				Sets.difference(
-						projectionClause.getReferencedFields(), 
+						projectionClause.getProjectedFields(),
 						projectionClause.getAggregateFields()
 				);
 			for(FieldDescriptor field : nonAggregateFields) {
@@ -40,7 +40,7 @@ public class OrderByBuilder {
 			}
 		}
 		else {
-			if(! query.getProjectionClause().getAggregateFields().isEmpty()) {
+			if(! query.getProjectionClause().getAggregations().isEmpty()) {
 				throw new IllegalArgumentException("Non-aggregate queries cannot project aggregate fields.");
 			}
 	}

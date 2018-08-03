@@ -22,7 +22,7 @@ public class ProjectionBuilder {
 	}
 	
 	public Query getQuery () {
-		if(! query.getProjectionClause().getAggregateFields().isEmpty()) {
+		if(! query.getProjectionClause().getAggregations().isEmpty()) {
 			throw new IllegalArgumentException("Non-aggregate queries cannot project aggregate fields.");
 		}
 		return query;

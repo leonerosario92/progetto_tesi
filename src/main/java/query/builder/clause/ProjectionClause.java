@@ -80,7 +80,7 @@ public class ProjectionClause  {
 	}
 	
 	
-	public Set<AggregationDescriptor> getAggregateFields(){
+	public Set<AggregationDescriptor> getAggregations(){
 		return aggregateFields;
 	}
 	
@@ -93,6 +93,28 @@ public class ProjectionClause  {
 			}
 		}
 		return projectionSequence;
+	}
+	
+	
+	public Set<FieldDescriptor> getProjectedFields(){
+		Set<FieldDescriptor> projectedFields = new HashSet<>();
+		for(ProjectionStatement statement : statements) {
+			if(statement.toSHow()) {
+				if( ! statement.isAggregate()) {
+					projectedFields.add((FieldDescriptor) statement.getField());
+				}
+			}
+		}
+		return projectedFields;
+	}
+	
+	
+	public Set<FieldDescriptor> getAggregateFields(){
+		Set<FieldDescriptor> aggregateFields = new HashSet<>();
+		for(AggregationDescriptor aggregation : getAggregations()) {
+			aggregateFields.add(aggregation.getField());
+		}
+		return aggregateFields;
 	}
 	
 }

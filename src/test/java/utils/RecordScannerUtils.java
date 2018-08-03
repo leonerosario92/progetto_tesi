@@ -55,6 +55,7 @@ public class RecordScannerUtils {
 
 	private static void appendFixedWidth(StringBuilder sb, String stringToAppend) {
 		int length = stringToAppend.length();
+		stringToAppend = stringToAppend.replace("\t", "");
 		if( length > COLUMN_WIDTH) {
 			stringToAppend = stringToAppend.substring(0, COLUMN_WIDTH-3)+"...";
 			sb.append( stringToAppend);

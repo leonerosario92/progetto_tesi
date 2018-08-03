@@ -90,7 +90,7 @@ public class BaseQueryPlanner extends QueryPlanner {
 			gbArgs.setGroupingSequence(groupByClause.getGroupingSequence());
 			gbArgs.setProjectionSequence(projectionClause.getProjectionSequence());
 			
-			for(AggregationDescriptor aggrField : projectionClause.getAggregateFields()) {
+			for(AggregationDescriptor aggrField : projectionClause.getAggregations()) {
 				gbArgs.addAggregation(aggrField);
 			}
 			

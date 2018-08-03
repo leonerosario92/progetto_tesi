@@ -66,7 +66,7 @@ public class GroupByBuilder {
 		Set<FieldDescriptor> nonAggregateFields = 
 			Sets.difference(
 					projectionClause.getReferencedFields(), 
-					projectionClause.getAggregateFields()
+					projectionClause.getAggregations()
 			);
 		for(FieldDescriptor field : nonAggregateFields) {
 			if(! groupByClause.getGroupingSequence().contains(field)) {
