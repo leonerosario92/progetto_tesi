@@ -25,6 +25,7 @@ public class MaterializedDataSet implements IDataSet {
 	private List<ColumnDescriptor> columnDescriptors;
 	private Map<String,Integer> nameIndexMapping;
 	
+	
 	public MaterializedDataSet(int recordCount,List<ColumnDescriptor> columns) {
 		this.validityBitset = new BitSet();
 		this.columnCount = columns.size();
@@ -34,6 +35,7 @@ public class MaterializedDataSet implements IDataSet {
 		initializeValidityBitSet();
 	}
 
+	
 	private void initializeColumnDescriptors(List<ColumnDescriptor> columns) {
 		this.nameIndexMapping = new HashMap<>();
 		this.columnDescriptors = new ArrayList<>();
@@ -43,9 +45,9 @@ public class MaterializedDataSet implements IDataSet {
 			nameIndexMapping.put(descriptor.getKey(), index);
 			index ++;
 		}
-		
 	}
 
+	
 	private void initializeValidityBitSet() {
     	this.validityBitset = new BitSet(recordCount);
     	validityBitset.set(0,recordCount,true);
@@ -54,7 +56,7 @@ public class MaterializedDataSet implements IDataSet {
 	
 	public void addRecord(Object[] record) {
 		if(record.length != columnCount) {
-			throw new IllegalArgumentException("Attempt to add record with invalid number of fields");
+			throw new IllegalArgumentException("Attempt to add record with invalid number of fields.");
 		}
 		recordList.add(record);
 	}
@@ -130,7 +132,7 @@ public class MaterializedDataSet implements IDataSet {
 	@Override
 	public void updateValidityBitset(BitSet validityBits) {
 		if(validityBits.size() != this.validityBitset.size()) {
-			throw new IllegalArgumentException("Operation on validity bits must operate on sets with same size");
+			throw new IllegalArgumentException("Operation on validity bits must operate on sets with same size.");
 		}
 		synchronized (validityBitset) {
 			this.validityBitset.and(validityBits);

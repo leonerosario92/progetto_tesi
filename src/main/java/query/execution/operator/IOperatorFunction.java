@@ -1,6 +1,3 @@
 package query.execution.operator;
 
-
-public interface  IOperatorFunction  {
-	
-}
+public interface IOperatorFunction { }

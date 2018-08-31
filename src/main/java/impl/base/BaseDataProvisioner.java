@@ -29,14 +29,15 @@ public class BaseDataProvisioner extends DataProvisioner  {
 	
 	@Override
 	public IDataSet loadSingleColumnDataset(FieldDescriptor field) throws DataSourceException {
-	// Here will be performed the search of requested data in the cache
+		
+		// Here will be performed the search of requested data in the cache
 		
 		//Retrieve from dataSource the data that has not been found in the cache
 		
 		IRecordScanner it = 
 				dataSource.getTableProjection(field.getTable(), field);
 		IDataSet result = layoutManager.buildColumnarDataSet(it);
-				
+		
 		//Merge data found in cache with data retrieved from dataSource 
 		
 		return result;
@@ -99,7 +100,6 @@ public class BaseDataProvisioner extends DataProvisioner  {
 			//TODO manage load from multiple Table if required
 		}
 		
-		
 		/*===TODO differentiate mapping for recordScanner and recordIterator===*/
 		Map<String,Integer> mapping = new HashMap<>();
 		for ( Entry<String, Integer> entry : rs.getNameIndexMapping().entrySet()) {
@@ -109,6 +109,23 @@ public class BaseDataProvisioner extends DataProvisioner  {
 		
 		RecordEvaluator evaluator = new RecordEvaluator(mapping, filterStatements);
 		IDataSet result = layoutManager.buildMaterializedDataSet(rs,evaluator);
+		return result;
+	}
+	
+	
+	@Override
+	public IDataSet loadStreamedDataSet(Set<FieldDescriptor> columns) throws DataSourceException {
+		Map <TableDescriptor, Set<FieldDescriptor>> groupedFields = fieldsByTable(columns);
+		IRecordScanner rs = null;
+		if(groupedFields.keySet().size() == 1) {
+			TableDescriptor table =
+					groupedFields.entrySet().iterator().next().getKey();
+			rs = dataSource.getTableProjection(table, columns.toArray(new FieldDescriptor[columns.size()] ));
+		}else {
+			//TODO manage load from multiple Table if required
+		}
+		
+		IDataSet result = layoutManager.buildStreamedDataSet(rs);
 		return result;
 	}
 	
@@ -123,7 +140,7 @@ public class BaseDataProvisioner extends DataProvisioner  {
 			}else {
 				HashSet<FieldDescriptor> s = new HashSet<>();
 				s.add(field);
-				groupedFields.put(table, s);
+				groupedFields.put(table,s);
 			}
 		}
 		return groupedFields;

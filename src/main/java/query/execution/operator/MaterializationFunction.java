@@ -6,7 +6,7 @@ import dataset.ILayoutManager;
 import datasource.DataSourceException;
 import query.execution.operator.mergeonbitsets.MergeOnBitSetsArgs;
 
-public interface MaterializationFunction<A> extends IOperatorFunction {
+public interface MaterializationFunction<A> extends ISequentialOperatorFunction {
 	
 	public IDataSet apply(Iterable<IDataSet> inputDataSets, ILayoutManager layoutManager, A args);
 

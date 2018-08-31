@@ -1,7 +1,7 @@
 package query.execution.operator.loadmaterialized;
 
 import query.ImplementationProvider;
-import query.execution.LoadDataSetOperator;
+import query.execution.operator.LoadDataSetOperator;
 import query.execution.operator.RelOperatorType;
 
 public class LoadMaterializedOperator extends LoadDataSetOperator<LoadMaterializedFunction, LoadMaterializedArgs> {

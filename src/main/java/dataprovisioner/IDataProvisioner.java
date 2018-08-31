@@ -22,5 +22,7 @@ public interface IDataProvisioner {
 	IDataSet loadFilteredMaterializedDataSet(Set<FieldDescriptor> columns, Set<CFNode> filterStatements)
 			throws DataSourceException;
 
+	public IDataSet loadStreamedDataSet(Set<FieldDescriptor> columns) throws DataSourceException;
+
 }
 

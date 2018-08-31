@@ -1,9 +1,17 @@
 package impl.base;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
 import dataset.LayoutManager;
 import datasource.IRecordScanner;
 import datatype.DataType;
@@ -135,7 +143,6 @@ public class BaseLayoutManager extends LayoutManager {
 	}
 
 
-
 	public IDataSet buildMaterializedDataSet(IRecordScanner recordScanner,RecordEvaluator recordEvaluator) {
 		
 		int recordCount = recordScanner.getRecordCount();
@@ -181,6 +188,44 @@ public class BaseLayoutManager extends LayoutManager {
 			result.addRecord(recordIterator.next());
 		}
 		return result;
+	}
+
+
+	@Override
+	public IDataSet buildStreamedDataSet(IRecordScanner recordScanner) {
+		Stream <Object[]> recordStream = StreamSupport.stream(getRecordSpliterator(recordScanner),false);
+		List<ColumnDescriptor> columnSequence = getColumnSequence(recordScanner);
+		int recordCount = recordScanner.getRecordCount();
+		StreamedDataSet result = new StreamedDataSet(recordStream,columnSequence,recordCount);
+		
+		
+		return result;
+	}
+
+
+	private Spliterator<Object[]> getRecordSpliterator(IRecordScanner scanner) {
+		
+		int fieldsCount = scanner.getFieldsCount();
+		Object[] currentRecord = new Object[fieldsCount];
+		
+		Spliterator<Object[]> spliterator = 
+			new Spliterators.AbstractSpliterator<Object[]>(scanner.getRecordCount(),Spliterator.IMMUTABLE|Spliterator.ORDERED) {
+				@Override
+				public boolean tryAdvance(Consumer<? super Object[]> action) {
+					if(!scanner.next()) return false;
+                    action.accept(recordFromScannerRow(scanner));
+                    return true;
+				}
+
+				private Object[] recordFromScannerRow(IRecordScanner currentRow) {
+					for (int i=0; i<fieldsCount; i++) {
+						currentRecord[i] = currentRow.getValueByColumnIndex(i+1);
+					}
+					
+					return currentRecord;
+				}
+			};
+		return spliterator;
 	}
 
 }

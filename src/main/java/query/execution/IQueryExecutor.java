@@ -15,7 +15,7 @@ public interface IQueryExecutor {
 
 	public IDataSet executePlan(ExecutionPlan plan, MeasurementType measurement) throws QueryExecutionException;
 	
-	IResultHolder<IDataSet> submit (Callable<IDataSet> executable);
+	public <T> IResultHolder<T> submit (Callable<T> executable);
 	
 	public IDataProvisioner getProvisioner();
 

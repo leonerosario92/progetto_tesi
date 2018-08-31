@@ -1,16 +1,14 @@
-package query.execution;
+package query.execution.operator;
 
 import java.util.ArrayList;
 
 import dataset.IDataSet;
 import dataset.ILayoutManager;
 import query.ImplementationProvider;
-import query.execution.operator.IOperatorArgs;
-import query.execution.operator.MaterializationFunction;
-import query.execution.operator.RelOperatorType;
-import query.execution.operator.SortDataSetFunction;
+import query.execution.IQueryExecutor;
+import query.execution.QueryExecutionException;
 
-public abstract class SortDataSetOperator<F extends SortDataSetFunction, A extends IOperatorArgs> extends Operator<F,A> {
+public abstract class SortDataSetOperator<F extends SortDataSetFunction, A extends IOperatorArgs> extends SequentialOperator<F,A> {
 
 	private IDataSet inputDataSet;
 	private boolean hasInputDataSet;
@@ -31,7 +29,7 @@ public abstract class SortDataSetOperator<F extends SortDataSetFunction, A exten
 	}
 	
 	
-	public  IDataSet execOperator(IQueryExecutor executor) throws QueryExecutionException {
+	public  IDataSet execute(IQueryExecutor executor) throws QueryExecutionException {
 		
 		if(! hasInputDataSet) {
 			throw new IllegalStateException("ProcessDataSet Operators cannot be executed if an input DataSet has not been set."); 

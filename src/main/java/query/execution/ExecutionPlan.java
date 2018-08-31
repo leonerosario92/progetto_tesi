@@ -1,17 +1,19 @@
 package query.execution;
 
+import dataset.IDataSet;
+import query.execution.operator.IOperatorGroup;
 import utils.ExecutionPlanNavigator;
 import utils.report.IExecutionReport;
 
 public class ExecutionPlan {
 	
-	private OperatorGroup rootExecutable;
+	private IOperatorGroup<IDataSet> rootExecutable;
 	
-	public ExecutionPlan(OperatorGroup rootExecutable) {
+	public ExecutionPlan(IOperatorGroup<IDataSet> rootExecutable) {
 		this.rootExecutable = rootExecutable;
 	}
 
-	public OperatorGroup getRootExecutable() {
+	public IOperatorGroup getRootExecutable() {
 		return rootExecutable;
 	}
 	

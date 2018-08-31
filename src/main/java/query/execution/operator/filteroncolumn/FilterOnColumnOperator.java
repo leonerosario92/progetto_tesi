@@ -1,7 +1,7 @@
 package query.execution.operator.filteroncolumn;
 
 import query.ImplementationProvider;
-import query.execution.ProcessDataSetOperator;
+import query.execution.operator.ProcessDataSetOperator;
 import query.execution.operator.RelOperatorType;
 
 public class FilterOnColumnOperator extends ProcessDataSetOperator<FilterOnColumnFunction, FilterOnColumnArgs>{

@@ -16,6 +16,8 @@ import model.TableDescriptor;
 
 public abstract class JDBCDataSource implements IRemoteDataSource{
 	
+	private static final Integer DEFAULT_FETCH_SIZE = Integer.MIN_VALUE;
+	
 	private Connection connection;
 	private JDBCMetaData metaData;
 	private JDBCConnectionParams params;
@@ -33,7 +35,8 @@ public abstract class JDBCDataSource implements IRemoteDataSource{
 			if(connection instanceof com.mysql.jdbc.Connection) {
 				((com.mysql.jdbc.Connection) connection).setUseCursorFetch(true);
 				((com.mysql.jdbc.Connection) connection).setUseServerPrepStmts(false);
-				((com.mysql.jdbc.Connection) connection).setDefaultFetchSize(Integer.MIN_VALUE);
+				((com.mysql.jdbc.Connection) connection).setDefaultFetchSize(DEFAULT_FETCH_SIZE);
+
 			}
 			this.getTableStatement = prepareGetTableStatement();
 			this.metaData = new JDBCMetaData(connection);

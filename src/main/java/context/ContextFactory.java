@@ -15,6 +15,8 @@ import impl.query.execution.operator.filteronmultiplecolumn.FilterOnMultipleColu
 import impl.query.execution.operator.groupBy.GroupByImpl;
 import impl.query.execution.operator.loadcolumn.LoadColumnImpl;
 import impl.query.execution.operator.loadmaterialized.LoadMaterializedImpl;
+import impl.query.execution.operator.loadstream.LoadStreamImpl;
+import impl.query.execution.operator.loadverticalpartition.LoadStreamedImpl;
 import impl.query.execution.operator.loadverticalpartition.LoadVerticalPartitionImpl;
 import impl.query.execution.operator.mergeonbitsets.MergeOnBitSetsImpl;
 import impl.query.execution.operator.orderby.OrderByImpl;
@@ -40,12 +42,16 @@ public class ContextFactory {
 		this.implementationProvider = new ImplementationProvider();
 			this.implementationProvider.setFilterOnColumnImpl(FilterOnColumnImpl.class);
 			this.implementationProvider.setLoadColumnImpl(LoadColumnImpl.class);
+			
 			this.implementationProvider.setLoadVerticalPartitionImpl(LoadVerticalPartitionImpl.class);
+//			this.implementationProvider.setLoadVerticalPartitionImpl(LoadStreamedImpl.class);
+			
 			this.implementationProvider.setFilterOnMultipleColumnImpl(FilterOnMultipleColumnImpl.class);
 			this.implementationProvider.setMergeOnBitSetsImpl(MergeOnBitSetsImpl.class);
 			this.implementationProvider.setOrderByImpl(OrderByImpl.class);
 			this.implementationProvider.setGroupByImpl(GroupByImpl.class);
 			this.implementationProvider.setLoadMaterializedImpl(LoadMaterializedImpl.class);
+			this.implementationProvider.setLoadStreamImpl(LoadStreamImpl.class);
 		
 		this.layoutManagerImpl = BaseLayoutManager.class;
 		this.dataProvisionerImpl = BaseDataProvisioner.class;
@@ -64,7 +70,7 @@ public class ContextFactory {
 	public Context getContext() throws ContextFactoryException {
 		
 		if((dataSource == null)) {
-			throw new ContextFactoryException ("Error : mandatory fields of contextFactory not set");
+			throw new ContextFactoryException ("Error : mandatory field of contextFactory not set.");
 		}
 		
 		LayoutManager layoutManager;
@@ -118,11 +124,6 @@ public class ContextFactory {
 	public void setQueryExecutor(Class<? extends QueryExecutor> queryExecutorImpl) {
 		this.queryExecutorImpl = queryExecutorImpl;
 	}
-
-	
-//	public void setQueryProvider(QueryProvider queryProviderImpl) {
-//		this.queryProviderImpl = queryProviderImpl;
-//	}
 
 	
 	public void setQueryPlanner(Class<? extends QueryPlanner> queryPlannerImpl) {

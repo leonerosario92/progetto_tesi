@@ -9,11 +9,11 @@ import java.util.function.Supplier;
 import dataset.IDataSet;
 import dispatcher.MeasurementType;
 import query.execution.QueryExecutor;
+import query.execution.operator.Operator;
+import query.execution.operator.IOperatorGroup;
 import query.builder.Query;
 import query.execution.ExecutionPlan;
 import query.execution.IResultHolder;
-import query.execution.Operator;
-import query.execution.OperatorGroup;
 import query.execution.QueryExecutionException;
 
 public class BaseQueryExecutor extends QueryExecutor {
@@ -28,27 +28,27 @@ public class BaseQueryExecutor extends QueryExecutor {
 	
 	@Override
 	public IDataSet executePlan(ExecutionPlan plan) throws QueryExecutionException {
-		OperatorGroup rootExecutable = plan.getRootExecutable();
-		IResultHolder<IDataSet> result = rootExecutable.execSubOperators(this);
-		return result.getResult();
+		IOperatorGroup<IDataSet> rootExecutable = plan.getRootExecutable();
+		IDataSet result = rootExecutable.execute(this);
+		return result;
 	}
 
 
 	@Override
 	public IDataSet executePlan(ExecutionPlan plan, MeasurementType measurement) throws QueryExecutionException {
-		OperatorGroup rootExecutable = plan.getRootExecutable();
-		IResultHolder<IDataSet> result = rootExecutable.execSubOperators(this, measurement);
-		return result.getResult();
+		IOperatorGroup<IDataSet> rootExecutable = plan.getRootExecutable();
+		IDataSet result = rootExecutable.execute(this, measurement);
+		return result;
 	}
 	
 	
-	@Override
-	public IResultHolder <IDataSet> submit(Callable<IDataSet> executable) {
-		Future<IDataSet> future = executorService.submit(executable);
-		return new IResultHolder<IDataSet>() {
+	
+	public <T> IResultHolder <T> submit(Callable<T> executable) {
+		Future<T> future = executorService.submit(executable);
+		return new IResultHolder<T>() {
 
 			@Override
-			public IDataSet getResult() {
+			public T getResult() {
 				try {
 					return future.get();
 				} catch (InterruptedException | ExecutionException e) {

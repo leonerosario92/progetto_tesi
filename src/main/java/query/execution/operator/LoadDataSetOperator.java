@@ -1,16 +1,15 @@
-package query.execution;
+package query.execution.operator;
 
 import dataprovisioner.IDataProvisioner;
 import dataset.IDataSet;
 import datasource.DataSourceException;
 import query.ImplementationProvider;
-import query.execution.operator.DataSetProcessingFunction;
-import query.execution.operator.DatasetLoadingFunction;
-import query.execution.operator.IOperatorArgs;
-import query.execution.operator.RelOperatorType;
+import query.execution.IQueryExecutor;
+import query.execution.QueryExecutionException;
 
-public abstract class LoadDataSetOperator<F extends DatasetLoadingFunction, A extends IOperatorArgs> extends Operator<F,A>{
-	
+public abstract class LoadDataSetOperator<F extends DatasetLoadingFunction, A extends IOperatorArgs> 
+extends SequentialOperator<F,A>
+{
 	
 	public LoadDataSetOperator(ImplementationProvider provider, RelOperatorType type) {
 		super(provider, type, true);
@@ -22,16 +21,16 @@ public abstract class LoadDataSetOperator<F extends DatasetLoadingFunction, A ex
 	}
 
 	
-	public  IDataSet execOperator(IQueryExecutor executor) throws QueryExecutionException {
-		
+	public  IDataSet execute(IQueryExecutor executor) throws QueryExecutionException {
 		IDataProvisioner provisioner = executor.getProvisioner();
 		try {
 			return function.apply(provisioner,args);
-		} catch (DataSourceException e) {
+		} 
+		catch (DataSourceException e) {
 			throw new QueryExecutionException(
 					"An error occourred while executing operator " +operatorName
 					+" caused by : " +e.getMessage()
-					);
+			);
 		}
 	}
 	

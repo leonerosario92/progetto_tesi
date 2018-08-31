@@ -8,6 +8,7 @@ import query.execution.operator.filteronmultiplecolumn.FilterOnMultipleColumnFun
 import query.execution.operator.groupby.GroupByFunction;
 import query.execution.operator.loadcolumn.LoadColumnFunction;
 import query.execution.operator.loadmaterialized.LoadMaterializedFunction;
+import query.execution.operator.loadstream.LoadStreamFunction;
 import query.execution.operator.loadverticalpartition.LoadVerticalPartitionFunction;
 import query.execution.operator.mergeonbitsets.MergeOnBitSetsFunction;
 import query.execution.operator.orderby.OrderByFunction;
@@ -96,6 +97,15 @@ public class ImplementationProvider  {
 	}
 	
 	
+	public void setLoadStreamImpl(Class<? extends LoadStreamFunction> function) {
+		setImplementation(RelOperatorType.LOAD_STREAMED, function);
+	}
+	
+	public LoadStreamFunction getLoadStreamImpl() {
+		return (LoadStreamFunction) getImplementationInstance(RelOperatorType.LOAD_STREAMED);
+	}
+	
+	
 	private Object getImplementationInstance(RelOperatorType type) {
 		checkImplementation(type);
 		Class<?> clazz = implementations.get(type);
@@ -106,7 +116,6 @@ public class ImplementationProvider  {
 			throw new IllegalArgumentException();
 		}
 	}
-	
 	
 	private void setImplementation(RelOperatorType type, Class<?> clazz) {
 		implementations.put(type, clazz);

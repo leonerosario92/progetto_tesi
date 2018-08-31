@@ -24,7 +24,9 @@ import query.builder.statement.CFNode;
 import query.builder.statement.CFilterStatement;
 import query.builder.statement.FilterStatement;
 import query.execution.ExecutionPlan;
-import query.execution.SequentialOperatorGroup;
+import query.execution.operator.LoadDataSetOperator;
+import query.execution.operator.ParallelOperatorGroup;
+import query.execution.operator.SequentialOperatorGroup;
 import query.execution.operator.filteroncolumn.FilterOnColumnArgs;
 import query.execution.operator.filteroncolumn.FilterOnColumnOperator;
 import query.execution.operator.filteronmultiplecolumn.FilterOnMultipleColumnArgs;
@@ -39,8 +41,6 @@ import query.execution.operator.loadverticalpartition.LoadVerticalPartitionArgs;
 import query.execution.operator.loadverticalpartition.LoadVerticalPartitionOperator;
 import query.execution.operator.mergeonbitsets.MergeOnBitesetsOperator;
 import query.execution.operator.orderby.OrderByOperator;
-import query.execution.LoadDataSetOperator;
-import query.execution.ParallelOperatorGroup;
 
 public class BaseQueryPlanner extends QueryPlanner {
 	
@@ -49,12 +49,6 @@ public class BaseQueryPlanner extends QueryPlanner {
 		super();
 	}
 
-	/**
-	 * Base implementation of a queryPlanner. Groups all filter statements 
-	 * contained in the query by the field to which they will be applied
-	 * and generates a query plan where every execution item is represented by 
-	 * all filter operation on a specific "fields group".
-	 */
 	
 	@Override
 	public ExecutionPlan getExecutionPlan(Query query) {

@@ -1,12 +1,11 @@
-package query.execution;
+package query.execution.operator;
 
 import dataset.IDataSet;
 import query.ImplementationProvider;
-import query.execution.operator.DataSetProcessingFunction;
-import query.execution.operator.IOperatorArgs;
-import query.execution.operator.RelOperatorType;
+import query.execution.IQueryExecutor;
+import query.execution.QueryExecutionException;
 
-public abstract class ProcessDataSetOperator<F extends DataSetProcessingFunction, A extends IOperatorArgs> extends Operator<F,A>{
+public abstract class ProcessDataSetOperator<F extends DataSetProcessingFunction, A extends IOperatorArgs> extends SequentialOperator<F,A>{
 	
 	private boolean hasInputDataSet;
 	private IDataSet inputDataSet;
@@ -26,7 +25,7 @@ public abstract class ProcessDataSetOperator<F extends DataSetProcessingFunction
 	}
 
 	
-	public  IDataSet execOperator(IQueryExecutor executor) throws QueryExecutionException {
+	public  IDataSet execute(IQueryExecutor executor) throws QueryExecutionException {
 		
 		if(! hasInputDataSet) {
 			throw new IllegalStateException("ProcessDataSet Operators cannot be executed if an input DataSet has not been set."); 

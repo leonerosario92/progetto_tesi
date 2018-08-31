@@ -4,7 +4,7 @@ import dataprovisioner.IDataProvisioner;
 import dataset.IDataSet;
 import datasource.DataSourceException;
 
-public interface DatasetLoadingFunction <A> extends IOperatorFunction {
+public interface DatasetLoadingFunction <A> extends ISequentialOperatorFunction {
 	
 	public IDataSet apply(IDataProvisioner provisioner, A args) throws DataSourceException;
 	

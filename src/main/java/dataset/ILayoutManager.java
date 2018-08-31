@@ -22,5 +22,7 @@ public interface ILayoutManager {
 			List<ColumnDescriptor> columnSequence, 
 			Iterator<Object[]> records
 	);
+	
+	public IDataSet buildStreamedDataSet(IRecordScanner scanner);
 
 }

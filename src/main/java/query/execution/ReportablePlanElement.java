@@ -3,7 +3,7 @@ package query.execution;
 import utils.ExecutionPlanNavigator;
 import utils.report.IExecutionReport;
 
-public interface ExecutionPlanElement {
+public interface ReportablePlanElement {
 	
 	public void addRepresentation (ExecutionPlanNavigator navigator);
 	

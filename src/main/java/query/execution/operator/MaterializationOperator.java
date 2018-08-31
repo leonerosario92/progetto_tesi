@@ -1,4 +1,4 @@
-package query.execution;
+package query.execution.operator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,12 +6,10 @@ import java.util.List;
 import dataset.IDataSet;
 import dataset.ILayoutManager;
 import query.ImplementationProvider;
-import query.execution.operator.DataSetProcessingFunction;
-import query.execution.operator.IOperatorArgs;
-import query.execution.operator.MaterializationFunction;
-import query.execution.operator.RelOperatorType;
+import query.execution.IQueryExecutor;
+import query.execution.QueryExecutionException;
 
-public abstract class MaterializationOperator <F extends MaterializationFunction, A extends IOperatorArgs> extends Operator<F,A>{
+public abstract class MaterializationOperator <F extends MaterializationFunction, A extends IOperatorArgs> extends SequentialOperator<F,A>{
 
 	private List<IDataSet> inputDataSets;
 	
@@ -29,7 +27,7 @@ public abstract class MaterializationOperator <F extends MaterializationFunction
 	}
 
 	
-	public  IDataSet execOperator(IQueryExecutor executor) throws QueryExecutionException {
+	public  IDataSet execute(IQueryExecutor executor) throws QueryExecutionException {
 		
 		if(inputDataSets.size() == 0) {
 			throw new IllegalStateException("Materialization Operators cannot be executed if no input DataSet has been Set."); 

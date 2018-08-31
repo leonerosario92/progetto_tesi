@@ -85,7 +85,6 @@ public class GroupByImpl  extends GroupByFunction{
 				columnSequence,
 				aggregateRecords.iterator()
 		);
-		
 		return result;
 	}
 
@@ -256,8 +255,8 @@ public class GroupByImpl  extends GroupByFunction{
 	
 	
 	private List<ColumnDescriptor> getResultColumnSequence(
-			List<IDescriptor> projectionSequence
-	){
+			List<IDescriptor> projectionSequence)
+	{
 		List<ColumnDescriptor> sequence = new ArrayList<>();
 		for(IDescriptor descriptor : projectionSequence) {
 			if(descriptor instanceof FieldDescriptor) {
@@ -266,16 +265,17 @@ public class GroupByImpl  extends GroupByFunction{
 						field.getTable().getName(), 
 						field.getName(), 
 						field.getType()
-						);
-					sequence.add(currentColumn);
-			}else if(descriptor instanceof AggregationDescriptor) {
+				);
+				sequence.add(currentColumn);
+			}
+			else if(descriptor instanceof AggregationDescriptor) {
 				AggregationDescriptor aggregateField = AggregationDescriptor.class.cast(descriptor);
 				ColumnDescriptor currentColumn = new ColumnDescriptor(
 						aggregateField.getField().getTable().getName(), 
 						aggregateField.getName(), 
 						DataType.DOUBLE
-						);
-					sequence.add(currentColumn);
+				);
+				sequence.add(currentColumn);
 			}
 		}
 		return sequence;
@@ -350,16 +350,15 @@ public class GroupByImpl  extends GroupByFunction{
 		Stream<Object[]> result =
 		recordStream.map(
 			oldRecord ->{
-				Object[] projectedRecord = new Object[projectionSequence.size()];
+				Object[] newRecord = new Object[projectionSequence.size()];
 				int j = 0;
 				for(IDescriptor field : projectionSequence) {
-					projectedRecord[j] = oldRecord[oldMapping.get(field.getKey())];
+					newRecord[j] = oldRecord[oldMapping.get(field.getKey())];
 					j++;
 				}
-				return projectedRecord;
+				return newRecord;
  			}
 		);
-		
 		return result;
 	}
 

@@ -1,7 +1,7 @@
 package query.execution.operator.mergeonbitsets;
 
 import query.ImplementationProvider;
-import query.execution.MaterializationOperator;
+import query.execution.operator.MaterializationOperator;
 import query.execution.operator.RelOperatorType;
 
 

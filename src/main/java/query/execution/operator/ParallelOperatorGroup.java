@@ -1,4 +1,4 @@
-package query.execution;
+package query.execution.operator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,15 +8,18 @@ import java.util.stream.Collectors;
 import dataset.IDataSet;
 import dispatcher.MeasurementType;
 import objectexplorer.MemoryMeasurer;
+import query.execution.ReportablePlanElement;
+import query.execution.IQueryExecutor;
+import query.execution.IResultHolder;
+import query.execution.QueryExecutionException;
 import utils.ExecutionPlanNavigator;
 import utils.report.IExecutionReport;
 import utils.report.OperatorGroupReport;
 import utils.report.ReportAggregator;
 
-public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement{
+public class ParallelOperatorGroup implements IOperatorGroup<IDataSet>{
 	
-	private List<OperatorGroup> subElements;
-//	private OperatorGroupReport report;
+	private List<IOperatorGroup<IDataSet>> subElements;
 	private MaterializationOperator<?,?> materializationOperator;
 	private boolean generatesNewDataSet;
 	
@@ -37,7 +40,7 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 	}
 	
 	
-	public void addSubElement(OperatorGroup subElement) {
+	public void addSubElement(IOperatorGroup subElement) {
 		if(subElement.generatesNewDataSet()) {
 			this.generatesNewDataSet = true;
 		}
@@ -46,61 +49,36 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 	
 	
 	@Override
-	public IResultHolder<IDataSet> execSubOperators(IQueryExecutor executor) {
-		return execSubOperators(executor, MeasurementType.NONE);
+	public IDataSet execute(IQueryExecutor executor) {
+		return execute(executor, MeasurementType.NONE);
 	}
 
 	
 	@Override
-	public IResultHolder<IDataSet> execSubOperators(IQueryExecutor executor, MeasurementType measurement) {
-		List<IResultHolder<IDataSet>> partialResults = getPartialResults (executor, measurement);
+	public IDataSet execute(IQueryExecutor executor, MeasurementType measurement) {
+		List<IDataSet> partialResults = getPartialResults (executor, measurement);
 		
 		setExecutionStartTime();
 		
-//		report.setExecutionStartTime();
 		List<IDataSet> partialResultList = partialResults.stream()
-				.map(datasetHolder->datasetHolder.getResult())
 				.collect(Collectors.toList());	
-//		report.setExecutionEndTime();
-
-//		report.setMaterializationStartTime();
+		
 		IDataSet result = executor
 				.submit(getMaterializationCallable(partialResultList,executor,measurement))
 				.getResult();
 		
-
-//		report.setMaterializationEndTime();
-		
-		
-//		if (measurement == MeasurementType.EVALUATE_MEMORY_OCCUPATION) {
-//			float subOperatorsMemOccupation = 0;
-//			for(OperatorGroup op : subElements) {
-//				subOperatorsMemOccupation += op.getReport().getMemoryOccupationMB();
-//			}
-//			report.setMemoryOccupationMByte(subOperatorsMemOccupation);
-//			
-//			long materializationMemOccupation = 
-//					MemoryMeasurer.measureBytes(result);
-//			report.sumMemoryOccupationByte(materializationMemOccupation);
-//		}
-		
 		setExecutionEndTime();
 		executed = true;
-		
-		return new IResultHolder<IDataSet>() {
-			@Override
-			public IDataSet getResult() {
-				return result;
-			}
-		};
+		return result;
 	}
 
 
-	private List<IResultHolder<IDataSet>> getPartialResults(IQueryExecutor executor, MeasurementType measurement) {
-		List<IResultHolder<IDataSet>> partialResults = new ArrayList<>();
-		for(OperatorGroup operator : subElements) {
+	private List<IDataSet> getPartialResults(IQueryExecutor executor, MeasurementType measurement) {
+		List<IDataSet> partialResults = new ArrayList<>();
+		for(IOperatorGroup<IDataSet> operator : subElements) {
 			try {
-				partialResults.add(operator.execSubOperators(executor,measurement));
+				
+				partialResults.add(operator.execute(executor,measurement));
 			} catch (QueryExecutionException e) {
 				//TODO Manage exception
 				e.printStackTrace();
@@ -113,16 +91,15 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 	private Callable<IDataSet> getMaterializationCallable(
 			List<IDataSet> partialResultList,
 			IQueryExecutor executor,
-			MeasurementType measurement
-	){
-		
+			MeasurementType measurement)
+	{
 		IDataSet[] inputDataSets = partialResultList.toArray(new IDataSet[partialResultList.size()]);
 		materializationOperator.setInputData(inputDataSets);
 		Callable<IDataSet> result = 
 			new Callable<IDataSet>() {
 				@Override
 				public IDataSet call() throws Exception {
-					return materializationOperator.execOperator(executor,measurement);
+					return materializationOperator.execute(executor,measurement);
 				}
 			};
 		return result;
@@ -150,7 +127,7 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 	public void addRepresentation(ExecutionPlanNavigator printer) {
 		printer.appendLine("[PARALLEL GROUP]");
 		
-		for( ExecutionPlanElement e : subElements) {
+		for( ReportablePlanElement e : subElements) {
 			printer.addIndentation();
 			e.addRepresentation(printer);
 			printer.removeIndentation();
@@ -173,7 +150,7 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 		
 		printer.appendLine("[PARALLEL GROUP " + getReport().toString() +  "]");
 		
-		for( ExecutionPlanElement e : subElements) {
+		for( ReportablePlanElement e : subElements) {
 			printer.addIndentation();
 			e.addRepresentationWithReport(printer);
 			printer.removeIndentation();
@@ -198,7 +175,7 @@ public class ParallelOperatorGroup implements OperatorGroup,ExecutionPlanElement
 		
 		ReportAggregator result = new ReportAggregator();
 		result.sumMemoryOccupationMByte(materializationOperator.getReport().getMemoryOccupationMB());
-		for(OperatorGroup op : subElements) {
+		for(IOperatorGroup op : subElements) {
 			if(op.generatesNewDataSet()) {
 				result.sumMemoryOccupationMByte(
 						op.getReport().getMemoryOccupationMB());

@@ -1,7 +1,7 @@
 package query.execution.operator.loadverticalpartition;
 
 import query.ImplementationProvider;
-import query.execution.LoadDataSetOperator;
+import query.execution.operator.LoadDataSetOperator;
 import query.execution.operator.RelOperatorType;
 
 public class LoadVerticalPartitionOperator extends LoadDataSetOperator<LoadVerticalPartitionFunction,LoadVerticalPartitionArgs>{
