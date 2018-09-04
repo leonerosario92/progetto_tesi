@@ -196,17 +196,19 @@ public class SequentialOperatorGroup implements IOperatorGroup<IDataSet> {
 		if(!this.executed) {
 			throw new IllegalStateException("Attempt to retrieve execution report from non-executed operator group");
 		}
-		
 		ReportAggregator result = new ReportAggregator();
+		
+		result.setExecutionTmeMs(getExecutionTimeMillis());
+		
 		if(this.dataLoader != null) {
 			result.sumMemoryOccupationMByte(dataLoader.getReport().getMemoryOccupationMB());
 		}
-		result.setExecutionTmeMs(getExecutionTimeMillis());
 		for (ReportablePlanElement subElement : subElements) {
 			if (subElement.generatesNewDataSet()) {
 				result.sumMemoryOccupationMByte(subElement.getReport().getMemoryOccupationMB());
 			}
 		}
+		
 		return result;
 	}
 

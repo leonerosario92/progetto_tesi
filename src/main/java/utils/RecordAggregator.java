@@ -25,10 +25,10 @@ public class RecordAggregator {
 	
 	public RecordAggregator(
 		List<AggregationDescriptor> aggregations, 
-		IDataSet inputDataSet
+		Map<String,Integer> nameIndexMapping
 	){
 		this.aggregations = Lists.newArrayList(aggregations);
-		this.mapping = inputDataSet.getNameIndexMapping();
+		this.mapping = nameIndexMapping;
 		this.aggregators = new ArrayList<>();
 		for(AggregationDescriptor aggregation : this.aggregations) {
 			TypeDescriptor fieldType =  aggregation.getField().getType().getDescriptor();

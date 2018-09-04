@@ -1,4 +1,4 @@
-package query.execution.operator.orderby;
+package query.execution.operator.streamedorderby;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,11 +10,11 @@ import com.google.common.collect.Sets;
 import model.FieldDescriptor;
 import query.execution.operator.IOperatorArgs;
 
-public class OrderByArgs implements IOperatorArgs {
-	
+public class StreamedOrderByArgs implements IOperatorArgs {
+
 	private List<FieldDescriptor> orderingSequence;
 	
-	public OrderByArgs() {
+	public StreamedOrderByArgs() {
 		orderingSequence = new ArrayList<>();
 	}
 	

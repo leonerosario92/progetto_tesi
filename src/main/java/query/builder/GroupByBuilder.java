@@ -65,7 +65,7 @@ public class GroupByBuilder {
 		GroupByClause groupByClause = query.getGroupByClause();
 		Set<FieldDescriptor> nonAggregateFields = 
 			Sets.difference(
-					projectionClause.getReferencedFields(), 
+					projectionClause.getProjectedFields(), 
 					projectionClause.getAggregations()
 			);
 		for(FieldDescriptor field : nonAggregateFields) {

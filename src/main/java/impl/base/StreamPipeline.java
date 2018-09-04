@@ -15,8 +15,9 @@ import dataset.IDataSet;
 import dataset.IRecordIterator;
 import datasource.IRecordScanner;
 import model.FieldDescriptor;
+import query.execution.operator.StreamProcessingOperator;
 
-public class StreamedDataSet implements IDataSet{
+public class StreamPipeline {
 
 	private int recordCount;
 	private int columnCount;
@@ -25,7 +26,7 @@ public class StreamedDataSet implements IDataSet{
 	private Stream<Object[]> recordStream;
 	
 	
-	public StreamedDataSet(Stream<Object[]> recordStream, List<ColumnDescriptor> columnDescriptors, int recordCount) {
+	public StreamPipeline(Stream<Object[]> recordStream, List<ColumnDescriptor> columnDescriptors, int recordCount) {
 		this.recordStream = recordStream;
 		this.recordCount = recordCount;
 		this.columnCount = columnDescriptors.size();
@@ -44,90 +45,47 @@ public class StreamedDataSet implements IDataSet{
 		}
 	}
 	
+	
+	public void updateStream (Stream<Object[]> stream) {
+		synchronized(this) {
+			this.recordStream = stream;
+		}
+	}
+	
+	
+	public void updateMapping (Map<String,Integer> mapping) {
+		synchronized(this) {
+			this.nameIndexMapping = mapping;
+		}
+	}
+	
 
-	@Override
 	public boolean containsColumn(FieldDescriptor field) {
 		return nameIndexMapping.containsKey(field.getKey());
 	}
 
-	@Override
 	public Stream<Object[]> getRecordStream() {
 		return recordStream;
 	}
 
-	@Override
 	public int getRecordCount() {
 		return recordCount;
 	}
 
-	@Override
 	public int getFieldsCount() {
 		return columnCount;
 	}
 
-	@Override
 	public ColumnDescriptor getColumnDescriptor(int index){
 		return columnDescriptors.get(index);
 	}
 
-	@Override
 	public int getColumnIndex(FieldDescriptor field) {
 		return nameIndexMapping.get(field.getKey());
 	}
 
-	@Override
 	public Map<String, Integer> getNameIndexMapping() {
 		return nameIndexMapping;
-	}
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-	@Override
-	public IColumn<?> getColumn(FieldDescriptor column) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public List<IColumn<?>> getAllColumns() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public IRecordIterator getRecordIterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public IRecordScanner getRecordScanner() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public void updateValidityBitset(BitSet validityBits) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public BitSet getValidityBitSet() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

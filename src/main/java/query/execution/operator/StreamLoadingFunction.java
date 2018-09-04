@@ -4,9 +4,10 @@ import java.util.stream.Stream;
 
 import dataprovisioner.IDataProvisioner;
 import datasource.DataSourceException;
+import impl.base.StreamPipeline;
 
 public interface StreamLoadingFunction<A> extends IStreamedOperatorFunction {
 
-	public Stream<Object[]> apply(IDataProvisioner provisioner, A args) throws DataSourceException;
+	public StreamPipeline apply(IDataProvisioner provisioner, A args) throws DataSourceException;
 	
 }

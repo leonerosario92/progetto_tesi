@@ -1,9 +1,8 @@
 package query.execution.operator;
 
-import java.util.stream.Stream;
-
 import dataprovisioner.IDataProvisioner;
 import datasource.DataSourceException;
+import impl.base.StreamPipeline;
 import query.ImplementationProvider;
 import query.execution.QueryExecutionException;
 
@@ -15,7 +14,7 @@ extends StreamOperator<F,A>
 		super(provider,type);
 	}
 	
-	public Stream<Object[]> loadStream (IDataProvisioner provisioner) throws QueryExecutionException{
+	public StreamPipeline loadStream (IDataProvisioner provisioner) throws QueryExecutionException{
 		try {
 			return function.apply(provisioner,args);
 		} 

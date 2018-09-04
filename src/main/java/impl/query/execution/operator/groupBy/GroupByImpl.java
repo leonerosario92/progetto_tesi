@@ -30,7 +30,9 @@ import query.builder.statement.AggregateFilterStatement;
 import query.builder.statement.CFNode;
 import query.execution.operator.groupby.GroupByArgs;
 import query.execution.operator.groupby.GroupByFunction;
+import utils.CollectorUtils;
 import utils.RecordAggregator;
+import utils.RecordComparator;
 import utils.RecordEvaluator;
 
 public class GroupByImpl  extends GroupByFunction{
@@ -43,7 +45,6 @@ public class GroupByImpl  extends GroupByFunction{
 		List<AggregationDescriptor> aggregations = Lists.newArrayList(args.getAggregations());
 		List<AggregateFilterStatement> aggregateFilters = args.getAggregateFIlters();
 		List<FieldDescriptor> orderingSequence = args.getOrderingSequence();
-		
 		List<IDescriptor> projectionSequence = args.getProjectionSequence();
 		
 		int[] groupingSequenceIndexes = 
@@ -51,28 +52,30 @@ public class GroupByImpl  extends GroupByFunction{
 		
 		List<Object[]> aggregateRecords;
 		if(aggregations.size() == 0) {
-			aggregateRecords =
+			recordStream =
 					groupRecords(recordStream, groupingSequenceIndexes);
 		}else {
 			Collector<Object[], RecordAggregator, Object[]> downStreamCollector = 
-					getDownStreamCollector(aggregations,inputDataSet);
-			aggregateRecords =
+				CollectorUtils.getRecordDownStreamCollector(
+					aggregations,
+					inputDataSet.getNameIndexMapping()
+				);
+			recordStream =
 					aggregateRecords(recordStream,groupingSequenceIndexes,downStreamCollector);
 		}
 		
-		recordStream = aggregateRecords.stream();
 		Map<String,Integer> nameIndexMapping = mapAggregateRecordsToIndexes(groupingSequence, aggregations);
 		
 		if(aggregateFilters.size() != 0) {
 			recordStream = 
-					filterRecords(nameIndexMapping,aggregateFilters,recordStream);
+				filterRecords(nameIndexMapping,aggregateFilters,recordStream);
 		}
 		
 		recordStream = projectFields(projectionSequence,recordStream,nameIndexMapping);
 		
 		if(orderingSequence.size() !=0) {
 			recordStream =
-					sortRecords(nameIndexMapping,orderingSequence,recordStream);
+				sortRecords(nameIndexMapping,orderingSequence,recordStream);
 		}
 		
 		aggregateRecords = 
@@ -98,59 +101,9 @@ public class GroupByImpl  extends GroupByFunction{
 		}
 		return fieldSequenceIndexes;
 	}
-
-	
-	private Collector<Object[], RecordAggregator, Object[]> getDownStreamCollector(List<AggregationDescriptor> aggregations, IDataSet inputDataSet) {
-		Supplier<RecordAggregator> supplier = getSupplier(aggregations,inputDataSet);
-		BiConsumer<RecordAggregator, Object[]> accumulator = getAccumulator();
-		BinaryOperator<RecordAggregator> combiner = getCombiner();
-		Function<RecordAggregator,Object[]> finalizer = getFinalizer(aggregations);
-		
-		return Collector.of(supplier,accumulator,combiner ,finalizer);
-	}
-
-	
-	private Supplier<RecordAggregator> getSupplier(List<AggregationDescriptor> aggregations, IDataSet inputDataSet) {
-		return new Supplier<RecordAggregator>() {
-			@Override
-			public RecordAggregator get() {
-				return new RecordAggregator(aggregations, inputDataSet);
-			}
-		};
-	}	
-	
-	private BiConsumer<RecordAggregator, Object[]> getAccumulator() {
-		return new BiConsumer<RecordAggregator, Object[]>() {
-			@Override
-			public void accept(RecordAggregator recordAggregator, Object[] record) {
-				recordAggregator.aggregateRecord(record);
-			}
-		};
-	}
-	
-	private BinaryOperator<RecordAggregator> getCombiner() {
-		return new BinaryOperator<RecordAggregator>() {
-			@Override
-			public RecordAggregator apply(RecordAggregator aggregator, RecordAggregator other) {
-				RecordAggregator combinedAggregator = aggregator.combine(other);
-				return combinedAggregator;
-			}
-		};
-	}
-	
-	private Function<RecordAggregator, Object[]> getFinalizer (List<AggregationDescriptor> aggregations) {
-		return new Function<RecordAggregator, Object[]>() {
-			@Override
-			public Object[] apply(RecordAggregator aggregator) {
-				return aggregator.getAggregationResult();
-			}
-		};
-	}
 	
 	
-	
-	private List<Object[]> groupRecords(Stream<Object[]> recordStream, int[] fieldSequenceIndexes) {
-		
+	private Stream<Object[]> groupRecords(Stream<Object[]> recordStream, int[] fieldSequenceIndexes) {
 		Map<Object, List<Object[]>> resultMap =
 		recordStream
 		.collect(
@@ -166,24 +119,22 @@ public class GroupByImpl  extends GroupByFunction{
 				Collectors.toList()
 			)
 		);
-	
+		
 		List<Object[]> result = new ArrayList<>();
 		for(List<Object[]> partialResult : resultMap.values()) {
 			result.addAll(partialResult);
 		}
-		
-		return result;
+		return result.stream();
 	}
 	
 	
 	
-	private List<Object[]> aggregateRecords(
+	private Stream<Object[]> aggregateRecords(
 			Stream<Object[]> recordStream, 
 			int[] fieldSequenceIndexes,
 			Collector<Object[], RecordAggregator, Object[]> downStreamCollector
 	){
-		
-		Map<List<Object>, Object[]> resultMap =
+		Stream<Object[]> resultStream=
 		recordStream
 		.collect(
 			Collectors.groupingBy (
@@ -196,23 +147,25 @@ public class GroupByImpl  extends GroupByFunction{
 				},
 				downStreamCollector
 			)
+		)
+		.entrySet()
+		.stream()
+		.map(
+			entry -> {
+				List<Object> key = entry.getKey();
+				Object[] value = entry.getValue();
+				Object[] currentRecord = new Object[key.size() + value.length];
+				for(int i=0; i<key.size(); i++) {
+					currentRecord[i] = key.get(i);
+				}
+				for(int i=key.size(); i < (key.size() + value.length); i++) {
+					currentRecord[i] = value[ i-key.size()];
+				}
+				return currentRecord;
+			}
 		);
-			
-		List<Object[]> result = new ArrayList<>();
-		for(Map.Entry<List<Object>,Object[]> entry : resultMap.entrySet()) {
-			List<Object> key = entry.getKey();
-			Object[] value = entry.getValue();
-			Object[] currentRecord = new Object[key.size() + value.length];
-			for(int i=0; i<key.size(); i++) {
-				currentRecord[i] = key.get(i);
-			}
-			for(int i=key.size(); i < (key.size() + value.length); i++) {
-				currentRecord[i] = value[ i-key.size()];
-			}
-			
-			result.add(currentRecord);
-		}
-		return result;
+		
+		return resultStream;
 	}
 
 
@@ -255,7 +208,7 @@ public class GroupByImpl  extends GroupByFunction{
 	
 	
 	private List<ColumnDescriptor> getResultColumnSequence(
-			List<IDescriptor> projectionSequence)
+		List<IDescriptor> projectionSequence)
 	{
 		List<ColumnDescriptor> sequence = new ArrayList<>();
 		for(IDescriptor descriptor : projectionSequence) {
@@ -282,51 +235,13 @@ public class GroupByImpl  extends GroupByFunction{
 	}
 	
 	
-	private Comparator<Object[]> getRecordComparator(
-			Map<String,Integer> nameIndexMapping, 
-			List<FieldDescriptor> orderingSequence)
-	{
-		int size = orderingSequence.size();
-		TypeComparator[] comparators = new TypeComparator [size];
-		int[] indexes = new int[size];
-		int fieldIndex=0;
-		for(FieldDescriptor field : orderingSequence) {
-			indexes[fieldIndex] = nameIndexMapping.get(field.getKey());
-			comparators[fieldIndex] = 
-					field
-					.getType()
-					.getComparator();
-			fieldIndex ++;
-		}
-		
-		Comparator<Object[]> recordComparator = 
-				(record,other)-> comparators[0].compare(record[indexes[0]], other[indexes[0]]);
-
-		for(int i=1; i<size; i++ ) {
-			final int currentIndex = i;
-			recordComparator = recordComparator.thenComparing(
-				new Comparator<Object[]>() {
-					@Override
-					public int compare(Object[] record, Object[] other) {
-						return comparators[currentIndex].
-								compare(record[indexes[currentIndex]], other[indexes[currentIndex]]);
-					}
-				}
-			);
-			
-		}
-		
-		return recordComparator;
-	}
-	
-	
 	private Stream<Object[]> sortRecords(
 			Map<String, Integer> aggrNameIndexMapping,
 			List<FieldDescriptor> orderingSequence, 
 			Stream<Object[]> aggregateRecordStream
 	){
 		Comparator<Object[]> recordComparator = 
-				getRecordComparator(aggrNameIndexMapping, orderingSequence);
+				RecordComparator.getRecordComparator(aggrNameIndexMapping, orderingSequence);
 		Stream<Object[]> sortedRecordStream =
 			aggregateRecordStream
 			.sorted(recordComparator);

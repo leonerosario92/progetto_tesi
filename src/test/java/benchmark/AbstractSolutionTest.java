@@ -75,6 +75,7 @@ public abstract class AbstractSolutionTest {
 		this.factory = getContextFactoryImpl();
 	}
 	
+	@Ignore
 	@Test
 	public void TestScanSmallDataSetMemoryOccupation(){
 		executeTest(MeasurementType.EVALUATE_MEMORY_OCCUPATION);
@@ -105,11 +106,11 @@ public abstract class AbstractSolutionTest {
 //			boolean correctness = testQueryResult(query, resultScanner);		
 //			assertTrue("Error : Query execution returned a result that differs from the expected one.", correctness);
 			
-//			long resultIterationStartTime = System.nanoTime();
-//			RecordScannerUtils.printToFile(resultScanner, RESULT_FILE_PATH);
-//			long resultIterationEndTime = System.nanoTime();			
-//			long iterationNanos = (resultIterationEndTime - resultIterationStartTime);
-//			query.setResultIterationTime(Float.valueOf(iterationNanos)/ (1000*1000));			
+			long resultIterationStartTime = System.nanoTime();
+			RecordScannerUtils.printToFile(resultScanner, RESULT_FILE_PATH);
+			long resultIterationEndTime = System.nanoTime();			
+			long iterationNanos = (resultIterationEndTime - resultIterationStartTime);
+			query.setResultIterationTime(Float.valueOf(iterationNanos)/ (1000*1000));			
 			
 			testReport = writeTestReport(query);
 		} 
@@ -140,7 +141,7 @@ public abstract class AbstractSolutionTest {
 		.project(city)
 		.project(sumUnitSales)
 		.project(maxUnitSales)
-//		.filter(quarter, FilterStatementType.EQUALS_TO, new String("Q1"))
+		.filter(quarter, FilterStatementType.EQUALS_TO, new String("Q1"))
 		.groupBy(city,productName)
 		.aggregateFilter(
 				AggregateFunction.SUM, 

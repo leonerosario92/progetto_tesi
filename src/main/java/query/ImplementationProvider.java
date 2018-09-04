@@ -12,6 +12,9 @@ import query.execution.operator.loadstream.LoadStreamFunction;
 import query.execution.operator.loadverticalpartition.LoadVerticalPartitionFunction;
 import query.execution.operator.mergeonbitsets.MergeOnBitSetsFunction;
 import query.execution.operator.orderby.OrderByFunction;
+import query.execution.operator.streamedgroupby.StreamedGroupByFunction;
+import query.execution.operator.streamedorderby.StreamedOrderByFunction;
+import query.execution.operator.streamedrecordfilter.FilterOnStreamFunction;
 
 public class ImplementationProvider  {
 	
@@ -103,6 +106,33 @@ public class ImplementationProvider  {
 	
 	public LoadStreamFunction getLoadStreamImpl() {
 		return (LoadStreamFunction) getImplementationInstance(RelOperatorType.LOAD_STREAMED);
+	}
+	
+	
+	public void setFilterOnStreamImpl(Class<? extends FilterOnStreamFunction> function) {
+		setImplementation(RelOperatorType.STREAMED_FILTER, function);
+	}
+	
+	public FilterOnStreamFunction getFilterOnStreamImpl() {
+		return (FilterOnStreamFunction) getImplementationInstance(RelOperatorType.STREAMED_FILTER);
+	}
+	
+	
+	public void setStreamedOrderByImpl(Class<? extends StreamedOrderByFunction> function) {
+		setImplementation(RelOperatorType.STREAMED_ORDER_BY, function);
+	}
+	
+	public StreamedOrderByFunction getStreamedOrderByImpl() {
+		return (StreamedOrderByFunction) getImplementationInstance(RelOperatorType.STREAMED_ORDER_BY);
+	}
+	
+	
+	public void setStreamedGroupByImpl(Class<? extends StreamedGroupByFunction> function) {
+		setImplementation(RelOperatorType.STREAMED_GROUP_BY, function);
+	}
+	
+	public StreamedGroupByFunction getStreamedGroupByImpl() {
+		return (StreamedGroupByFunction) getImplementationInstance(RelOperatorType.STREAMED_GROUP_BY);
 	}
 	
 	

@@ -1,17 +1,9 @@
 package impl.base;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
-
 import com.google.common.collect.Sets;
 
-import dataprovisioner.LoadingType;
 import model.AggregationDescriptor;
-import model.FieldDescriptor;
 import query.QueryPlanner;
 import query.builder.Query;
 import query.builder.clause.FilterClause;
@@ -20,26 +12,13 @@ import query.builder.clause.OrderByClause;
 import query.builder.clause.ProjectionClause;
 import query.builder.clause.SelectionClause;
 import query.builder.statement.AggregateFilterStatement;
-import query.builder.statement.CFNode;
-import query.builder.statement.CFilterStatement;
 import query.builder.statement.FilterStatement;
 import query.execution.ExecutionPlan;
-import query.execution.operator.LoadDataSetOperator;
-import query.execution.operator.ParallelOperatorGroup;
 import query.execution.operator.SequentialOperatorGroup;
-import query.execution.operator.filteroncolumn.FilterOnColumnArgs;
-import query.execution.operator.filteroncolumn.FilterOnColumnOperator;
-import query.execution.operator.filteronmultiplecolumn.FilterOnMultipleColumnArgs;
-import query.execution.operator.filteronmultiplecolumn.FilterOnMultipleColumnOperator;
 import query.execution.operator.groupby.GroupByArgs;
 import query.execution.operator.groupby.GroupByOperator;
-import query.execution.operator.loadcolumn.LoadColumnArgs;
-import query.execution.operator.loadcolumn.LoadColumnOperator;
 import query.execution.operator.loadmaterialized.LoadMaterializedArgs;
 import query.execution.operator.loadmaterialized.LoadMaterializedOperator;
-import query.execution.operator.loadverticalpartition.LoadVerticalPartitionArgs;
-import query.execution.operator.loadverticalpartition.LoadVerticalPartitionOperator;
-import query.execution.operator.mergeonbitsets.MergeOnBitesetsOperator;
 import query.execution.operator.orderby.OrderByOperator;
 
 public class BaseQueryPlanner extends QueryPlanner {

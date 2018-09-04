@@ -139,6 +139,9 @@ public class BaseLayoutManager extends LayoutManager {
 			Object[] currentRecord = recordScanner.getCurrentRecord();
 			result.addRecord(currentRecord);
 		}
+		
+		float mem = Runtime.getRuntime().freeMemory() /(1024 * 1024);
+		
 		return result;
 	}
 
@@ -192,13 +195,11 @@ public class BaseLayoutManager extends LayoutManager {
 
 
 	@Override
-	public IDataSet buildStreamedDataSet(IRecordScanner recordScanner) {
+	public StreamPipeline buildStreamedDataSet(IRecordScanner recordScanner) {
 		Stream <Object[]> recordStream = StreamSupport.stream(getRecordSpliterator(recordScanner),false);
 		List<ColumnDescriptor> columnSequence = getColumnSequence(recordScanner);
 		int recordCount = recordScanner.getRecordCount();
-		StreamedDataSet result = new StreamedDataSet(recordStream,columnSequence,recordCount);
-		
-		
+		StreamPipeline result = new StreamPipeline(recordStream,columnSequence,recordCount);
 		return result;
 	}
 
@@ -206,7 +207,7 @@ public class BaseLayoutManager extends LayoutManager {
 	private Spliterator<Object[]> getRecordSpliterator(IRecordScanner scanner) {
 		
 		int fieldsCount = scanner.getFieldsCount();
-		Object[] currentRecord = new Object[fieldsCount];
+		
 		
 		Spliterator<Object[]> spliterator = 
 			new Spliterators.AbstractSpliterator<Object[]>(scanner.getRecordCount(),Spliterator.IMMUTABLE|Spliterator.ORDERED) {
@@ -218,10 +219,10 @@ public class BaseLayoutManager extends LayoutManager {
 				}
 
 				private Object[] recordFromScannerRow(IRecordScanner currentRow) {
+					Object[] currentRecord = new Object[fieldsCount];
 					for (int i=0; i<fieldsCount; i++) {
 						currentRecord[i] = currentRow.getValueByColumnIndex(i+1);
 					}
-					
 					return currentRecord;
 				}
 			};

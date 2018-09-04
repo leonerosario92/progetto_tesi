@@ -6,8 +6,9 @@ import query.execution.operator.RelOperatorType;
 import query.execution.operator.filteroncolumn.FilterOnColumnArgs;
 import query.execution.operator.filteroncolumn.FilterOnColumnFunction;
 
-public class FilterOnMultipleColumnOperator extends ProcessDataSetOperator<FilterOnMultipleColumnFunction, FilterOnMultipleColumnArgs>{
-	
+public class FilterOnMultipleColumnOperator 
+extends ProcessDataSetOperator<FilterOnMultipleColumnFunction, FilterOnMultipleColumnArgs>
+{
 	public static final RelOperatorType OPERATOR_TYPE = RelOperatorType.FILTER_ON_MULTIPLE_COLUMN;
 
 	public FilterOnMultipleColumnOperator(ImplementationProvider provider) {

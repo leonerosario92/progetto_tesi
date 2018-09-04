@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import datasource.IRecordScanner;
+import impl.base.StreamPipeline;
 import utils.RecordEvaluator;
 
 
@@ -23,6 +24,6 @@ public interface ILayoutManager {
 			Iterator<Object[]> records
 	);
 	
-	public IDataSet buildStreamedDataSet(IRecordScanner scanner);
+	public StreamPipeline buildStreamedDataSet(IRecordScanner scanner);
 
 }

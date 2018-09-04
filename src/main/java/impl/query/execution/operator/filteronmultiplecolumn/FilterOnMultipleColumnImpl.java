@@ -22,7 +22,6 @@ public class FilterOnMultipleColumnImpl extends FilterOnMultipleColumnFunction {
 		IRecordIterator recordIterator = inputSet.getRecordIterator();
 		BitSet validityBitset = inputSet.getValidityBitSet();
 		Set<CFNode> statements = args.getStatements();
-		int fieldsCount =  inputSet.getFieldsCount();
 		
 		RecordEvaluator evaluator = 
 				new RecordEvaluator(inputSet.getNameIndexMapping(), statements);

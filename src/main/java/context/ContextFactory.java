@@ -16,10 +16,12 @@ import impl.query.execution.operator.groupBy.GroupByImpl;
 import impl.query.execution.operator.loadcolumn.LoadColumnImpl;
 import impl.query.execution.operator.loadmaterialized.LoadMaterializedImpl;
 import impl.query.execution.operator.loadstream.LoadStreamImpl;
-import impl.query.execution.operator.loadverticalpartition.LoadStreamedImpl;
 import impl.query.execution.operator.loadverticalpartition.LoadVerticalPartitionImpl;
 import impl.query.execution.operator.mergeonbitsets.MergeOnBitSetsImpl;
 import impl.query.execution.operator.orderby.OrderByImpl;
+import impl.query.execution.operator.streamedgroupby.StreamedGroupByImpl;
+import impl.query.execution.operator.streamedorderby.StreamedOrderByImpl;
+import impl.query.execution.operator.streamedrecordfilter.FilterOnStreamImpl;
 import impl.base.BaseLayoutManager;
 import query.QueryPlanner;
 import query.ImplementationProvider;
@@ -52,6 +54,9 @@ public class ContextFactory {
 			this.implementationProvider.setGroupByImpl(GroupByImpl.class);
 			this.implementationProvider.setLoadMaterializedImpl(LoadMaterializedImpl.class);
 			this.implementationProvider.setLoadStreamImpl(LoadStreamImpl.class);
+			this.implementationProvider.setFilterOnStreamImpl(FilterOnStreamImpl.class);
+			this.implementationProvider.setStreamedOrderByImpl(StreamedOrderByImpl.class);
+			this.implementationProvider.setStreamedGroupByImpl(StreamedGroupByImpl.class);
 		
 		this.layoutManagerImpl = BaseLayoutManager.class;
 		this.dataProvisionerImpl = BaseDataProvisioner.class;

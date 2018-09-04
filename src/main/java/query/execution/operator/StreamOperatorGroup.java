@@ -1,28 +1,38 @@
 package query.execution.operator;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import dataprovisioner.IDataProvisioner;
+import dataset.ColumnDescriptor;
 import dataset.IDataSet;
+import dataset.ILayoutManager;
 import dispatcher.MeasurementType;
+import impl.base.StreamPipeline;
+import model.AggregationDescriptor;
+import model.FieldDescriptor;
 import query.execution.IQueryExecutor;
-import query.execution.IResultHolder;
 import query.execution.QueryExecutionException;
 import utils.ExecutionPlanNavigator;
 import utils.report.IExecutionReport;
+import utils.report.ReportAggregator;
 
 public class StreamOperatorGroup implements IOperatorGroup<IDataSet> {
 	
-	private LinkedList<StreamOperator<?,?>> subElements;
+	private LinkedList<StreamProcessingOperator<?,?>> subElements;
 	private StreamLoadingOperator<?,?> streamLoader;
 	private boolean executed;
 	private long executionStartTime;
 	private long executionEndTime;
 	
 	
-	public StreamOperatorGroup(StreamLoadingOperator streamLoader) {
+	public StreamOperatorGroup(StreamLoadingOperator<?,?> streamLoader) {
 		// this.report = new OperatorGroupReport();
 		this.subElements = new LinkedList<>();
 		executionStartTime = executionEndTime = 0;
@@ -31,7 +41,7 @@ public class StreamOperatorGroup implements IOperatorGroup<IDataSet> {
 	}
 	
 	
-	public void addSubElement(StreamOperator subElement) {
+	public void addSubElement(StreamProcessingOperator<?,?> subElement) {
 		subElements.add(subElement);
 	}
 
@@ -48,12 +58,12 @@ public class StreamOperatorGroup implements IOperatorGroup<IDataSet> {
 			// TODO Manage exception properly
 			throw new IllegalStateException("Attempt to execute operator group multiple times");
 		}
-		Callable<IDataSet> callable = getCallable(executor, measurement);
-		
 		setExecutionStartTime();
+		Callable<IDataSet> callable = getCallable(executor, measurement);
 		IDataSet result = executor.submit(callable).getResult();
 		setExecutionEndTime();
 		this.executed = true;
+		
 		return result;
 	}
 	
@@ -63,20 +73,39 @@ public class StreamOperatorGroup implements IOperatorGroup<IDataSet> {
 			@Override
 			public IDataSet call() throws Exception {
 				IDataProvisioner provisioner = executor.getProvisioner();
-				Stream<Object[]> recordStream = streamLoader.loadStream(provisioner);
-				long count = recordStream.count();
-				System.out.println("Count = " + count);
+				ILayoutManager layoutManager = executor.getlayoutManager();
+				long start = System.nanoTime();
+				StreamPipeline streamPipeline = streamLoader.loadStream(provisioner);
+				Map<String,Integer> nameIndexMapping = streamPipeline.getNameIndexMapping();
+				Stream<Object[]> recordStream = streamPipeline.getRecordStream();
 				
-//				for(StreamOperator operator : subElements) {
-//					recordStream = operator.addToPipeline(recordStream);
-//				}
-//				
-//				List<Object[]> resultRecords = callTerminalOperation(recordStream);
-//				IDataSet result = executor.getlayoutManager().buildMaterializedDataSet(columnSequence,recordStream);
-//				return result;
-				return null;
+				for(StreamProcessingOperator<?,?> operator : subElements) {
+					recordStream = operator.addOperationToPipeline(recordStream,nameIndexMapping);
+				}
+				
+//				long count = recordStream.count();
+				
+				List<Object[]> resultRecords = recordStream.collect(Collectors.toList());
+				float ms = (System.nanoTime() - start) / (1000 * 1000);
+//				System.out.println("Count = " + count);
+				System.out.println("Time = " + ms);
+				
+				List<ColumnDescriptor> columnSequence = getColumnSequence(streamPipeline);
+				IDataSet result = 
+					layoutManager.buildMaterializedDataSet(resultRecords.size(),columnSequence,resultRecords.iterator() );			
+				return result;
 			}
 		};
+	}
+	
+	
+	private List<ColumnDescriptor> getColumnSequence(StreamPipeline streamSource) {
+		List<ColumnDescriptor> columnSequence = new ArrayList<>();
+		for(int i=0; i<streamSource.getFieldsCount(); i++) {
+			ColumnDescriptor currentColumn = streamSource.getColumnDescriptor(i);
+			columnSequence.add(currentColumn);
+		}
+		return columnSequence;
 	}
 	
 	
@@ -97,7 +126,17 @@ public class StreamOperatorGroup implements IOperatorGroup<IDataSet> {
 		}
 		return (new Float((executionEndTime - executionStartTime) / (1000*1000)));
 	}
-
+	
+	
+	@Override
+	public IExecutionReport getReport() {
+		if(!this.executed) {
+			throw new IllegalStateException("Attempt to retrieve execution report from non-executed operator group");
+		}
+		ReportAggregator result = new ReportAggregator();
+		result.setExecutionTmeMs(getExecutionTimeMillis());
+		return result;
+	}
 
 	
 	
@@ -130,17 +169,6 @@ public class StreamOperatorGroup implements IOperatorGroup<IDataSet> {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-
-	@Override
-	public IExecutionReport getReport() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-
-
 
 
 }

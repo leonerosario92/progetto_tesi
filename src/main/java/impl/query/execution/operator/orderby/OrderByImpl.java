@@ -19,6 +19,7 @@ import datatype.TypeComparator;
 import model.FieldDescriptor;
 import query.execution.operator.orderby.OrderByArgs;
 import query.execution.operator.orderby.OrderByFunction;
+import utils.RecordComparator;
 
 public class OrderByImpl extends OrderByFunction {
 
@@ -37,9 +38,9 @@ public class OrderByImpl extends OrderByFunction {
 		Stream<Object[]> recordStream = inputSet.getRecordStream();
 		
 		List<FieldDescriptor> orderingSequence = args.getOrderingSequence();
-		
-		Comparator<Object[]> recordComparator =
-				getRecordComparator(inputSet.getNameIndexMapping(),orderingSequence);
+		Map<String,Integer> nameIndexMapping = inputSet.getNameIndexMapping();
+		Comparator<Object[]> recordComparator = 
+				RecordComparator.getRecordComparator(nameIndexMapping,orderingSequence);
 		
 		Iterator<Object[]> orderedRecords = recordStream
 				.sorted(recordComparator) 
@@ -49,35 +50,5 @@ public class OrderByImpl extends OrderByFunction {
 		IDataSet result = layoutManager.buildMaterializedDataSet(recordCount, columnSequence, orderedRecords);
 		return result;
 	}		
-	
-
-	private Comparator<Object[]> getRecordComparator(
-			Map<String,Integer> nameIndexMapping, 
-			List<FieldDescriptor> orderingSequence)
-	{
-		TypeComparator[] comparators = new TypeComparator [orderingSequence.size()];
-		int [] indexes = new int[orderingSequence.size()];
-		int fieldIndex=0;
-		for(FieldDescriptor field : orderingSequence) {
-			indexes[fieldIndex] = nameIndexMapping.get(field.getKey());
-			comparators[fieldIndex] = 
-					field
-					.getType()
-					.getComparator();
-			fieldIndex ++;
-		}
-		
-		Comparator<Object[]> recordComparator = (record,other)-> comparators[0].compare(record[indexes[0]], other[indexes[0]]);
-		IntStream.range(1, orderingSequence.size())
-		.forEach
-		(
-			i -> recordComparator.thenComparing
-				(
-					(r,o)-> comparators[i].compare(r[indexes[i]], o[indexes[i]]
-				)
-			)
-		);
-		return recordComparator;
-	}
 	
 }
