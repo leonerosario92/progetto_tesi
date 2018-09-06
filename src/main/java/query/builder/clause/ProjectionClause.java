@@ -22,7 +22,7 @@ public class ProjectionClause  {
  	private HashSet<AggregationDescriptor> aggregateFields;
 	
 	public ProjectionClause() {
-		this.statements = new LinkedList();
+		this.statements = new LinkedList<>();
 		this.referencedFields = new HashSet<>();
 		this.aggregateFields = new HashSet<>();
 	}

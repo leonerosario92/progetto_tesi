@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import model.FieldDescriptor;
+import model.IDescriptor;
 import query.builder.QueryConstants;
 import query.builder.statement.CFilterStatement;
 
@@ -35,7 +36,7 @@ public class OrderByClause {
 		sb.append(QueryConstants.WHITESPACE_CHAR);
 		
 		Iterator<FieldDescriptor> it = orderingSequence.iterator();
-		FieldDescriptor field;
+		IDescriptor field;
 		if(it.hasNext()) {
 			field = it.next();
 			appendField(sb, field);
@@ -52,7 +53,7 @@ public class OrderByClause {
 	}
 	
 	
-	public StringBuilder appendField (StringBuilder sb,FieldDescriptor field) {
+	public StringBuilder appendField (StringBuilder sb,IDescriptor field) {
 		return 	sb.append(field.getTable().getName() +"."+ field.getName());
 	}
 

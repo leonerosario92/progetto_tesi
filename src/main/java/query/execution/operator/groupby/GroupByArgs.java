@@ -74,7 +74,7 @@ public class GroupByArgs implements IOperatorArgs {
 		return orderingSequence;
 	}
 	
-	public Set<FieldDescriptor> getColumns(){
+	public Set<IDescriptor> getColumns(){
 		return Sets.newHashSet(orderingSequence);
 	}
 

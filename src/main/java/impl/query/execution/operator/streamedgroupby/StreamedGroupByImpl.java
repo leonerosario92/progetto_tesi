@@ -13,6 +13,9 @@ import java.util.stream.Stream;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import dataset.ColumnDescriptor;
+import datatype.DataType;
+import impl.base.StreamPipeline;
 import model.AggregationDescriptor;
 import model.FieldDescriptor;
 import model.IDescriptor;
@@ -27,9 +30,8 @@ import utils.RecordEvaluator;
 public class StreamedGroupByImpl extends StreamedGroupByFunction {
 
 	@Override
-	public Stream<Object[]> apply(
-			Stream<Object[]> inputStream, 
-			Map<String, Integer> nameIndexMapping,
+	public StreamPipeline apply(
+			StreamPipeline pipeline, 
 			StreamedGroupByArgs args) 
 	{
 		List<FieldDescriptor> groupingSequence = args.getGroupingSequence();
@@ -37,30 +39,70 @@ public class StreamedGroupByImpl extends StreamedGroupByFunction {
 		List<AggregateFilterStatement> aggregateFilters = args.getAggregateFIlters();
 		List<IDescriptor> projectionSequence = args.getProjectionSequence();
 		
+		Stream<Object[]> recordStream = pipeline.getRecordStream();
+		Map<String,Integer> nameIndexMapping = pipeline.getNameIndexMapping();
+		
 		int[] groupingSequenceIndexes = 
 				getGroupingSequenceIndexes(nameIndexMapping,groupingSequence);
 		
 		if(aggregations.size() == 0) {
-			inputStream =
-				groupRecords(inputStream, groupingSequenceIndexes);
+			recordStream =
+				groupRecords(recordStream, groupingSequenceIndexes);
 		}else {
 			Collector<Object[], RecordAggregator, Object[]> downStreamCollector = 
 				CollectorUtils.getRecordDownStreamCollector(
 					aggregations,
 					nameIndexMapping
 				);
-			inputStream =
-				aggregateRecords(inputStream,groupingSequenceIndexes,downStreamCollector);
+			recordStream =
+				aggregateRecords(recordStream,groupingSequenceIndexes,downStreamCollector);
+		}
+//		Map<String,Integer> updatedNameIndexMapping =
+//				getUpdatedMapping(groupingSequence, aggregations);
+//		pipeline.updateMapping(updatedNameIndexMapping);
+		
+		List<ColumnDescriptor> newColumnSequence = 
+				getUpdatedColumnSequence(groupingSequence,aggregations);
+		pipeline.updateColumnDescriptors(newColumnSequence);
+		Map<String,Integer> updatedNameIndexMapping = getUpdatedMapping(groupingSequence,aggregations);
+//		Map<String,Integer> updatedNameIndexMapping2 = pipeline.getNameIndexMapping();
+		
+		if(aggregateFilters.size() != 0) {
+			recordStream = filterAggregateRecords(updatedNameIndexMapping,aggregateFilters,recordStream);
 		}
 		
-		nameIndexMapping = getAggregateMapping(groupingSequence, aggregations);
-		if(aggregateFilters.size() != 0) {
-			inputStream = filterAggregateRecords(nameIndexMapping,aggregateFilters,inputStream);
-		}
-		return inputStream;
+		pipeline.updateStream(recordStream);
+		System.out.println("");
+		return pipeline;
+		
 	}
 	
-	
+
+	private List<ColumnDescriptor> getUpdatedColumnSequence(
+			List<FieldDescriptor> groupingSequence,
+			List<AggregationDescriptor> aggregations)
+	{
+		List<ColumnDescriptor> result = new ArrayList<>();
+		int index = 0;
+		for(FieldDescriptor field : groupingSequence) {
+			String tableName = field.getTable().getName();
+			String columnName = field.getName();
+			DataType columnType = field.getType();
+			ColumnDescriptor column = new ColumnDescriptor(tableName, columnName, columnType);
+			result.add(index,column);
+			index++;
+		}
+		for(AggregationDescriptor aggregation : aggregations) {
+			String tableName = aggregation.getTable().getName();
+			String columnName = aggregation.getName();
+			DataType columnType = DataType.DOUBLE;
+			ColumnDescriptor column = new ColumnDescriptor(tableName, columnName, columnType);
+			result.add(index,column);
+			index ++;
+		}
+		return result;
+	}
+
 
 	private int[] getGroupingSequenceIndexes(
 			Map<String,Integer> nameIndexMapping, 
@@ -106,7 +148,7 @@ public class StreamedGroupByImpl extends StreamedGroupByFunction {
 			int[] fieldSequenceIndexes,
 			Collector<Object[], RecordAggregator, Object[]> downStreamCollector
 	){
-		Stream<Object[]> resultStream =
+		Map<List<Object>, Object[]> map =
 		recordStream
 		.collect(
 			Collectors.groupingBy (
@@ -119,8 +161,10 @@ public class StreamedGroupByImpl extends StreamedGroupByFunction {
 				},
 				downStreamCollector
 			)
-		)
-		.entrySet()
+		);
+		
+		Stream<Object[]> resultStream =
+		map.entrySet()
 		.stream()
 		.map(
 			entry -> {
@@ -141,7 +185,7 @@ public class StreamedGroupByImpl extends StreamedGroupByFunction {
 	}
 
 
-	private Map<String, Integer> getAggregateMapping(
+	private Map<String, Integer> getUpdatedMapping(
 			List<FieldDescriptor> groupingSequence,
 			List<AggregationDescriptor> aggregations) 
 	{

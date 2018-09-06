@@ -8,6 +8,7 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import model.FieldDescriptor;
+import model.IDescriptor;
 import query.execution.operator.IOperatorArgs;
 
 public class OrderByArgs implements IOperatorArgs {
@@ -22,7 +23,7 @@ public class OrderByArgs implements IOperatorArgs {
 		return orderingSequence;
 	}
 	
-	public Set<FieldDescriptor> getColumns(){
+	public Set<IDescriptor> getColumns(){
 		return Sets.newHashSet(orderingSequence);
 	}
 

@@ -22,7 +22,6 @@ import dataset.ColumnDescriptor;
 import dataset.IDataSet;
 import dataset.ILayoutManager;
 import datatype.DataType;
-import datatype.TypeComparator;
 import model.AggregationDescriptor;
 import model.FieldDescriptor;
 import model.IDescriptor;

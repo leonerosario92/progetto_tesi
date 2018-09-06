@@ -1,5 +1,6 @@
 package model;
 
+import datatype.DataType;
 import query.builder.predicate.AggregateFunction;
 
 public class AggregationDescriptor implements IDescriptor{
@@ -53,5 +54,10 @@ public class AggregationDescriptor implements IDescriptor{
 	@Override
 	public TableDescriptor getTable() {
 		return field.getTable();
+	}
+
+	@Override
+	public DataType getType() {
+		return DataType.DOUBLE;
 	}
 }

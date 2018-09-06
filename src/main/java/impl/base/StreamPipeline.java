@@ -29,12 +29,12 @@ public class StreamPipeline {
 	public StreamPipeline(Stream<Object[]> recordStream, List<ColumnDescriptor> columnDescriptors, int recordCount) {
 		this.recordStream = recordStream;
 		this.recordCount = recordCount;
-		this.columnCount = columnDescriptors.size();
 		initializeColumnDescriptors(columnDescriptors);
 	}
 	
 	
 	private void initializeColumnDescriptors(List<ColumnDescriptor> columns) {
+		this.columnCount = columns.size();
 		this.nameIndexMapping = new HashMap<>();
 		this.columnDescriptors = new ArrayList<>();
 		int index = 0;
@@ -53,9 +53,9 @@ public class StreamPipeline {
 	}
 	
 	
-	public void updateMapping (Map<String,Integer> mapping) {
+	public void updateColumnDescriptors (List<ColumnDescriptor> newColumns) {
 		synchronized(this) {
-			this.nameIndexMapping = mapping;
+			initializeColumnDescriptors(newColumns);
 		}
 	}
 	

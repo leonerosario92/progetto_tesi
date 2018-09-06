@@ -208,7 +208,6 @@ public class BaseLayoutManager extends LayoutManager {
 		
 		int fieldsCount = scanner.getFieldsCount();
 		
-		
 		Spliterator<Object[]> spliterator = 
 			new Spliterators.AbstractSpliterator<Object[]>(scanner.getRecordCount(),Spliterator.IMMUTABLE|Spliterator.ORDERED) {
 				@Override

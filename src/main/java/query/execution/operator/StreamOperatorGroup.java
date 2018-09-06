@@ -1,13 +1,10 @@
 package query.execution.operator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import dataprovisioner.IDataProvisioner;
 import dataset.ColumnDescriptor;
@@ -15,8 +12,6 @@ import dataset.IDataSet;
 import dataset.ILayoutManager;
 import dispatcher.MeasurementType;
 import impl.base.StreamPipeline;
-import model.AggregationDescriptor;
-import model.FieldDescriptor;
 import query.execution.IQueryExecutor;
 import query.execution.QueryExecutionException;
 import utils.ExecutionPlanNavigator;
@@ -33,7 +28,6 @@ public class StreamOperatorGroup implements IOperatorGroup<IDataSet> {
 	
 	
 	public StreamOperatorGroup(StreamLoadingOperator<?,?> streamLoader) {
-		// this.report = new OperatorGroupReport();
 		this.subElements = new LinkedList<>();
 		executionStartTime = executionEndTime = 0;
 		executed = false;
@@ -72,27 +66,23 @@ public class StreamOperatorGroup implements IOperatorGroup<IDataSet> {
 		return new Callable<IDataSet>() {
 			@Override
 			public IDataSet call() throws Exception {
+				
 				IDataProvisioner provisioner = executor.getProvisioner();
 				ILayoutManager layoutManager = executor.getlayoutManager();
-				long start = System.nanoTime();
+				
 				StreamPipeline streamPipeline = streamLoader.loadStream(provisioner);
-				Map<String,Integer> nameIndexMapping = streamPipeline.getNameIndexMapping();
-				Stream<Object[]> recordStream = streamPipeline.getRecordStream();
 				
 				for(StreamProcessingOperator<?,?> operator : subElements) {
-					recordStream = operator.addOperationToPipeline(recordStream,nameIndexMapping);
+					streamPipeline = operator.addOperationToPipeline(streamPipeline);
 				}
 				
-//				long count = recordStream.count();
-				
-				List<Object[]> resultRecords = recordStream.collect(Collectors.toList());
-				float ms = (System.nanoTime() - start) / (1000 * 1000);
-//				System.out.println("Count = " + count);
-				System.out.println("Time = " + ms);
-				
+				List<Object[]> resultRecords = 
+						streamPipeline.getRecordStream().collect(Collectors.toList());
+		
 				List<ColumnDescriptor> columnSequence = getColumnSequence(streamPipeline);
 				IDataSet result = 
-					layoutManager.buildMaterializedDataSet(resultRecords.size(),columnSequence,resultRecords.iterator() );			
+					layoutManager.buildMaterializedDataSet(resultRecords.size(),columnSequence,resultRecords.iterator());			
+				
 				return result;
 			}
 		};
@@ -138,12 +128,6 @@ public class StreamOperatorGroup implements IOperatorGroup<IDataSet> {
 		return result;
 	}
 
-	
-	
-	
-	
-	
-	
 	
 	
 	

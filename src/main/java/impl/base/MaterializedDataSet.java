@@ -55,6 +55,7 @@ public class MaterializedDataSet implements IDataSet {
 	
 	
 	public void addRecord(Object[] record) {
+		Object[] r = record;
 		if(record.length != columnCount) {
 			throw new IllegalArgumentException("Attempt to add record with invalid number of fields.");
 		}

@@ -1,6 +1,7 @@
 
 package model;
 
+import datatype.DataType;
 
 public interface IDescriptor {
 
@@ -9,5 +10,7 @@ public interface IDescriptor {
 	public String getKey();
 
 	public TableDescriptor getTable();
+	
+	public DataType getType();
 	
 }

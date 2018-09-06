@@ -6,6 +6,7 @@ import java.util.Map;
 
 import datatype.TypeComparator;
 import model.FieldDescriptor;
+import model.IDescriptor;
 
 public class RecordComparator {
 	
@@ -19,7 +20,7 @@ public class RecordComparator {
 		TypeComparator[] comparators = new TypeComparator [size];
 		int[] indexes = new int[size];
 		int fieldIndex=0;
-		for(FieldDescriptor field : orderingSequence) {
+		for(IDescriptor field : orderingSequence) {
 			indexes[fieldIndex] = nameIndexMapping.get(field.getKey());
 			comparators[fieldIndex] = 
 					field

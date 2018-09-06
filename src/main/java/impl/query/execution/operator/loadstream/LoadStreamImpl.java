@@ -16,8 +16,8 @@ public class LoadStreamImpl extends LoadStreamFunction {
 	@Override
 	public StreamPipeline apply(IDataProvisioner provisioner, LoadStreamArgs args) throws DataSourceException {
 		Set<FieldDescriptor> columns = args.getColumns();
-		StreamPipeline sourceDataSet = provisioner.loadStreamedDataSet(columns);
-		return sourceDataSet;
+		StreamPipeline pipeline = provisioner.loadStreamedDataSet(columns);
+		return pipeline;
 	}
 	
 }
