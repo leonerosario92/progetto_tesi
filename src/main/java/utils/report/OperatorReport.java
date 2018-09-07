@@ -1,6 +1,6 @@
 package utils.report;
 
-import utils.ExecutionPlanNavigator;
+import utils.ExecutableTreeNavigator;
 
 public class OperatorReport implements IExecutionReport {
 	

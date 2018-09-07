@@ -14,6 +14,10 @@ public class MaterializedRecordIterator implements IRecordIterator {
 		this.recordList = dataset.getRecordList();
 		this.recordIterator = recordList.iterator();
 	}
+	
+	public  MaterializedRecordIterator(Iterator<Object[]> sourceIterator) {
+		this.recordIterator = sourceIterator;
+	}
 
 	@Override
 	public boolean hasNext() {

@@ -1,6 +1,6 @@
 package utils.report;
 
-import utils.ExecutionPlanNavigator;
+import utils.ExecutableTreeNavigator;
 
 public class OperatorGroupReport implements IExecutionReport {
 	
@@ -64,7 +64,7 @@ public class OperatorGroupReport implements IExecutionReport {
 	/*_____________________________*/
 
 	
-	private void printExecutionTime(ExecutionPlanNavigator printer) {
+	private void printExecutionTime(ExecutableTreeNavigator printer) {
 		StringBuilder sb = new StringBuilder();
 		if((executionStartTime != 0) || (executionEndTime != 0)) {
 			sb.append("DataSet Processing Time = ") ;
@@ -79,7 +79,7 @@ public class OperatorGroupReport implements IExecutionReport {
 	}
 	
 	
-	private void printDataSetLoadingTime(ExecutionPlanNavigator printer) {
+	private void printDataSetLoadingTime(ExecutableTreeNavigator printer) {
 		StringBuilder sb = new StringBuilder();
 		if((dataLoadingStartTIme != 0) || (dataLoadingEndTIme != 0)) {
 			sb.append("DataSet Loading time = ");
@@ -93,7 +93,7 @@ public class OperatorGroupReport implements IExecutionReport {
 	}
 	
 	
-	private void printMaterializationTime(ExecutionPlanNavigator printer) {
+	private void printMaterializationTime(ExecutableTreeNavigator printer) {
 		StringBuilder sb = new StringBuilder();
 		if((materializationStartTime != 0) || (materializationEndTime != 0)) {
 			sb.append("Materialization time = ");
@@ -107,7 +107,7 @@ public class OperatorGroupReport implements IExecutionReport {
 	}
 
 
-	private void printMemoryOccupation(ExecutionPlanNavigator printer) {
+	private void printMemoryOccupation(ExecutableTreeNavigator printer) {
 		StringBuilder sb = new StringBuilder();
 		if(memoryOccupation != 0) {
 			sb.append("DataSet size = ")
@@ -138,7 +138,7 @@ public class OperatorGroupReport implements IExecutionReport {
 	}
 
 
-	public void addRepresentation(ExecutionPlanNavigator printer) {
+	public void addRepresentation(ExecutableTreeNavigator printer) {
 		
 		printer.appendLine("Execution Report : ");
 		printer.addIndentation();

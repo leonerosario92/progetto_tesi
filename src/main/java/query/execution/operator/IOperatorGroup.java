@@ -1,9 +1,8 @@
 package query.execution.operator;
 
-import query.execution.ReportablePlanElement;
+import dataset.IDataSet;
+import query.execution.IReportableExecutable;
 
-public interface IOperatorGroup<T> extends ReportablePlanElement,ExecutableUnit<T>{
-	
-}
+public interface IOperatorGroup<T extends IDataSet> extends IReportableExecutable,Executable<T> { }
 
  

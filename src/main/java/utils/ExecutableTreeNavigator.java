@@ -1,6 +1,6 @@
 package utils;
 
-public class ExecutionPlanNavigator {
+public class ExecutableTreeNavigator {
 
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	public static final String TABULATION = "    ";
@@ -8,7 +8,7 @@ public class ExecutionPlanNavigator {
 	private StringBuilder builder;
 	private String tabSpacing;
 	
-	public  ExecutionPlanNavigator () {
+	public  ExecutableTreeNavigator () {
 		tabSpacing = "";
 		builder = new StringBuilder();
 		indentationLevel = 0;

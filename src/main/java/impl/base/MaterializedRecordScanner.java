@@ -3,6 +3,7 @@ package impl.base;
 import java.util.Iterator;
 import java.util.Map;
 
+import dataset.IDataSet;
 import datasource.IRecordScanner;
 import datatype.DataType;
 import model.FieldDescriptor;
@@ -11,10 +12,10 @@ public class MaterializedRecordScanner implements IRecordScanner{
 	
 	private Iterator<Object[]> recordIterator;
 	private Object[] currentRecord;
-	private MaterializedDataSet sourceDataSet;
+	private IDataSet sourceDataSet;
 	private Map<String,Integer> nameIndexMapping;
 	
-	public MaterializedRecordScanner(MaterializedDataSet dataset) {
+	public MaterializedRecordScanner(IDataSet dataset) {
 		this.sourceDataSet = dataset;
 		this.recordIterator = dataset.getRecordIterator();
 		this.nameIndexMapping = sourceDataSet.getNameIndexMapping();

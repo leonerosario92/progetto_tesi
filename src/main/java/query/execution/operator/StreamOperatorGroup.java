@@ -1,10 +1,14 @@
 package query.execution.operator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import dataprovisioner.IDataProvisioner;
 import dataset.ColumnDescriptor;
@@ -12,9 +16,12 @@ import dataset.IDataSet;
 import dataset.ILayoutManager;
 import dispatcher.MeasurementType;
 import impl.base.StreamPipeline;
+import impl.base.StreamedDataSet;
+import model.AggregationDescriptor;
+import model.FieldDescriptor;
 import query.execution.IQueryExecutor;
 import query.execution.QueryExecutionException;
-import utils.ExecutionPlanNavigator;
+import utils.ExecutableTreeNavigator;
 import utils.report.IExecutionReport;
 import utils.report.ReportAggregator;
 
@@ -75,13 +82,12 @@ public class StreamOperatorGroup implements IOperatorGroup<IDataSet> {
 				for(StreamProcessingOperator<?,?> operator : subElements) {
 					streamPipeline = operator.addOperationToPipeline(streamPipeline);
 				}
-				
-				List<Object[]> resultRecords = 
-						streamPipeline.getRecordStream().collect(Collectors.toList());
 		
+				Iterator<Object[]> recordIterator = streamPipeline.getRecordStream().iterator();
 				List<ColumnDescriptor> columnSequence = getColumnSequence(streamPipeline);
+				
 				IDataSet result = 
-					layoutManager.buildMaterializedDataSet(resultRecords.size(),columnSequence,resultRecords.iterator());			
+						new StreamedDataSet(columnSequence, recordIterator);		
 				
 				return result;
 			}
@@ -134,15 +140,16 @@ public class StreamOperatorGroup implements IOperatorGroup<IDataSet> {
 	
 	
 	
+	
 	@Override
-	public void addRepresentation(ExecutionPlanNavigator navigator) {
+	public void addRepresentation(ExecutableTreeNavigator navigator) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
 	@Override
-	public void addRepresentationWithReport(ExecutionPlanNavigator navigator) {
+	public void addExecutionReport(ExecutableTreeNavigator navigator) {
 		// TODO Auto-generated method stub
 		
 	}

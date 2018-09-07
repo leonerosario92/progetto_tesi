@@ -4,15 +4,15 @@ import dataset.IDataSet;
 import dispatcher.MeasurementType;
 import objectexplorer.MemoryMeasurer;
 import query.ImplementationProvider;
-import query.execution.ReportablePlanElement;
+import query.execution.IReportableExecutable;
 import query.execution.IQueryExecutor;
 import query.execution.QueryExecutionException;
-import utils.ExecutionPlanNavigator;
+import utils.ExecutableTreeNavigator;
 import utils.report.IExecutionReport;
 import utils.report.OperatorReport;
 
 public abstract class SequentialOperator<F extends ISequentialOperatorFunction, A extends IOperatorArgs> 
-extends Operator<F,A> implements ReportablePlanElement,ExecutableUnit<IDataSet>{
+extends Operator<F,A> implements IReportableExecutable,Executable<IDataSet>{
 
 	protected OperatorReport report;
 	protected boolean generatesNewDataSet;
@@ -31,7 +31,7 @@ extends Operator<F,A> implements ReportablePlanElement,ExecutableUnit<IDataSet>{
 	
 	
 	@Override
-	public void addRepresentation(ExecutionPlanNavigator printer) {
+	public void addRepresentation(ExecutableTreeNavigator printer) {
 		printer.appendLine("[OPERATOR] ");
 		printer.addIndentation();
 		printer.appendLine("TYPE : " + operatorName);
@@ -42,7 +42,7 @@ extends Operator<F,A> implements ReportablePlanElement,ExecutableUnit<IDataSet>{
 	
 	
 	@Override
-	public void addRepresentationWithReport(ExecutionPlanNavigator printer ) {
+	public void addExecutionReport(ExecutableTreeNavigator printer ) {
 		printer.appendLine("[OPERATOR " + report.toString() + "]");
 		printer.addIndentation();
 		printer.appendLine("TYPE : " + operatorName);

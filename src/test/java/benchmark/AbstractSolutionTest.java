@@ -75,6 +75,7 @@ public abstract class AbstractSolutionTest {
 		this.factory = getContextFactoryImpl();
 	}
 	
+	
 	@Ignore
 	@Test
 	public void TestScanSmallDataSetMemoryOccupation(){
@@ -190,7 +191,7 @@ public abstract class AbstractSolutionTest {
 			.project(sender)
 			.project(subject)
 			.project(messageId)
-			.orderBy(body)
+//			.orderBy(body)
 			.getQuery();
 		return query;
 	}

@@ -4,10 +4,10 @@ import dataset.IDataSet;
 import dispatcher.MeasurementType;
 import objectexplorer.MemoryMeasurer;
 import query.ImplementationProvider;
-import query.execution.ReportablePlanElement;
+import query.execution.IReportableExecutable;
 import query.execution.IQueryExecutor;
 import query.execution.QueryExecutionException;
-import utils.ExecutionPlanNavigator;
+import utils.ExecutableTreeNavigator;
 import utils.report.IExecutionReport;
 import utils.report.OperatorReport;
 

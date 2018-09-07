@@ -8,11 +8,11 @@ import java.util.stream.Collectors;
 import dataset.IDataSet;
 import dispatcher.MeasurementType;
 import objectexplorer.MemoryMeasurer;
-import query.execution.ReportablePlanElement;
+import query.execution.IReportableExecutable;
 import query.execution.IQueryExecutor;
 import query.execution.IResultHolder;
 import query.execution.QueryExecutionException;
-import utils.ExecutionPlanNavigator;
+import utils.ExecutableTreeNavigator;
 import utils.report.IExecutionReport;
 import utils.report.OperatorGroupReport;
 import utils.report.ReportAggregator;
@@ -124,10 +124,10 @@ public class ParallelOperatorGroup implements IOperatorGroup<IDataSet>{
 	
 	
 	@Override
-	public void addRepresentation(ExecutionPlanNavigator printer) {
+	public void addRepresentation(ExecutableTreeNavigator printer) {
 		printer.appendLine("[PARALLEL GROUP]");
 		
-		for( ReportablePlanElement e : subElements) {
+		for( IReportableExecutable e : subElements) {
 			printer.addIndentation();
 			e.addRepresentation(printer);
 			printer.removeIndentation();
@@ -142,7 +142,7 @@ public class ParallelOperatorGroup implements IOperatorGroup<IDataSet>{
 
 	
 	@Override
-	public void addRepresentationWithReport(ExecutionPlanNavigator printer) {
+	public void addExecutionReport(ExecutableTreeNavigator printer) {
 		
 		if(!this.executed) {
 			throw new IllegalStateException("Attempt to retrieve execution report from non-executed operator group");
@@ -150,14 +150,14 @@ public class ParallelOperatorGroup implements IOperatorGroup<IDataSet>{
 		
 		printer.appendLine("[PARALLEL GROUP " + getReport().toString() +  "]");
 		
-		for( ReportablePlanElement e : subElements) {
+		for( IReportableExecutable e : subElements) {
 			printer.addIndentation();
-			e.addRepresentationWithReport(printer);
+			e.addExecutionReport(printer);
 			printer.removeIndentation();
 		}
 		
 		printer.addIndentation();
-		materializationOperator.addRepresentationWithReport(printer);
+		materializationOperator.addExecutionReport(printer);
 		printer.removeIndentation();
 //		
 //		report.addRepresentation(printer);

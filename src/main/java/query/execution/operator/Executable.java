@@ -5,7 +5,7 @@ import dispatcher.MeasurementType;
 import query.execution.IQueryExecutor;
 import query.execution.QueryExecutionException;
 
-public interface ExecutableUnit <T> {
+public interface Executable <T> {
 
 	public abstract T execute(IQueryExecutor executor) throws QueryExecutionException;
 	

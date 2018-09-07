@@ -8,17 +8,17 @@ import javax.naming.spi.DirStateFactory.Result;
 
 import dataset.IDataSet;
 import dispatcher.MeasurementType;
-import query.execution.ReportablePlanElement;
+import query.execution.IReportableExecutable;
 import query.execution.IQueryExecutor;
 import query.execution.IResultHolder;
 import query.execution.QueryExecutionException;
-import utils.ExecutionPlanNavigator;
+import utils.ExecutableTreeNavigator;
 import utils.report.IExecutionReport;
 import utils.report.ReportAggregator;
 
 public class SequentialOperatorGroup implements IOperatorGroup<IDataSet> {
 
-	private LinkedList<ReportablePlanElement> subElements;
+	private LinkedList<IReportableExecutable> subElements;
 	private IDataSet inputDataSet;
 	private LoadDataSetOperator<?,?> dataLoader;
 	private boolean generatesNewDataSet;
@@ -48,7 +48,7 @@ public class SequentialOperatorGroup implements IOperatorGroup<IDataSet> {
 	}
 
 	
-	public void addSubElement(ReportablePlanElement subElement, int position) {
+	public void addSubElement(IReportableExecutable subElement, int position) {
 		if (subElement.generatesNewDataSet()) {
 			this.generatesNewDataSet = true;
 		}
@@ -56,7 +56,7 @@ public class SequentialOperatorGroup implements IOperatorGroup<IDataSet> {
 	}
 
 	
-	public void queueSubElement(ReportablePlanElement subElement) {
+	public void queueSubElement(IReportableExecutable subElement) {
 		if (subElement.generatesNewDataSet()) {
 			this.generatesNewDataSet = true;
 		}
@@ -105,9 +105,9 @@ public class SequentialOperatorGroup implements IOperatorGroup<IDataSet> {
 	throws QueryExecutionException 
 	{
 		IDataSet currentDataSet = inputDataSet;
-		ReportablePlanElement nextOperator;
+		IReportableExecutable nextOperator;
 		
-		Iterator<ReportablePlanElement> it = subElements.iterator();
+		Iterator<IReportableExecutable> it = subElements.iterator();
 		while (it.hasNext()) {
 			nextOperator = it.next();
 			if (nextOperator instanceof IOperatorGroup<?>) {
@@ -124,7 +124,7 @@ public class SequentialOperatorGroup implements IOperatorGroup<IDataSet> {
 
 	
 	@Override
-	public void addRepresentation(ExecutionPlanNavigator printer) {
+	public void addRepresentation(ExecutableTreeNavigator printer) {
 		printer.appendLine("[SEQUENTIAL GROUP]");
 		printer.addIndentation();
 
@@ -136,7 +136,7 @@ public class SequentialOperatorGroup implements IOperatorGroup<IDataSet> {
 
 	
 	@Override
-	public void addRepresentationWithReport(ExecutionPlanNavigator printer) {
+	public void addExecutionReport(ExecutableTreeNavigator printer) {
 		printer.appendLine("[SEQUENTIAL GROUP " + getReport().toString() + " ]");
 		printer.addIndentation();
 
@@ -148,24 +148,24 @@ public class SequentialOperatorGroup implements IOperatorGroup<IDataSet> {
 	}
 
 	
-	private void addOperatorsRepresentationWithReport(ExecutionPlanNavigator printer) {
+	private void addOperatorsRepresentationWithReport(ExecutableTreeNavigator printer) {
 		if (!(dataLoader == null)) {
-			dataLoader.addRepresentationWithReport(printer);
+			dataLoader.addExecutionReport(printer);
 		}
 
-		for (ReportablePlanElement op : subElements) {
-			op.addRepresentationWithReport(printer);
+		for (IReportableExecutable op : subElements) {
+			op.addExecutionReport(printer);
 		}
 	}
 	
 	
-	private void addOperatorsRepresentation(ExecutionPlanNavigator printer) {
+	private void addOperatorsRepresentation(ExecutableTreeNavigator printer) {
 
 		if (!(dataLoader == null)) {
 			dataLoader.addRepresentation(printer);
 		}
 
-		for (ReportablePlanElement op : subElements) {
+		for (IReportableExecutable op : subElements) {
 			op.addRepresentation(printer);
 		}
 	}
@@ -203,7 +203,7 @@ public class SequentialOperatorGroup implements IOperatorGroup<IDataSet> {
 		if(this.dataLoader != null) {
 			result.sumMemoryOccupationMByte(dataLoader.getReport().getMemoryOccupationMB());
 		}
-		for (ReportablePlanElement subElement : subElements) {
+		for (IReportableExecutable subElement : subElements) {
 			if (subElement.generatesNewDataSet()) {
 				result.sumMemoryOccupationMByte(subElement.getReport().getMemoryOccupationMB());
 			}

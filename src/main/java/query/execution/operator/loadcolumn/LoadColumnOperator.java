@@ -3,7 +3,7 @@ package query.execution.operator.loadcolumn;
 import query.ImplementationProvider;
 import query.execution.operator.LoadDataSetOperator;
 import query.execution.operator.RelOperatorType;
-import utils.ExecutionPlanNavigator;
+import utils.ExecutableTreeNavigator;
 
 public class LoadColumnOperator extends LoadDataSetOperator<LoadColumnFunction, LoadColumnArgs>{
 	
