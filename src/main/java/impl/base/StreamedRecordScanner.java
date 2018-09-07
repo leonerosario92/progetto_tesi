@@ -3,20 +3,19 @@ package impl.base;
 import java.util.Iterator;
 import java.util.Map;
 
-import dataset.IDataSet;
 import datasource.IRecordScanner;
 import datatype.DataType;
 import model.FieldDescriptor;
 
-public class MaterializedRecordScanner implements IRecordScanner{
-	
+public class StreamedRecordScanner implements IRecordScanner {
+
 	private Iterator<Object[]> recordIterator;
 	private Object[] currentRecord;
-	private MaterializedDataSet sourceDataSet;
+	private StreamedDataSet sourceDataSet;
 	private Map<String,Integer> nameIndexMapping;
 	
 	
-	public MaterializedRecordScanner(MaterializedDataSet dataset) {
+	public StreamedRecordScanner(StreamedDataSet dataset) {
 		this.sourceDataSet = dataset;
 		this.recordIterator = dataset.getRecordIterator();
 		this.nameIndexMapping = sourceDataSet.getNameIndexMapping();
@@ -107,10 +106,6 @@ public class MaterializedRecordScanner implements IRecordScanner{
 	public Map<String, Integer> getNameIndexMapping() {
 		return nameIndexMapping;
 	}
-	
-	
-	public int getRecordCount() {
-		return sourceDataSet.getRecordCount();
-	}
-	
+
+
 }

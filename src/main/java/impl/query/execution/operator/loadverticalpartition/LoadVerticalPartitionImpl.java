@@ -13,8 +13,9 @@ public class LoadVerticalPartitionImpl extends LoadVerticalPartitionFunction {
 
 	@Override
 	public IDataSet apply(IDataProvisioner provisioner, LoadVerticalPartitionArgs args) throws DataSourceException {
-		Set<FieldDescriptor> columns = args.getColumns();
-		return provisioner.loadColumnarDataSet (columns);
+		return null;
+//		Set<FieldDescriptor> columns = args.getColumns();
+//		return provisioner.loadColumnarDataSet (columns);
 	}
 	
 }

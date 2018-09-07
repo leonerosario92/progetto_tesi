@@ -19,27 +19,28 @@ public class FilterOnMultipleColumnImpl extends FilterOnMultipleColumnFunction {
 
 	@Override
 	public IDataSet apply(IDataSet inputSet, FilterOnMultipleColumnArgs args) throws QueryExecutionException {
-		IRecordIterator recordIterator = inputSet.getRecordIterator();
-		BitSet validityBitset = inputSet.getValidityBitSet();
-		Set<CFNode> statements = args.getStatements();
-		
-		RecordEvaluator evaluator = 
-				new RecordEvaluator(inputSet.getNameIndexMapping(), statements);
-				
-		int index = 0;
-		boolean isValid;
-		while(recordIterator.hasNext()) {
-			Object[] currentRecord = recordIterator.next();
-			if (! (isValid = validityBitset.get(index))) {
-				index ++;
-				continue;
-			}
-			boolean evaluation = evaluator.evaluate(currentRecord);
-			validityBitset.set(index,evaluation);
-			index++;
-		}
-		inputSet.updateValidityBitset(validityBitset);
 		return inputSet;
+//		IRecordIterator recordIterator = inputSet.getRecordIterator();
+//		BitSet validityBitset = inputSet.getValidityBitSet();
+//		Set<CFNode> statements = args.getStatements();
+//		
+//		RecordEvaluator evaluator = 
+//				new RecordEvaluator(inputSet.getNameIndexMapping(), statements);
+//				
+//		int index = 0;
+//		boolean isValid;
+//		while(recordIterator.hasNext()) {
+//			Object[] currentRecord = recordIterator.next();
+//			if (! (isValid = validityBitset.get(index))) {
+//				index ++;
+//				continue;
+//			}
+//			boolean evaluation = evaluator.evaluate(currentRecord);
+//			validityBitset.set(index,evaluation);
+//			index++;
+//		}
+//		inputSet.updateValidityBitset(validityBitset);
+//		return inputSet;
 	}
 	
 }

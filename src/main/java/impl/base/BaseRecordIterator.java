@@ -3,13 +3,9 @@ package impl.base;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-
 import dataset.ColumnDescriptor;
 import dataset.IColumn;
-import dataset.IDataSet;
 import dataset.IRecordIterator;
-import datatype.DataType;
 
 public class BaseRecordIterator implements IRecordIterator {
 
@@ -18,7 +14,7 @@ public class BaseRecordIterator implements IRecordIterator {
 	private int iterationIndex;
 	private int recordCount;
 	private int columnCount;
-	private IDataSet dataSet;
+	private BaseDataSet dataSet;
 	private HashMap <String,Integer> nameIndexMapping;
 	
 	
@@ -32,13 +28,6 @@ public class BaseRecordIterator implements IRecordIterator {
 		initializeIterators();
 	}
 	
-//	
-//	public BaseRecordIterator(MaterializedDataSet dataSet) {
-//		this.dataSet = dataSet;
-//		recordCount = dataSet.getRecordCount();
-//		columnCount = dataSet.getFieldsCount();
-//	}
-
 	
 	private void initializeIterators() {
 		columnIterators = new ArrayList<>(columnCount);

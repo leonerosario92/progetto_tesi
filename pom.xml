@@ -16,8 +16,8 @@
 			    <artifactId>maven-surefire-plugin</artifactId>
 			    <version>2.9</version>
 			    <configuration>
-    				<argLine>-Xms50m -Xmx50m</argLine>
-<!-- 				   	<argLine>-javaagent:${project.basedir}/ext-lib/object-explorer.jar</argLine> -->
+<!--     				<argLine>-Xms256m -Xmx256m</argLine> -->
+				   	<argLine>-javaagent:${project.basedir}/ext-lib/object-explorer.jar</argLine>
 	  			</configuration>
 			</plugin>
 		</plugins>

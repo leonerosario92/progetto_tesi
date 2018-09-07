@@ -25,7 +25,7 @@ extends Operator<F,A> implements IReportableExecutable,Executable<IDataSet>{
 	}	
 	
 	@Override
-	public boolean generatesNewDataSet() {
+	public boolean increaseMemoryOccupation() {
 		return generatesNewDataSet;
 	}
 	

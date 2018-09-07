@@ -21,11 +21,11 @@ public class BaseRecordScanner implements IRecordScanner {
 	private int recordCount;
 	private int columnCount;
 	private Object[] currentRecord;
-	private IDataSet dataSet;
+	private BaseDataSet dataSet;
 	private HashMap <String,Integer> nameIndexMapping;
 	
 	
-	public BaseRecordScanner(IDataSet dataSet) {
+	public BaseRecordScanner(BaseDataSet dataSet) {
 		this.dataSet = dataSet;
 		recordCount = dataSet.getRecordCount();
 		columnCount = dataSet.getFieldsCount();
@@ -98,13 +98,6 @@ public class BaseRecordScanner implements IRecordScanner {
 	}
 
 
-
-	@Override
-	public int getRecordCount() {
-		return recordCount;
-	}
-
-
 	@Override
 	public Object getValueByColumnDescriptor(FieldDescriptor field) {
 		int index = getColumnIndex(field);
@@ -150,5 +143,11 @@ public class BaseRecordScanner implements IRecordScanner {
 	public Map<String, Integer> getNameIndexMapping() {
 		return nameIndexMapping;
 	}
+	
+	
+	public int getRecordCount() {
+		return recordCount;
+	}
+
 	
 }

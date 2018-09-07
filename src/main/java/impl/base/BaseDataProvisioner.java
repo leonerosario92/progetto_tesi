@@ -27,46 +27,46 @@ public class BaseDataProvisioner extends DataProvisioner  {
 	}
 
 	
-	@Override
-	public IDataSet loadSingleColumnDataset(FieldDescriptor field) throws DataSourceException {
-		
-		// Here will be performed the search of requested data in the cache
-		
-		//Retrieve from dataSource the data that has not been found in the cache
-		
-		IRecordScanner it = 
-				dataSource.getTableProjection(field.getTable(), field);
-		IDataSet result = layoutManager.buildColumnarDataSet(it);
-		
-		//Merge data found in cache with data retrieved from dataSource 
-		
-		return result;
-	}
-
-	
-	@Override
-	public IDataSet loadColumnarDataSet(Set<FieldDescriptor> fields) throws DataSourceException {
-		
-		// Here will be performed the search of requested data in the cache
-		
-		//Retrieve from dataSource the data that has not been found in the cache
-		
-		Map <TableDescriptor, Set<FieldDescriptor>> groupedFields = fieldsByTable(fields);
-		IRecordScanner rs = null;
-		if(groupedFields.keySet().size() == 1) {
-			TableDescriptor table =
-					groupedFields.entrySet().iterator().next().getKey();
-			rs = dataSource.getTableProjection(table, fields.toArray(new FieldDescriptor[fields.size()] ));
-		}else {
-			//TODO manage load from multiple Table if required
-		}
-		
-		IDataSet result = layoutManager.buildColumnarDataSet(rs);
-				
-		//Merge data found in cache with data retrieved from dataSource 
-		
-		return result;
-	}
+//	@Override
+//	public IDataSet<?> loadSingleColumnDataset(FieldDescriptor field) throws DataSourceException {
+//		
+//		// Here will be performed the search of requested data in the cache
+//		
+//		//Retrieve from dataSource the data that has not been found in the cache
+//		
+//		IRecordScanner it = 
+//				dataSource.getTableProjection(field.getTable(), field);
+//		IDataSet<?> result = layoutManager.buildColumnarDataSet(it);
+//		
+//		//Merge data found in cache with data retrieved from dataSource 
+//		
+//		return result;
+//	}
+//
+//	
+//	@Override
+//	public IDataSet<?> loadColumnarDataSet(Set<FieldDescriptor> fields) throws DataSourceException {
+//		
+//		// Here will be performed the search of requested data in the cache
+//		
+//		//Retrieve from dataSource the data that has not been found in the cache
+//		
+//		Map <TableDescriptor, Set<FieldDescriptor>> groupedFields = fieldsByTable(fields);
+//		IRecordScanner rs = null;
+//		if(groupedFields.keySet().size() == 1) {
+//			TableDescriptor table =
+//					groupedFields.entrySet().iterator().next().getKey();
+//			rs = dataSource.getTableProjection(table, fields.toArray(new FieldDescriptor[fields.size()] ));
+//		}else {
+//			//TODO manage load from multiple Table if required
+//		}
+//		
+//		IDataSet result = layoutManager.buildColumnarDataSet(rs);
+//				
+//		//Merge data found in cache with data retrieved from dataSource 
+//		
+//		return result;
+//	}
 
 
 	@Override

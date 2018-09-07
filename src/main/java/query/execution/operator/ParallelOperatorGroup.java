@@ -17,9 +17,9 @@ import utils.report.IExecutionReport;
 import utils.report.OperatorGroupReport;
 import utils.report.ReportAggregator;
 
-public class ParallelOperatorGroup implements IOperatorGroup<IDataSet>{
+public class ParallelOperatorGroup implements IOperatorGroup{
 	
-	private List<IOperatorGroup<IDataSet>> subElements;
+	private List<IOperatorGroup> subElements;
 	private MaterializationOperator<?,?> materializationOperator;
 	private boolean generatesNewDataSet;
 	
@@ -41,7 +41,7 @@ public class ParallelOperatorGroup implements IOperatorGroup<IDataSet>{
 	
 	
 	public void addSubElement(IOperatorGroup subElement) {
-		if(subElement.generatesNewDataSet()) {
+		if(subElement.increaseMemoryOccupation()) {
 			this.generatesNewDataSet = true;
 		}
 		subElements.add(subElement);
@@ -75,7 +75,7 @@ public class ParallelOperatorGroup implements IOperatorGroup<IDataSet>{
 
 	private List<IDataSet> getPartialResults(IQueryExecutor executor, MeasurementType measurement) {
 		List<IDataSet> partialResults = new ArrayList<>();
-		for(IOperatorGroup<IDataSet> operator : subElements) {
+		for(IOperatorGroup operator : subElements) {
 			try {
 				
 				partialResults.add(operator.execute(executor,measurement));
@@ -176,7 +176,7 @@ public class ParallelOperatorGroup implements IOperatorGroup<IDataSet>{
 		ReportAggregator result = new ReportAggregator();
 		result.sumMemoryOccupationMByte(materializationOperator.getReport().getMemoryOccupationMB());
 		for(IOperatorGroup op : subElements) {
-			if(op.generatesNewDataSet()) {
+			if(op.increaseMemoryOccupation()) {
 				result.sumMemoryOccupationMByte(
 						op.getReport().getMemoryOccupationMB());
 			}
@@ -186,7 +186,7 @@ public class ParallelOperatorGroup implements IOperatorGroup<IDataSet>{
 
 
 	@Override
-	public boolean generatesNewDataSet() {
+	public boolean increaseMemoryOccupation() {
 		return generatesNewDataSet;
 	}
 

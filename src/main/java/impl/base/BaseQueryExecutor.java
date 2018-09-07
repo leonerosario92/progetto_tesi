@@ -28,15 +28,15 @@ public class BaseQueryExecutor extends QueryExecutor {
 	
 	@Override
 	public IDataSet executePlan(ExecutionPlan plan) throws QueryExecutionException {
-		IOperatorGroup<IDataSet> rootExecutable = plan.getRootExecutable();
-		IDataSet result = rootExecutable.execute(this);
+		IOperatorGroup rootExecutable = plan.getRootExecutable();
+		IDataSet result =  rootExecutable.execute(this);
 		return result;
 	}
 
 
 	@Override
 	public IDataSet executePlan(ExecutionPlan plan, MeasurementType measurement) throws QueryExecutionException {
-		IOperatorGroup<IDataSet> rootExecutable = plan.getRootExecutable();
+		IOperatorGroup rootExecutable = plan.getRootExecutable();
 		IDataSet result = rootExecutable.execute(this, measurement);
 		return result;
 	}

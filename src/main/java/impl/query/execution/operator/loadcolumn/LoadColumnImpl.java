@@ -11,8 +11,9 @@ public class LoadColumnImpl extends LoadColumnFunction{
 
 	@Override
 	public IDataSet apply(IDataProvisioner provisioner, LoadColumnArgs args) throws DataSourceException {
-		FieldDescriptor field = args.getColumn();
-		 return provisioner.loadSingleColumnDataset(field);
+		return null;
+//		FieldDescriptor field = args.getColumn();
+//		 return provisioner.loadSingleColumnDataset(field);
 	}
 
 	

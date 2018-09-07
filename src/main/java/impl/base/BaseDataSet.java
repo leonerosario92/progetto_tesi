@@ -20,7 +20,7 @@ import datasource.IRecordScanner;
 import model.FieldDescriptor;
 
 
-public class BaseDataSet implements IDataSet,Iterable<Object[]> {
+public class BaseDataSet implements IDataSet , Iterable<Object[]> {
 	
 	private List<BaseColumn<?>> columns;
 	private Map<String,Integer> nameindexMapping;
@@ -37,65 +37,12 @@ public class BaseDataSet implements IDataSet,Iterable<Object[]> {
 		nameindexMapping = new HashMap<>();
 		initializeValidityBitSet();
 	}
-	
-	
-    void addColumn(BaseColumn<?> newColumn) {
-		String key = newColumn.getDescriptor().getKey();
-		synchronized (columnLock) {
-			columns.add(newColumn);
-			nameindexMapping.put(key,columnCount);
-			columnCount ++;
-		}
-	}
-    
-    
-    private void initializeValidityBitSet() {
-    	this.validityBitset = new BitSet(recordCount);
-    	validityBitset.set(0,recordCount,true);
-    }
-
     
     @Override
     public boolean containsColumn(FieldDescriptor field) {
     	String key = field.getKey();
     	return nameindexMapping.containsKey(key);
     }
-    
-    
-	@Override
-	public void updateValidityBitset(BitSet validityBits) {
-		if(validityBits.size() != this.validityBitset.size()) {
-			throw new IllegalArgumentException("Operation on validity bits must operate on sets with same size");
-		}
-		synchronized (validityBitset) {
-			this.validityBitset.and(validityBits);
-		}
-	}
-
-
-	@Override
-	public BitSet getValidityBitSet() {
-		BitSet bitSet;
-		synchronized (validityBitset) {
-			bitSet = (BitSet) validityBitset.clone();
-		}
-		return bitSet;
-	}
-
-
-	@Override
-	public IColumn<?> getColumn(FieldDescriptor column) {
-		String key = column.getKey();
-		int index = nameindexMapping.get(key);
-		return columns.get(index);
-	}
-
-
-	@Override
-	public List<IColumn<?>> getAllColumns() {
-		return Lists.newArrayList(columns);
-	}
-
 
 
 	@Override
@@ -103,7 +50,6 @@ public class BaseDataSet implements IDataSet,Iterable<Object[]> {
 		return new BaseRecordIterator(this);
 	}
 
-	@Override
 	public int getRecordCount() {
 		return recordCount;
 	}
@@ -152,6 +98,57 @@ public class BaseDataSet implements IDataSet,Iterable<Object[]> {
 					,false
 				);
 		return recordStream;
+	}
+	
+	
+	
+	
+    void addColumn(BaseColumn<?> newColumn) {
+		String key = newColumn.getDescriptor().getKey();
+		synchronized (columnLock) {
+			columns.add(newColumn);
+			nameindexMapping.put(key,columnCount);
+			columnCount ++;
+		}
+	}
+    
+    
+    private void initializeValidityBitSet() {
+    	this.validityBitset = new BitSet(recordCount);
+    	validityBitset.set(0,recordCount,true);
+    }
+    
+    
+    
+    
+	public void updateValidityBitset(BitSet validityBits) {
+		if(validityBits.size() != this.validityBitset.size()) {
+			throw new IllegalArgumentException("Operation on validity bits must operate on sets with same size");
+		}
+		synchronized (validityBitset) {
+			this.validityBitset.and(validityBits);
+		}
+	}
+
+
+	public BitSet getValidityBitSet() {
+		BitSet bitSet;
+		synchronized (validityBitset) {
+			bitSet = (BitSet) validityBitset.clone();
+		}
+		return bitSet;
+	}
+
+
+	public IColumn<?> getColumn(FieldDescriptor column) {
+		String key = column.getKey();
+		int index = nameindexMapping.get(key);
+		return columns.get(index);
+	}
+
+
+	public List<IColumn<?>> getAllColumns() {
+		return Lists.newArrayList(columns);
 	}
 
 }

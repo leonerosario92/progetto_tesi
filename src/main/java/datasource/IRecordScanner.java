@@ -36,7 +36,7 @@ public interface IRecordScanner {
 	
 	public int getFieldsCount();
 	
-	public int getRecordCount();
+//	public int getRecordCount();
 
 
 }

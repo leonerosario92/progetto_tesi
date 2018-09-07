@@ -1,9 +1,7 @@
 package query.execution;
 
-import dataprovisioner.DataProvisioner;
 import dataprovisioner.IDataProvisioner;
 import dataset.ILayoutManager;
-import dataset.LayoutManager;
 
 public abstract class QueryExecutor implements IQueryExecutor {
 

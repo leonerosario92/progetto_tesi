@@ -16,7 +16,7 @@ import utils.ExecutableTreeNavigator;
 import utils.report.IExecutionReport;
 import utils.report.ReportAggregator;
 
-public class SequentialOperatorGroup implements IOperatorGroup<IDataSet> {
+public class SequentialOperatorGroup implements IOperatorGroup {
 
 	private LinkedList<IReportableExecutable> subElements;
 	private IDataSet inputDataSet;
@@ -49,7 +49,7 @@ public class SequentialOperatorGroup implements IOperatorGroup<IDataSet> {
 
 	
 	public void addSubElement(IReportableExecutable subElement, int position) {
-		if (subElement.generatesNewDataSet()) {
+		if (subElement.increaseMemoryOccupation()) {
 			this.generatesNewDataSet = true;
 		}
 		subElements.add(position, subElement);
@@ -57,7 +57,7 @@ public class SequentialOperatorGroup implements IOperatorGroup<IDataSet> {
 
 	
 	public void queueSubElement(IReportableExecutable subElement) {
-		if (subElement.generatesNewDataSet()) {
+		if (subElement.increaseMemoryOccupation()) {
 			this.generatesNewDataSet = true;
 		}
 		subElements.addLast(subElement);
@@ -110,9 +110,9 @@ public class SequentialOperatorGroup implements IOperatorGroup<IDataSet> {
 		Iterator<IReportableExecutable> it = subElements.iterator();
 		while (it.hasNext()) {
 			nextOperator = it.next();
-			if (nextOperator instanceof IOperatorGroup<?>) {
+			if (nextOperator instanceof IOperatorGroup) {
 				currentDataSet = 
-					((IOperatorGroup<IDataSet>) nextOperator).execute(executor, measurement);
+					((IOperatorGroup) nextOperator).execute(executor, measurement);
 			} else if (nextOperator instanceof SequentialOperator) {
 				((SequentialOperator<?,?>) nextOperator).setInputData(currentDataSet);
 				currentDataSet = 
@@ -204,7 +204,7 @@ public class SequentialOperatorGroup implements IOperatorGroup<IDataSet> {
 			result.sumMemoryOccupationMByte(dataLoader.getReport().getMemoryOccupationMB());
 		}
 		for (IReportableExecutable subElement : subElements) {
-			if (subElement.generatesNewDataSet()) {
+			if (subElement.increaseMemoryOccupation()) {
 				result.sumMemoryOccupationMByte(subElement.getReport().getMemoryOccupationMB());
 			}
 		}
@@ -214,7 +214,7 @@ public class SequentialOperatorGroup implements IOperatorGroup<IDataSet> {
 
 	
 	@Override
-	public boolean generatesNewDataSet() {
+	public boolean increaseMemoryOccupation() {
 		return this.generatesNewDataSet;
 	}
 

@@ -7,9 +7,9 @@ import utils.report.IExecutionReport;
 
 public class ExecutionPlan {
 	
-	private IOperatorGroup<IDataSet> rootExecutable;
+	private IOperatorGroup rootExecutable;
 	
-	public ExecutionPlan(IOperatorGroup<IDataSet> rootExecutable) {
+	public ExecutionPlan(IOperatorGroup rootExecutable) {
 		this.rootExecutable = rootExecutable;
 	}
 

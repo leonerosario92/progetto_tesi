@@ -28,7 +28,6 @@ public class OrderByImpl extends OrderByFunction {
 
 		IRecordIterator iterator = inputSet.getRecordIterator();
 		int fieldsCount = inputSet.getFieldsCount();
-		int recordCount = inputSet.getRecordCount();
 		
 		List<ColumnDescriptor> columnSequence = new ArrayList<>();
 		for(int i=0; i<fieldsCount; i++) {
@@ -47,7 +46,7 @@ public class OrderByImpl extends OrderByFunction {
 				.collect(Collectors.toList())
 				.iterator();
 
-		IDataSet result = layoutManager.buildMaterializedDataSet(recordCount, columnSequence, orderedRecords);
+		IDataSet result = layoutManager.buildMaterializedDataSet(columnSequence, orderedRecords);
 		return result;
 	}		
 	

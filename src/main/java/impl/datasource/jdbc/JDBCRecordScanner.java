@@ -133,12 +133,6 @@ public class JDBCRecordScanner implements IRecordScanner {
 	
 	
 	@Override
-	public int getRecordCount() {
-		return recordCount;
-	}
-	
-	
-	@Override
 	public void resetToFirstRecord() {
 		try {
 			resultSet.beforeFirst();
@@ -197,20 +191,26 @@ public class JDBCRecordScanner implements IRecordScanner {
 		int index = nameIndexMapping.get(columnId);
 		return getValueByColumnIndex(index);
 	}
+
+	
+	@Override
+	public Map<String, Integer> getNameIndexMapping() {
+		return nameIndexMapping;
+	}
+	
+	
+	public int getRecordCount() {
+		return recordCount;
+	}
 	
 	
 	public Map<String, Integer> getColumnIndexMapping() {
 		return nameIndexMapping;
 	}
 
+	
 	public void setColumnIndexMapping(Map<String, Integer> columnIndexMapping) {
 		this.nameIndexMapping = columnIndexMapping;
-	}
-
-
-	@Override
-	public Map<String, Integer> getNameIndexMapping() {
-		return nameIndexMapping;
 	}
 
 }

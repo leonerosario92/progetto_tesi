@@ -25,7 +25,7 @@ import utils.ExecutableTreeNavigator;
 import utils.report.IExecutionReport;
 import utils.report.ReportAggregator;
 
-public class StreamOperatorGroup implements IOperatorGroup<IDataSet> {
+public class StreamOperatorGroup implements IOperatorGroup {
 	
 	private LinkedList<StreamProcessingOperator<?,?>> subElements;
 	private StreamLoadingOperator<?,?> streamLoader;
@@ -88,7 +88,6 @@ public class StreamOperatorGroup implements IOperatorGroup<IDataSet> {
 				
 				IDataSet result = 
 						new StreamedDataSet(columnSequence, recordIterator);		
-				
 				return result;
 			}
 		};
@@ -156,7 +155,7 @@ public class StreamOperatorGroup implements IOperatorGroup<IDataSet> {
 
 
 	@Override
-	public boolean generatesNewDataSet() {
+	public boolean increaseMemoryOccupation() {
 		// TODO Auto-generated method stub
 		return false;
 	}

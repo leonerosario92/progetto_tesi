@@ -83,7 +83,6 @@ public class GroupByImpl  extends GroupByFunction{
 		
 		List<ColumnDescriptor> columnSequence = getResultColumnSequence(projectionSequence);
 		IDataSet result = layoutManager.buildMaterializedDataSet(
-				aggregateRecords.size(),
 				columnSequence,
 				aggregateRecords.iterator()
 		);

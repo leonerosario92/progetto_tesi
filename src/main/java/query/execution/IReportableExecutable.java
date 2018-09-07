@@ -9,7 +9,7 @@ public interface IReportableExecutable {
 	
 	public void addExecutionReport(ExecutableTreeNavigator navigator);
 	
-	public boolean generatesNewDataSet();
+	public boolean increaseMemoryOccupation();
 	
 	public IExecutionReport getReport();
 

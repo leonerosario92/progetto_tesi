@@ -26,13 +26,11 @@ public class MaterializedDataSet implements IDataSet {
 	private Map<String,Integer> nameIndexMapping;
 	
 	
-	public MaterializedDataSet(int recordCount,List<ColumnDescriptor> columns) {
+	public MaterializedDataSet(List<ColumnDescriptor> columns) {
 		this.validityBitset = new BitSet();
 		this.columnCount = columns.size();
-		this.recordCount = recordCount;
-		this.recordList = new ArrayList<>(recordCount);
+		this.recordList = new ArrayList<>();
 		initializeColumnDescriptors(columns);
-		initializeValidityBitSet();
 	}
 
 	
@@ -48,14 +46,7 @@ public class MaterializedDataSet implements IDataSet {
 	}
 
 	
-	private void initializeValidityBitSet() {
-    	this.validityBitset = new BitSet(recordCount);
-    	validityBitset.set(0,recordCount,true);
-    }
-	
-	
 	public void addRecord(Object[] record) {
-		Object[] r = record;
 		if(record.length != columnCount) {
 			throw new IllegalArgumentException("Attempt to add record with invalid number of fields.");
 		}
@@ -71,28 +62,10 @@ public class MaterializedDataSet implements IDataSet {
 	
 	
 	@Override
-	public IColumn<?> getColumn(FieldDescriptor column) {
-		int columnIndex = nameIndexMapping.get(column.getKey());
-		return buildColumn(columnIndex);
-	}
-
-	
-	@Override
 	public boolean containsColumn(FieldDescriptor field) {
 		return nameIndexMapping.containsKey(field.getKey());
 	}
-	
-	
-	@Override
-	public List<IColumn<?>> getAllColumns() {
-		List<IColumn<?>> result = new ArrayList<>();
-		for(int i=0; i<columnCount; i++) {
-			IColumn<?> currentColumn = buildColumn(i);
-			result.add(currentColumn);
-		}
-		return result;
-	}
-	
+		
 	
 	private IColumn<?> buildColumn (int columnIndex){
 		ColumnDescriptor descriptor = columnDescriptors.get(columnIndex);
@@ -116,9 +89,8 @@ public class MaterializedDataSet implements IDataSet {
 	public IRecordScanner getRecordScanner() {
 		return new MaterializedRecordScanner(this);
 	}
-
 	
-	@Override
+	
 	public int getRecordCount() {
 		return recordCount;
 	}
@@ -129,23 +101,6 @@ public class MaterializedDataSet implements IDataSet {
 		return columnCount;
 	}
 
-	
-	@Override
-	public void updateValidityBitset(BitSet validityBits) {
-		if(validityBits.size() != this.validityBitset.size()) {
-			throw new IllegalArgumentException("Operation on validity bits must operate on sets with same size.");
-		}
-		synchronized (validityBitset) {
-			this.validityBitset.and(validityBits);
-		}
-	}
-	
-	@Override
-	public BitSet getValidityBitSet() {
-		return validityBitset;
-	}
-
-	
 
 	@Override
 	public ColumnDescriptor getColumnDescriptor(int index) {
