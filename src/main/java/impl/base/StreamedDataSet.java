@@ -14,31 +14,29 @@ import dataset.ColumnDescriptor;
 import dataset.IColumn;
 import dataset.IDataSet;
 import dataset.IRecordIterator;
+import dataset.IRecordMapper;
 import datasource.IRecordScanner;
 import model.FieldDescriptor;
 
 public class StreamedDataSet implements IDataSet{
 	private int columnCount;
 	private List<ColumnDescriptor> columnDescriptors;
-	private Map<String,Integer> nameIndexMapping;
 	private Iterator<Object[]> sourceIterator;
+	private IRecordMapper recordMapper;
 	
 	
 	public StreamedDataSet(List<ColumnDescriptor> columns,Iterator<Object[]> sourceIterator) {
 		this.columnCount = columns.size();
 		initializeColumnDescriptors(columns);
+		this.recordMapper = new RecordMapper(columnDescriptors);
 		this.sourceIterator = sourceIterator;
 	}
 
 	
 	private void initializeColumnDescriptors(List<ColumnDescriptor> columns) {
-		this.nameIndexMapping = new HashMap<>();
 		this.columnDescriptors = new ArrayList<>();
-		int index = 0;
 		for(ColumnDescriptor descriptor : columns) {
 			columnDescriptors.add(descriptor);
-			nameIndexMapping.put(descriptor.getKey(), index);
-			index ++;
 		}
 	}
 
@@ -69,19 +67,19 @@ public class StreamedDataSet implements IDataSet{
 	
 	@Override
 	public int getColumnIndex(FieldDescriptor field) {
-		return nameIndexMapping.get(field.getKey());
+		return recordMapper.getIndex(field.getKey());
 	}
 
 	
 	@Override
 	public boolean containsColumn(FieldDescriptor field) {
-		return nameIndexMapping.containsKey(field.getKey());
+		return recordMapper.containsKey(field.getKey());
 	}
 	
 	
 	@Override
-	public Map<String, Integer> getNameIndexMapping() {
-		return nameIndexMapping;
+	public IRecordMapper getRecordMapper() {
+		return this.recordMapper;
 	}
 
 	

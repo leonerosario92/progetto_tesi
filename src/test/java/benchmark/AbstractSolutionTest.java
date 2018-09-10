@@ -96,7 +96,7 @@ public abstract class AbstractSolutionTest {
 		try {
 			Context context = factory.getContext();
 			
-			query = getScanBigDataSetQuery(context);
+			query = getTestQuery(context);
 			String sql = query.writeSql();
 			IRecordScanner resultScanner = context.executeQuery (query, measurementType);	
 			

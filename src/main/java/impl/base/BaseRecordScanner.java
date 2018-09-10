@@ -9,6 +9,7 @@ import dataset.ColumnDescriptor;
 import dataset.IColumn;
 import dataset.IDataSet;
 import dataset.IRecordIterator;
+import dataset.IRecordMapper;
 import datasource.IRecordScanner;
 import datatype.DataType;
 import model.FieldDescriptor;
@@ -22,17 +23,15 @@ public class BaseRecordScanner implements IRecordScanner {
 	private int columnCount;
 	private Object[] currentRecord;
 	private BaseDataSet dataSet;
-	private HashMap <String,Integer> nameIndexMapping;
-	
+	private IRecordMapper recordMapper;
 	
 	public BaseRecordScanner(BaseDataSet dataSet) {
 		this.dataSet = dataSet;
+		recordMapper = dataSet.getRecordMapper();
 		recordCount = dataSet.getRecordCount();
 		columnCount = dataSet.getFieldsCount();
 		currentRecord = new Object[columnCount];
 		columnDescriptors = new ArrayList<>(columnCount);
-		nameIndexMapping = new HashMap<>();
-		
 		initializeIterators();
 	}
 
@@ -44,7 +43,6 @@ public class BaseRecordScanner implements IRecordScanner {
 		for (IColumn<?> column : dataSet.getAllColumns()) {
 			columnIterators.add(columnIndex,column.getColumnIterator());
 			columnDescriptors.add(columnIndex, column.getDescriptor());
-			nameIndexMapping.put(column.getDescriptor().getColumnName(), columnIndex);
 			columnIndex ++;
 		}
 	}
@@ -53,6 +51,7 @@ public class BaseRecordScanner implements IRecordScanner {
 	private boolean hasNext() {
 		return iterationIndex < recordCount;
 	}
+	
 	
 	@Override
 	public boolean next() {
@@ -66,16 +65,19 @@ public class BaseRecordScanner implements IRecordScanner {
 		return true;
 	}
 
+	
 	@Override
 	public int getFieldsCount() {
 		return columnCount;
 	}
 
+	
 	@Override
 	public DataType getColumnType(int index) {
 		return columnDescriptors.get(index-1).getColumnType();
 	}
 
+	
 	@Override
 	public String getColumnName(int index) {
 		if(index <= 0 || index > recordCount) {
@@ -84,11 +86,13 @@ public class BaseRecordScanner implements IRecordScanner {
 		return columnDescriptors.get(index-1).getColumnName();
 	}
 
+	
 	@Override
 	public String getTableName(int index) {
 		return columnDescriptors.get(index-1).getTableName();
 	}
 
+	
 	@Override
 	public Object getValueByColumnIndex(int index) {
 		if (index > columnCount) {
@@ -107,11 +111,7 @@ public class BaseRecordScanner implements IRecordScanner {
 
 	@Override
 	public int getColumnIndex(FieldDescriptor field) {
-		String columnName = field.getName();
-		if(! (nameIndexMapping.containsKey(columnName))){
-			throw new IllegalArgumentException("Attempt to retrieve index of unknown column.");
-		}
-		return (nameIndexMapping.get(columnName));
+		return recordMapper.getIndex(field);
 	}
 
 
@@ -134,19 +134,19 @@ public class BaseRecordScanner implements IRecordScanner {
 
 	@Override
 	public Object getValueByColumnID(String columnId) {
-		int index = nameIndexMapping.get(columnId);
+		int index = recordMapper.getIndex(columnId);
 		return getValueByColumnIndex(index);
-	}
-
-
-	@Override
-	public Map<String, Integer> getNameIndexMapping() {
-		return nameIndexMapping;
 	}
 	
 	
 	public int getRecordCount() {
 		return recordCount;
+	}
+
+
+	@Override
+	public IRecordMapper getRecordMapper() {
+		return recordMapper;
 	}
 
 	

@@ -16,6 +16,7 @@ import dataset.ColumnDescriptor;
 import dataset.IColumn;
 import dataset.IDataSet;
 import dataset.IRecordIterator;
+import dataset.IRecordMapper;
 import datasource.IRecordScanner;
 import model.FieldDescriptor;
 
@@ -85,11 +86,11 @@ public class BaseDataSet implements IDataSet , Iterable<Object[]> {
 
 
 	@Override
-	public Map<String, Integer> getNameIndexMapping() {
-		return nameindexMapping;
+	public IRecordMapper getRecordMapper() {
+		return new RecordMapper(this.nameindexMapping);
 	}
 
-
+	
 	@Override
 	public Stream<Object[]> getRecordStream() {
 		Stream<Object[]> recordStream = StreamSupport.stream
@@ -103,7 +104,7 @@ public class BaseDataSet implements IDataSet , Iterable<Object[]> {
 	
 	
 	
-    void addColumn(BaseColumn<?> newColumn) {
+    public void addColumn(BaseColumn<?> newColumn) {
 		String key = newColumn.getDescriptor().getKey();
 		synchronized (columnLock) {
 			columns.add(newColumn);
@@ -117,8 +118,6 @@ public class BaseDataSet implements IDataSet , Iterable<Object[]> {
     	this.validityBitset = new BitSet(recordCount);
     	validityBitset.set(0,recordCount,true);
     }
-    
-    
     
     
 	public void updateValidityBitset(BitSet validityBits) {

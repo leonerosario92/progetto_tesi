@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import dataset.IRecordMapper;
 import impl.base.StreamPipeline;
 import model.FieldDescriptor;
 import model.IDescriptor;
@@ -20,11 +21,11 @@ public class StreamedOrderByImpl extends StreamedOrderByFunction{
 			StreamedOrderByArgs args) 
 	{
 		Stream<Object[]> recordStream = pipeline.getRecordStream();
-		Map<String,Integer> nameIndexMapping = pipeline.getNameIndexMapping();
+		IRecordMapper recordMapper = pipeline.getRecordMapper();
 		
 		List<FieldDescriptor> orderingSequence = args.getOrderingSequence();
 		Comparator<Object[]> recordComparator = 
-				RecordComparator.getRecordComparator(nameIndexMapping, orderingSequence);
+				RecordComparator.getRecordComparator(recordMapper, orderingSequence);
 		Stream<Object[]> sortedStream = recordStream.sorted(recordComparator);
 		pipeline.updateStream(sortedStream);
 		return pipeline;

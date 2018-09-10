@@ -5,8 +5,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import dataset.IRecordMapper;
 import datatype.DoubleComparator;
 import datatype.TypeComparator;
+import impl.base.RecordMapper;
 import model.FieldDescriptor;
 import query.builder.LogicalOperand;
 import query.builder.predicate.FilterStatementType;
@@ -18,15 +20,19 @@ import query.builder.statement.FilterStatement;
 public class RecordEvaluator {
 
 	private Predicate<Object[]> evaluator;
-	private Map<String, Integer> nameIndexMapping;
+	private IRecordMapper recordMapper;
 
-	
 	public RecordEvaluator(Map<String, Integer> mapping, Set<CFNode> statements) {
+		this(new RecordMapper(mapping),statements);
+	}
+	
+	
+	public RecordEvaluator(IRecordMapper recordMapper, Set<CFNode> statements) {
 		Iterator<CFNode> it = statements.iterator();
 		
 		Predicate<Object[]> evaluator = null;
 		CFNode statement;
-		this.nameIndexMapping = mapping;
+		this.recordMapper = recordMapper;
 
 		if (it.hasNext()) {
 			statement = it.next();
@@ -77,10 +83,10 @@ public class RecordEvaluator {
 		}
 		/*====================================================================*/
 
-		int fieldIndex = nameIndexMapping.get(fieldKey);
+		int fieldIndex = recordMapper.getIndex(fieldKey);
 		Predicate<Object[]> evaluator = null;
 		if(rightOperand instanceof FieldDescriptor) {
-			int operandIndex = nameIndexMapping.get( ((FieldDescriptor)rightOperand).getKey());
+			int operandIndex = recordMapper.getIndex(((FieldDescriptor)rightOperand).getKey());
 			evaluator = new Predicate<Object[]>() {
 				@Override
 				public boolean test(Object[] record) {

@@ -8,17 +8,19 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
+import dataset.IRecordMapper;
 import model.AggregationDescriptor;
 
 public class CollectorUtils {
 	
 	private CollectorUtils() {}
 	
+	
 	public static Collector<Object[], RecordAggregator, Object[]> getRecordDownStreamCollector(
 			List<AggregationDescriptor> aggregations, 
-			Map<String,Integer> nameIndexMapping) 
+			IRecordMapper recordMapper) 
 	{
-		Supplier<RecordAggregator> supplier = getSupplier(aggregations,nameIndexMapping);
+		Supplier<RecordAggregator> supplier = getSupplier(aggregations,recordMapper);
 		BiConsumer<RecordAggregator, Object[]> accumulator = getAccumulator();
 		BinaryOperator<RecordAggregator> combiner = getCombiner();
 		Function<RecordAggregator,Object[]> finalizer = getFinalizer(aggregations);
@@ -29,16 +31,16 @@ public class CollectorUtils {
 	
 	private static Supplier<RecordAggregator> getSupplier(
 			List<AggregationDescriptor> aggregations,
-			Map<String,Integer> nameIndexMapping) 
+			IRecordMapper recordMapper) 
 	{
 		return new Supplier<RecordAggregator>() {
 			@Override
 			public RecordAggregator get() {
-				return new RecordAggregator(aggregations, nameIndexMapping);
+				return new RecordAggregator(aggregations, recordMapper);
 			}
 		};
 	}	
-	
+
 	
 	private static BiConsumer<RecordAggregator, Object[]> getAccumulator() {
 		return new BiConsumer<RecordAggregator, Object[]>() {

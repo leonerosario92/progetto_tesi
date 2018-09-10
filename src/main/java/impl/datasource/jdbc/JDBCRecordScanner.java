@@ -6,9 +6,11 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import dataset.IRecordMapper;
 import datasource.IRecordScanner;
 import datatype.DataType;
 import datatype.ITypeFactory;
+import impl.base.RecordMapper;
 import model.FieldDescriptor;
 
 public class JDBCRecordScanner implements IRecordScanner {
@@ -18,7 +20,7 @@ public class JDBCRecordScanner implements IRecordScanner {
 	private ITypeFactory typeFactory;
 	private int recordCount;
 	private int fieldsCount;
-	private Map<String,Integer>nameIndexMapping;
+	private IRecordMapper recordMapper;
 
 
 	public JDBCRecordScanner(ResultSet resultSet, int recordCount) throws JDBCDataSourceException {
@@ -31,12 +33,12 @@ public class JDBCRecordScanner implements IRecordScanner {
 		} catch (SQLException e) {
 			manageSqlException();
 		}
-		initializeColumnIndexMapping();
+		initializeRecordMapper();
 	}
 
 
-	private void initializeColumnIndexMapping() {
-		nameIndexMapping = new HashMap<>();
+	private void initializeRecordMapper() {
+		Map <String,Integer>nameIndexMapping = new HashMap<>();
 		for(int index=1; index<=fieldsCount; index++) {
 			String tableName = getTableName(index);
 			String columnName = getColumnName(index);
@@ -46,6 +48,7 @@ public class JDBCRecordScanner implements IRecordScanner {
 				index
 			);
 		}
+		this.recordMapper = new RecordMapper(nameIndexMapping);
 	}
 
 
@@ -185,32 +188,27 @@ public class JDBCRecordScanner implements IRecordScanner {
 
 	@Override
 	public Object getValueByColumnID(String columnId) {
-		if(! (nameIndexMapping.containsKey(columnId))) {
+		if(! (recordMapper.containsKey(columnId))) {
 			throw new IllegalArgumentException("Attempt to retrieve value from an unknown column");
 		}
-		int index = nameIndexMapping.get(columnId);
+		int index = recordMapper.getIndex(columnId);
 		return getValueByColumnIndex(index);
-	}
-
-	
-	@Override
-	public Map<String, Integer> getNameIndexMapping() {
-		return nameIndexMapping;
 	}
 	
 	
 	public int getRecordCount() {
 		return recordCount;
 	}
-	
-	
-	public Map<String, Integer> getColumnIndexMapping() {
-		return nameIndexMapping;
+
+
+	@Override
+	public IRecordMapper getRecordMapper() {
+		return recordMapper;
 	}
 
-	
-	public void setColumnIndexMapping(Map<String, Integer> columnIndexMapping) {
-		this.nameIndexMapping = columnIndexMapping;
+
+	public void setRecordMapper(IRecordMapper recordMapper) {
+		this.recordMapper = recordMapper;
 	}
 
 }

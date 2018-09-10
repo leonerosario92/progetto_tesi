@@ -15,6 +15,7 @@ import dataset.ColumnDescriptor;
 import dataset.IDataSet;
 import dataset.ILayoutManager;
 import dataset.IRecordIterator;
+import dataset.IRecordMapper;
 import datatype.TypeComparator;
 import model.FieldDescriptor;
 import query.execution.operator.orderby.OrderByArgs;
@@ -37,9 +38,11 @@ public class OrderByImpl extends OrderByFunction {
 		Stream<Object[]> recordStream = inputSet.getRecordStream();
 		
 		List<FieldDescriptor> orderingSequence = args.getOrderingSequence();
-		Map<String,Integer> nameIndexMapping = inputSet.getNameIndexMapping();
+//		Map<String,Integer> nameIndexMapping = inputSet.getRecordMapper();
+		IRecordMapper recordMapper = inputSet.getRecordMapper();
 		Comparator<Object[]> recordComparator = 
-				RecordComparator.getRecordComparator(nameIndexMapping,orderingSequence);
+//				RecordComparator.getRecordComparator(nameIndexMapping,orderingSequence);
+				RecordComparator.getRecordComparator(recordMapper,orderingSequence);
 		
 		Iterator<Object[]> orderedRecords = recordStream
 				.sorted(recordComparator) 

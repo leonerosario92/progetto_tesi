@@ -13,34 +13,31 @@ import dataset.ColumnDescriptor;
 import dataset.IColumn;
 import dataset.IDataSet;
 import dataset.IRecordIterator;
+import dataset.IRecordMapper;
 import datasource.IRecordScanner;
 import model.FieldDescriptor;
 
 public class MaterializedDataSet implements IDataSet {
 	
-	private BitSet validityBitset;
 	private int columnCount;
 	private int recordCount;
 	private List<Object[]> recordList;
 	private List<ColumnDescriptor> columnDescriptors;
-	private Map<String,Integer> nameIndexMapping;
-	
+	private RecordMapper recordMapper;
 	
 	public MaterializedDataSet(List<ColumnDescriptor> columns) {
-		this.validityBitset = new BitSet();
 		this.columnCount = columns.size();
 		this.recordList = new ArrayList<>();
+		this.recordMapper = new RecordMapper(columns);
 		initializeColumnDescriptors(columns);
 	}
 
 	
 	private void initializeColumnDescriptors(List<ColumnDescriptor> columns) {
-		this.nameIndexMapping = new HashMap<>();
 		this.columnDescriptors = new ArrayList<>();
 		int index = 0;
 		for(ColumnDescriptor descriptor : columns) {
 			columnDescriptors.add(descriptor);
-			nameIndexMapping.put(descriptor.getKey(), index);
 			index ++;
 		}
 	}
@@ -63,22 +60,10 @@ public class MaterializedDataSet implements IDataSet {
 	
 	@Override
 	public boolean containsColumn(FieldDescriptor field) {
-		return nameIndexMapping.containsKey(field.getKey());
+		return recordMapper.containsKey(field.getKey());
 	}
 		
 	
-	private IColumn<?> buildColumn (int columnIndex){
-		ColumnDescriptor descriptor = columnDescriptors.get(columnIndex);
-		BaseColumn<?> result = 
-				BaseColumnFactory.createColumn(descriptor,recordCount);
-		int index = 0;
-		for(Object[] record : recordList) {
-			result.storeValueAt(record[columnIndex], index);
-		}
-		return result;
-	}
-
-
 	@Override
 	public IRecordIterator getRecordIterator() {
 			return new MaterializedRecordIterator(this);
@@ -109,12 +94,17 @@ public class MaterializedDataSet implements IDataSet {
 
 	@Override
 	public int getColumnIndex(FieldDescriptor field) {
-		return nameIndexMapping.get(field.getKey());
+		return recordMapper.getIndex(field);
 	}
 
+	
+//	@Override
+//	public Map<String, Integer> getRecordMapper() {
+//		return nameIndexMapping;
+//	}
 	@Override
-	public Map<String, Integer> getNameIndexMapping() {
-		return nameIndexMapping;
+	public IRecordMapper getRecordMapper() {
+		return recordMapper;
 	}
 
 	

@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import dataset.IRecordMapper;
 import datatype.TypeComparator;
 import model.FieldDescriptor;
 import model.IDescriptor;
@@ -12,16 +13,15 @@ public class RecordComparator {
 	
 	private RecordComparator() {}
 	
-	public static Comparator<Object[]> getRecordComparator (
-		Map<String,Integer> nameIndexMapping, 
-		List<FieldDescriptor> orderingSequence)
-	{
+	public static Comparator<Object[]> getRecordComparator(
+			IRecordMapper recordMapper,
+			List<FieldDescriptor> orderingSequence) {
 		int size = orderingSequence.size();
 		TypeComparator[] comparators = new TypeComparator [size];
 		int[] indexes = new int[size];
 		int fieldIndex=0;
 		for(IDescriptor field : orderingSequence) {
-			indexes[fieldIndex] = nameIndexMapping.get(field.getKey());
+			indexes[fieldIndex] = recordMapper.getIndex(field);
 			comparators[fieldIndex] = 
 					field
 					.getType()
@@ -47,6 +47,7 @@ public class RecordComparator {
 		}
 		
 		return recordComparator;
+
 	}
 
 }

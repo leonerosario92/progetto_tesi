@@ -2,17 +2,13 @@ package impl.base;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import dataprovisioner.DataProvisioner;
 import dataset.IDataSet;
-import dataset.ILayoutManager;
-import dataset.IRecordIterator;
+import dataset.IRecordMapper;
 import datasource.DataSourceException;
-import datasource.IDataSource;
 import datasource.IRecordScanner;
 import model.FieldDescriptor;
 import model.TableDescriptor;
@@ -100,14 +96,13 @@ public class BaseDataProvisioner extends DataProvisioner  {
 			//TODO manage load from multiple Table if required
 		}
 		
-		/*===TODO differentiate mapping for recordScanner and recordIterator===*/
 		Map<String,Integer> mapping = new HashMap<>();
-		for ( Entry<String, Integer> entry : rs.getNameIndexMapping().entrySet()) {
-			mapping.put(entry.getKey(), entry.getValue()-1);
+		for (int i=0; i<rs.getFieldsCount(); i++) {
+			mapping.put(rs.getColumnId(i+1),i);
 		}
-		/*=====================================================================*/
+		IRecordMapper mapper = new RecordMapper(mapping);
 		
-		RecordEvaluator evaluator = new RecordEvaluator(mapping, filterStatements);
+		RecordEvaluator evaluator = new RecordEvaluator(mapper, filterStatements);
 		IDataSet result = layoutManager.buildMaterializedDataSet(rs,evaluator);
 		return result;
 	}

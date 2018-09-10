@@ -7,13 +7,14 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import dataset.ColumnDescriptor;
+import dataset.IRecordMapper;
 import model.FieldDescriptor;
 
 public class StreamPipeline {
 
 	private int columnCount;
 	private List<ColumnDescriptor> columnDescriptors;
-	private Map<String,Integer> nameIndexMapping;
+	private IRecordMapper recordMapper;
 	private Stream<Object[]> recordStream;
 	
 	
@@ -25,14 +26,11 @@ public class StreamPipeline {
 	
 	private void initializeColumnDescriptors(List<ColumnDescriptor> columns) {
 		this.columnCount = columns.size();
-		this.nameIndexMapping = new HashMap<>();
 		this.columnDescriptors = new ArrayList<>();
-		int index = 0;
 		for(ColumnDescriptor descriptor : columns) {
 			columnDescriptors.add(descriptor);
-			nameIndexMapping.put(descriptor.getKey(), index);
-			index ++;
 		}
+		this.recordMapper = new RecordMapper(columnDescriptors);
 	}
 	
 	
@@ -51,7 +49,7 @@ public class StreamPipeline {
 	
 
 	public boolean containsColumn(FieldDescriptor field) {
-		return nameIndexMapping.containsKey(field.getKey());
+		return recordMapper.containsKey(field.getKey());
 	}
 
 	public Stream<Object[]> getRecordStream() {
@@ -67,11 +65,11 @@ public class StreamPipeline {
 	}
 
 	public int getColumnIndex(FieldDescriptor field) {
-		return nameIndexMapping.get(field.getKey());
+		return recordMapper.getIndex(field);
 	}
 
-	public Map<String, Integer> getNameIndexMapping() {
-		return nameIndexMapping;
+	public IRecordMapper getRecordMapper () {
+		return recordMapper;
 	}
 
 }

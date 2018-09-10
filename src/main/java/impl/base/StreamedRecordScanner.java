@@ -3,6 +3,7 @@ package impl.base;
 import java.util.Iterator;
 import java.util.Map;
 
+import dataset.IRecordMapper;
 import datasource.IRecordScanner;
 import datatype.DataType;
 import model.FieldDescriptor;
@@ -12,13 +13,13 @@ public class StreamedRecordScanner implements IRecordScanner {
 	private Iterator<Object[]> recordIterator;
 	private Object[] currentRecord;
 	private StreamedDataSet sourceDataSet;
-	private Map<String,Integer> nameIndexMapping;
+	private IRecordMapper recordMapper;
 	
 	
 	public StreamedRecordScanner(StreamedDataSet dataset) {
 		this.sourceDataSet = dataset;
+		this.recordMapper = sourceDataSet.getRecordMapper();
 		this.recordIterator = dataset.getRecordIterator();
-		this.nameIndexMapping = sourceDataSet.getNameIndexMapping();
 		this.currentRecord = null;
 	}
 
@@ -97,15 +98,15 @@ public class StreamedRecordScanner implements IRecordScanner {
 	
 	@Override
 	public Object getValueByColumnID(String columnId) {
-		int index = sourceDataSet.getNameIndexMapping().get(columnId);
+		int index = recordMapper.getIndex(columnId);
 		return getValueByColumnIndex(index);
 	}
 
-	
+
 	@Override
-	public Map<String, Integer> getNameIndexMapping() {
-		return nameIndexMapping;
+	public IRecordMapper getRecordMapper() {
+		return recordMapper;
 	}
 
-
+	
 }

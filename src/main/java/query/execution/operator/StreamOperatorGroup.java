@@ -1,15 +1,10 @@
 package query.execution.operator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import dataprovisioner.IDataProvisioner;
 import dataset.ColumnDescriptor;
 import dataset.IDataSet;
@@ -17,8 +12,6 @@ import dataset.ILayoutManager;
 import dispatcher.MeasurementType;
 import impl.base.StreamPipeline;
 import impl.base.StreamedDataSet;
-import model.AggregationDescriptor;
-import model.FieldDescriptor;
 import query.execution.IQueryExecutor;
 import query.execution.QueryExecutionException;
 import utils.ExecutableTreeNavigator;
@@ -134,16 +127,9 @@ public class StreamOperatorGroup implements IOperatorGroup {
 	}
 
 	
-	
-	
-	
-	
-	
-	
 	@Override
 	public void addRepresentation(ExecutableTreeNavigator navigator) {
 		// TODO Auto-generated method stub
-		
 	}
 
 

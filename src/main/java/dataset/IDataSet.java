@@ -1,14 +1,9 @@
 package dataset;
 
-import java.util.BitSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import datasource.IRecordScanner;
 import model.FieldDescriptor;
-import model.TableDescriptor;
 
 public interface IDataSet  {
 	
@@ -34,6 +29,6 @@ public interface IDataSet  {
 	public int getColumnIndex(FieldDescriptor field);
 
 	/*Substitute that with recordMapper interface */
-	public Map<String, Integer> getNameIndexMapping();
+	public IRecordMapper getRecordMapper();
 	
 }

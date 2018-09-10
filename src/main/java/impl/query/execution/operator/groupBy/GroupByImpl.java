@@ -7,10 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,6 +18,7 @@ import dataset.ColumnDescriptor;
 import dataset.IDataSet;
 import dataset.ILayoutManager;
 import datatype.DataType;
+import impl.base.RecordMapper;
 import model.AggregationDescriptor;
 import model.FieldDescriptor;
 import model.IDescriptor;
@@ -57,7 +54,7 @@ public class GroupByImpl  extends GroupByFunction{
 			Collector<Object[], RecordAggregator, Object[]> downStreamCollector = 
 				CollectorUtils.getRecordDownStreamCollector(
 					aggregations,
-					inputDataSet.getNameIndexMapping()
+					inputDataSet.getRecordMapper()
 				);
 			recordStream =
 					aggregateRecords(recordStream,groupingSequenceIndexes,downStreamCollector);
@@ -239,7 +236,7 @@ public class GroupByImpl  extends GroupByFunction{
 			Stream<Object[]> aggregateRecordStream
 	){
 		Comparator<Object[]> recordComparator = 
-				RecordComparator.getRecordComparator(aggrNameIndexMapping, orderingSequence);
+				RecordComparator.getRecordComparator(new RecordMapper(aggrNameIndexMapping), orderingSequence);
 		Stream<Object[]> sortedRecordStream =
 			aggregateRecordStream
 			.sorted(recordComparator);

@@ -9,6 +9,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 
 import dataset.IDataSet;
+import dataset.IRecordMapper;
 import datatype.AggregableTypeDescriptor;
 import datatype.TypeAggregator;
 import datatype.TypeDescriptor;
@@ -20,31 +21,30 @@ public class RecordAggregator {
 	
 	private List<AggregationDescriptor> aggregations;
 	private List<TypeAggregator<?>> aggregators;
-	private Map<String, Integer> mapping;
-	
+	private IRecordMapper recordMapper;
 	
 	public RecordAggregator(
-		List<AggregationDescriptor> aggregations, 
-		Map<String,Integer> nameIndexMapping
-	){
-		this.aggregations = Lists.newArrayList(aggregations);
-		this.mapping = nameIndexMapping;
-		this.aggregators = new ArrayList<>();
-		for(AggregationDescriptor aggregation : this.aggregations) {
-			TypeDescriptor fieldType =  aggregation.getField().getType().getDescriptor();
-			if(fieldType instanceof AggregableTypeDescriptor) {
-				this.aggregators.add(
-						AggregableTypeDescriptor.class.cast(fieldType).getTypeAggregator()
-				);
+			List<AggregationDescriptor> aggregations, 
+			IRecordMapper recordMapper
+		){
+			this.aggregations = Lists.newArrayList(aggregations);
+			this.recordMapper = recordMapper;
+			this.aggregators = new ArrayList<>();
+			for(AggregationDescriptor aggregation : this.aggregations) {
+				TypeDescriptor fieldType =  aggregation.getField().getType().getDescriptor();
+				if(fieldType instanceof AggregableTypeDescriptor) {
+					this.aggregators.add(
+							AggregableTypeDescriptor.class.cast(fieldType).getTypeAggregator()
+					);
+				}
 			}
 		}
-	}
 	
 	
 	public void aggregateRecord(Object[] record) {
 		int index = 0;
 		for(AggregationDescriptor aggregation : aggregations) {
-			int fieldIndex = mapping.get(aggregation.getField().getKey());
+			int fieldIndex = recordMapper.getIndex(aggregation.getField());
 			aggregators.get(index).addValue(record[fieldIndex]);
 			index ++;
 		}

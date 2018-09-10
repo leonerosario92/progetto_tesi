@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import dataset.IDataSet;
+import dataset.IRecordMapper;
 import datasource.IRecordScanner;
 import datatype.DataType;
 import model.FieldDescriptor;
@@ -13,13 +14,15 @@ public class MaterializedRecordScanner implements IRecordScanner{
 	private Iterator<Object[]> recordIterator;
 	private Object[] currentRecord;
 	private MaterializedDataSet sourceDataSet;
-	private Map<String,Integer> nameIndexMapping;
+//	private Map<String,Integer> nameIndexMapping;
+	private IRecordMapper recordMapper;
 	
 	
 	public MaterializedRecordScanner(MaterializedDataSet dataset) {
 		this.sourceDataSet = dataset;
 		this.recordIterator = dataset.getRecordIterator();
-		this.nameIndexMapping = sourceDataSet.getNameIndexMapping();
+//		this.nameIndexMapping = sourceDataSet.getRecordMapper().getMapper();
+		this.recordMapper = sourceDataSet.getRecordMapper();
 		this.currentRecord = null;
 	}
 
@@ -98,19 +101,20 @@ public class MaterializedRecordScanner implements IRecordScanner{
 	
 	@Override
 	public Object getValueByColumnID(String columnId) {
-		int index = sourceDataSet.getNameIndexMapping().get(columnId);
+//		int index = sourceDataSet.getRecordMapper().getMapper().get(columnId);
+		int index = recordMapper.getIndex(columnId);
 		return getValueByColumnIndex(index);
-	}
-
-	
-	@Override
-	public Map<String, Integer> getNameIndexMapping() {
-		return nameIndexMapping;
 	}
 	
 	
 	public int getRecordCount() {
 		return sourceDataSet.getRecordCount();
+	}
+
+
+	@Override
+	public IRecordMapper getRecordMapper() {
+		return recordMapper;
 	}
 	
 }

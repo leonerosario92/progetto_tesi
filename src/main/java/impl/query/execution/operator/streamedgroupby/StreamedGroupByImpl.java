@@ -14,6 +14,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import dataset.ColumnDescriptor;
+import dataset.IRecordMapper;
 import datatype.DataType;
 import impl.base.StreamPipeline;
 import model.AggregationDescriptor;
@@ -40,10 +41,10 @@ public class StreamedGroupByImpl extends StreamedGroupByFunction {
 		List<IDescriptor> projectionSequence = args.getProjectionSequence();
 		
 		Stream<Object[]> recordStream = pipeline.getRecordStream();
-		Map<String,Integer> nameIndexMapping = pipeline.getNameIndexMapping();
+		IRecordMapper recordMapper = pipeline.getRecordMapper();
 		
 		int[] groupingSequenceIndexes = 
-				getGroupingSequenceIndexes(nameIndexMapping,groupingSequence);
+				getGroupingSequenceIndexes(recordMapper,groupingSequence);
 		
 		if(aggregations.size() == 0) {
 			recordStream =
@@ -52,20 +53,16 @@ public class StreamedGroupByImpl extends StreamedGroupByFunction {
 			Collector<Object[], RecordAggregator, Object[]> downStreamCollector = 
 				CollectorUtils.getRecordDownStreamCollector(
 					aggregations,
-					nameIndexMapping
+					recordMapper
 				);
 			recordStream =
 				aggregateRecords(recordStream,groupingSequenceIndexes,downStreamCollector);
 		}
-//		Map<String,Integer> updatedNameIndexMapping =
-//				getUpdatedMapping(groupingSequence, aggregations);
-//		pipeline.updateMapping(updatedNameIndexMapping);
 		
 		List<ColumnDescriptor> newColumnSequence = 
 				getUpdatedColumnSequence(groupingSequence,aggregations);
 		pipeline.updateColumnDescriptors(newColumnSequence);
 		Map<String,Integer> updatedNameIndexMapping = getUpdatedMapping(groupingSequence,aggregations);
-//		Map<String,Integer> updatedNameIndexMapping2 = pipeline.getNameIndexMapping();
 		
 		if(aggregateFilters.size() != 0) {
 			recordStream = filterAggregateRecords(updatedNameIndexMapping,aggregateFilters,recordStream);
@@ -103,15 +100,15 @@ public class StreamedGroupByImpl extends StreamedGroupByFunction {
 		return result;
 	}
 
-
+	
 	private int[] getGroupingSequenceIndexes(
-			Map<String,Integer> nameIndexMapping, 
-			List<FieldDescriptor> groupingSequence) 
+			IRecordMapper recordMapper,
+			List<FieldDescriptor> groupingSequence)
 	{
 		int[] fieldSequenceIndexes = new int[groupingSequence.size()];
 		int index = 0;
 		for( FieldDescriptor field : groupingSequence) {
-			fieldSequenceIndexes[index] = nameIndexMapping.get(field.getKey());
+			fieldSequenceIndexes[index] = recordMapper.getIndex(field.getKey());
 			index ++;
 		}
 		return fieldSequenceIndexes;

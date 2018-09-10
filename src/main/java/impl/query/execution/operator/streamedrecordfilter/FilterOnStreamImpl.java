@@ -1,9 +1,9 @@
 package impl.query.execution.operator.streamedrecordfilter;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import dataset.IRecordMapper;
 import impl.base.StreamPipeline;
 import query.builder.statement.CFNode;
 import query.execution.operator.streamedrecordfilter.FilterOnStreamArgs;
@@ -18,17 +18,15 @@ public class FilterOnStreamImpl extends FilterOnStreamFunction {
 			FilterOnStreamArgs args)
 	{
 		Stream<Object[]> recordStream = pipeline.getRecordStream();
-		Map<String,Integer> nameIndexMapping = pipeline.getNameIndexMapping();
+		IRecordMapper recordMapper = pipeline.getRecordMapper();
 		
 		Set<CFNode> statements = args.getStatements();
 		RecordEvaluator evaluator = 
-				new RecordEvaluator(nameIndexMapping, statements);
+				new RecordEvaluator(recordMapper, statements);
 		Stream<Object[]> resultStream = 
 				recordStream.filter( record -> evaluator.evaluate(record));
 		pipeline.updateStream(resultStream);
 		return pipeline;
 	}
-
-
 
 }

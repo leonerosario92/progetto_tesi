@@ -12,10 +12,12 @@ import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 import com.google.common.collect.Maps;
 
 import dataset.IRecordIterator;
+import dataset.IRecordMapper;
 import datasource.IRecordScanner;
 import datasource.IRemoteDataSource;
 import dispatcher.MeasurementType;
 import dispatcher.QueryDispatcher;
+import impl.base.RecordMapper;
 import impl.datasource.jdbc.JDBCDataSource;
 import impl.datasource.jdbc.JDBCDataSourceException;
 import impl.datasource.jdbc.JDBCRecordScanner;
@@ -54,7 +56,6 @@ public class NativeQueryDispatcher extends QueryDispatcher {
 			 */
 			fixNameIndexMapping(query, result);
 			
-			
 			return result;
 		} catch (SQLException | JDBCDataSourceException e) {
 			throw new QueryExecutionException("An Exception occurred while executing query on native data source : "+ e.getMessage());
@@ -74,7 +75,8 @@ public class NativeQueryDispatcher extends QueryDispatcher {
 				}
 			}
 		}
-		((JDBCRecordScanner)result).setColumnIndexMapping(fixedMapping);
+		IRecordMapper newMapper = new RecordMapper(fixedMapping);
+		((JDBCRecordScanner)result).setRecordMapper(newMapper);
 	}
 
 
