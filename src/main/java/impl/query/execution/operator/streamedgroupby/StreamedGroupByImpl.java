@@ -16,7 +16,7 @@ import com.google.common.collect.Sets;
 import dataset.ColumnDescriptor;
 import dataset.IRecordMapper;
 import datatype.DataType;
-import impl.base.StreamPipeline;
+import impl.base.StreamedDataSet;
 import model.AggregationDescriptor;
 import model.FieldDescriptor;
 import model.IDescriptor;
@@ -31,8 +31,8 @@ import utils.RecordEvaluator;
 public class StreamedGroupByImpl extends StreamedGroupByFunction {
 
 	@Override
-	public StreamPipeline apply(
-			StreamPipeline pipeline, 
+	public StreamedDataSet apply(
+			StreamedDataSet pipeline, 
 			StreamedGroupByArgs args) 
 	{
 		List<FieldDescriptor> groupingSequence = args.getGroupingSequence();

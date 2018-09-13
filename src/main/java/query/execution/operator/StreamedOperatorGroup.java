@@ -1,16 +1,10 @@
 package query.execution.operator;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.Callable;
 import dataprovisioner.IDataProvisioner;
-import dataset.ColumnDescriptor;
 import dataset.IDataSet;
-import dataset.ILayoutManager;
 import dispatcher.MeasurementType;
-import impl.base.StreamPipeline;
 import impl.base.StreamedDataSet;
 import query.execution.IQueryExecutor;
 import query.execution.QueryExecutionException;
@@ -18,7 +12,7 @@ import utils.ExecutableTreeNavigator;
 import utils.report.IExecutionReport;
 import utils.report.ReportAggregator;
 
-public class StreamOperatorGroup implements IOperatorGroup {
+public class StreamedOperatorGroup implements IOperatorGroup {
 	
 	private LinkedList<StreamProcessingOperator<?,?>> subElements;
 	private StreamLoadingOperator<?,?> streamLoader;
@@ -27,7 +21,7 @@ public class StreamOperatorGroup implements IOperatorGroup {
 	private long executionEndTime;
 	
 	
-	public StreamOperatorGroup(StreamLoadingOperator<?,?> streamLoader) {
+	public StreamedOperatorGroup(StreamLoadingOperator<?,?> streamLoader) {
 		this.subElements = new LinkedList<>();
 		executionStartTime = executionEndTime = 0;
 		executed = false;
@@ -68,32 +62,16 @@ public class StreamOperatorGroup implements IOperatorGroup {
 			public IDataSet call() throws Exception {
 				
 				IDataProvisioner provisioner = executor.getProvisioner();
-				ILayoutManager layoutManager = executor.getlayoutManager();
 				
-				StreamPipeline streamPipeline = streamLoader.loadStream(provisioner);
+				StreamedDataSet streamPipeline = streamLoader.loadStream(provisioner);
 				
 				for(StreamProcessingOperator<?,?> operator : subElements) {
 					streamPipeline = operator.addOperationToPipeline(streamPipeline);
 				}
 		
-				Iterator<Object[]> recordIterator = streamPipeline.getRecordStream().iterator();
-				List<ColumnDescriptor> columnSequence = getColumnSequence(streamPipeline);
-				
-				IDataSet result = 
-						new StreamedDataSet(columnSequence, recordIterator);		
-				return result;
+				return streamPipeline;
 			}
 		};
-	}
-	
-	
-	private List<ColumnDescriptor> getColumnSequence(StreamPipeline streamSource) {
-		List<ColumnDescriptor> columnSequence = new ArrayList<>();
-		for(int i=0; i<streamSource.getFieldsCount(); i++) {
-			ColumnDescriptor currentColumn = streamSource.getColumnDescriptor(i);
-			columnSequence.add(currentColumn);
-		}
-		return columnSequence;
 	}
 	
 	
@@ -109,7 +87,6 @@ public class StreamOperatorGroup implements IOperatorGroup {
 	
 	private float getExecutionTimeMillis() {
 		if (!this.executed) {
-			// TODO Manage exception properly
 			throw new IllegalStateException("Attempt to retrieve execution Time from a non-executed operator group");
 		}
 		return (new Float((executionEndTime - executionStartTime) / (1000*1000)));

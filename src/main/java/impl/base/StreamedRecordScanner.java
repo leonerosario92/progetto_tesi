@@ -36,12 +36,6 @@ public class StreamedRecordScanner implements IRecordScanner {
 
 	
 	@Override
-	public void resetToFirstRecord() {
-		recordIterator = sourceDataSet.getRecordIterator();
-	}
-
-	
-	@Override
 	public DataType getColumnType(int index) {
 		return sourceDataSet.getColumnDescriptor(index-1).getColumnType();
 	}

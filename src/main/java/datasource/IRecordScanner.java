@@ -8,7 +8,7 @@ public interface IRecordScanner {
 	
 	public boolean next();
 	
-	public void resetToFirstRecord();
+//	public void resetToFirstRecord();
 	
 	
 	public DataType getColumnType(int index);

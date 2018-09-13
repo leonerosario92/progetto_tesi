@@ -4,7 +4,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import dataset.IRecordMapper;
-import impl.base.StreamPipeline;
+import impl.base.StreamedDataSet;
 import query.builder.statement.CFNode;
 import query.execution.operator.streamedrecordfilter.FilterOnStreamArgs;
 import query.execution.operator.streamedrecordfilter.FilterOnStreamFunction;
@@ -13,8 +13,8 @@ import utils.RecordEvaluator;
 public class FilterOnStreamImpl extends FilterOnStreamFunction {
 
 	@Override
-	public StreamPipeline apply(
-			StreamPipeline pipeline, 
+	public StreamedDataSet apply(
+			StreamedDataSet pipeline, 
 			FilterOnStreamArgs args)
 	{
 		Stream<Object[]> recordStream = pipeline.getRecordStream();

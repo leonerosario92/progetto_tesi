@@ -5,9 +5,9 @@ import java.util.List;
 
 import dataset.IDataSet;
 import dataset.ILayoutManager;
-import query.ImplementationProvider;
 import query.execution.IQueryExecutor;
 import query.execution.QueryExecutionException;
+import query.optimization.ImplementationProvider;
 
 public abstract class MaterializationOperator <F extends MaterializationFunction, A extends IOperatorArgs> extends SequentialOperator<F,A>{
 

@@ -6,7 +6,7 @@ import dataset.IDataSet;
 import dataset.ILayoutManager;
 import datasource.DataSourceException;
 import datasource.IDataSource;
-import impl.base.StreamPipeline;
+import impl.base.StreamedDataSet;
 import model.FieldDescriptor;
 import model.TableDescriptor;
 import query.builder.statement.CFNode;
@@ -22,7 +22,7 @@ public interface IDataProvisioner {
 	public IDataSet loadFilteredMaterializedDataSet(Set<FieldDescriptor> columns, Set<CFNode> filterStatements)
 			throws DataSourceException;
 
-	public StreamPipeline loadStreamedDataSet(Set<FieldDescriptor> columns) throws DataSourceException;
+	public StreamedDataSet loadStreamedDataSet(Set<FieldDescriptor> columns) throws DataSourceException;
 
 }
 

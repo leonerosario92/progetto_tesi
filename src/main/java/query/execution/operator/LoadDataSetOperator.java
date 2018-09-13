@@ -3,9 +3,9 @@ package query.execution.operator;
 import dataprovisioner.IDataProvisioner;
 import dataset.IDataSet;
 import datasource.DataSourceException;
-import query.ImplementationProvider;
 import query.execution.IQueryExecutor;
 import query.execution.QueryExecutionException;
+import query.optimization.ImplementationProvider;
 
 public abstract class LoadDataSetOperator<F extends DatasetLoadingFunction, A extends IOperatorArgs> 
 extends SequentialOperator<F,A>

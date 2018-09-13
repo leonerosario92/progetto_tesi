@@ -4,7 +4,6 @@ import java.util.List;
 import com.google.common.collect.Sets;
 
 import model.AggregationDescriptor;
-import query.QueryPlanner;
 import query.builder.Query;
 import query.builder.clause.FilterClause;
 import query.builder.clause.GroupByClause;
@@ -20,6 +19,7 @@ import query.execution.operator.groupby.GroupByOperator;
 import query.execution.operator.loadmaterialized.LoadMaterializedArgs;
 import query.execution.operator.loadmaterialized.LoadMaterializedOperator;
 import query.execution.operator.orderby.OrderByOperator;
+import query.optimization.QueryPlanner;
 
 public class BaseQueryPlanner extends QueryPlanner {
 	

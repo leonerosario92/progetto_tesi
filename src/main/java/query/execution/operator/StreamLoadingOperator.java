@@ -2,9 +2,9 @@ package query.execution.operator;
 
 import dataprovisioner.IDataProvisioner;
 import datasource.DataSourceException;
-import impl.base.StreamPipeline;
-import query.ImplementationProvider;
+import impl.base.StreamedDataSet;
 import query.execution.QueryExecutionException;
+import query.optimization.ImplementationProvider;
 
 public abstract class StreamLoadingOperator<F extends StreamLoadingFunction, A extends IOperatorArgs> 
 extends StreamOperator<F,A>
@@ -14,7 +14,7 @@ extends StreamOperator<F,A>
 		super(provider,type);
 	}
 	
-	public StreamPipeline loadStream (IDataProvisioner provisioner) throws QueryExecutionException{
+	public StreamedDataSet loadStream (IDataProvisioner provisioner) throws QueryExecutionException{
 		try {
 			return function.apply(provisioner,args);
 		} 

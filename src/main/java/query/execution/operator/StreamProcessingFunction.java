@@ -1,12 +1,12 @@
 package query.execution.operator;
 
 import java.util.Map;
-import impl.base.StreamPipeline;
+import impl.base.StreamedDataSet;
 
 public interface StreamProcessingFunction<A> extends IStreamedOperatorFunction {
 	
-	public StreamPipeline apply(
-			StreamPipeline inputStream,
+	public StreamedDataSet apply(
+			StreamedDataSet inputStream,
 			A args
 	);
 	

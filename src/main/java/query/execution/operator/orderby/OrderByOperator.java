@@ -1,10 +1,10 @@
 package query.execution.operator.orderby;
 
-import query.ImplementationProvider;
 import query.execution.operator.MaterializationOperator;
 import query.execution.operator.ProcessDataSetOperator;
 import query.execution.operator.RelOperatorType;
 import query.execution.operator.SortDataSetOperator;
+import query.optimization.ImplementationProvider;
 
 public class OrderByOperator extends SortDataSetOperator <OrderByFunction, OrderByArgs> {
 

@@ -1,4 +1,4 @@
-package query;
+package query.optimization;
 
 import java.util.HashMap;
 
@@ -146,6 +146,7 @@ public class ImplementationProvider  {
 			throw new IllegalArgumentException();
 		}
 	}
+	
 	
 	private void setImplementation(RelOperatorType type, Class<?> clazz) {
 		implementations.put(type, clazz);

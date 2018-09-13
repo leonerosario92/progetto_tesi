@@ -23,7 +23,6 @@ public abstract class JDBCDataSource implements IRemoteDataSource{
 	private JDBCConnectionParams params;
 	
 	private PreparedStatement getTableStatement;
-	private PreparedStatement getColumnStatement;
 	
 	public JDBCDataSource(JDBCConnectionParams params) throws JDBCDataSourceException {
 		

@@ -1,8 +1,8 @@
 package query.execution.operator.groupby;
 
-import query.ImplementationProvider;
 import query.execution.operator.RelOperatorType;
 import query.execution.operator.SortDataSetOperator;
+import query.optimization.ImplementationProvider;
 
 public class GroupByOperator extends SortDataSetOperator <GroupByFunction, GroupByArgs> {
 

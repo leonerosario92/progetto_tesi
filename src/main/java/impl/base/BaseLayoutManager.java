@@ -182,10 +182,10 @@ public class BaseLayoutManager extends LayoutManager {
 
 
 	@Override
-	public StreamPipeline buildStreamedDataSet(IRecordScanner recordScanner) {
+	public StreamedDataSet buildStreamedDataSet(IRecordScanner recordScanner) {
 		Stream <Object[]> recordStream = StreamSupport.stream(getRecordSpliterator(recordScanner),false);
 		List<ColumnDescriptor> columnSequence = getColumnSequence(recordScanner);
-		StreamPipeline result = new StreamPipeline(recordStream,columnSequence);
+		StreamedDataSet result = new StreamedDataSet(recordStream,columnSequence);
 		return result;
 	}
 

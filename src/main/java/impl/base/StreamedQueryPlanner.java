@@ -5,7 +5,6 @@ import java.util.List;
 import com.google.common.collect.Sets;
 
 import model.AggregationDescriptor;
-import query.QueryPlanner;
 import query.builder.Query;
 import query.builder.clause.FilterClause;
 import query.builder.clause.GroupByClause;
@@ -16,7 +15,7 @@ import query.builder.statement.AggregateFilterStatement;
 import query.builder.statement.FilterStatement;
 import query.execution.ExecutionPlan;
 import query.execution.operator.IOperatorGroup;
-import query.execution.operator.StreamOperatorGroup;
+import query.execution.operator.StreamedOperatorGroup;
 import query.execution.operator.groupby.GroupByArgs;
 import query.execution.operator.groupby.GroupByOperator;
 import query.execution.operator.loadstream.LoadStreamArgs;
@@ -27,6 +26,7 @@ import query.execution.operator.streamedgroupby.StreamedGroupByOperator;
 import query.execution.operator.streamedorderby.StreamedOrderByOperator;
 import query.execution.operator.streamedrecordfilter.FilterOnStreamArgs;
 import query.execution.operator.streamedrecordfilter.FilterOnStreamOperator;
+import query.optimization.QueryPlanner;
 
 public class StreamedQueryPlanner extends QueryPlanner{
 	
@@ -48,7 +48,7 @@ public class StreamedQueryPlanner extends QueryPlanner{
 		LoadStreamArgs dataLoadingArgs = dataLoadingOperator.getArgs();
 		dataLoadingArgs.setColumns(projectionClause.getReferencedFields());
 		
-		StreamOperatorGroup rootExecutable = new StreamOperatorGroup(dataLoadingOperator);
+		StreamedOperatorGroup rootExecutable = new StreamedOperatorGroup(dataLoadingOperator);
 		
 		List<FilterStatement> filterStatements = filterClause.getStatements();
 		if(! (filterStatements.isEmpty())) {
@@ -64,19 +64,12 @@ public class StreamedQueryPlanner extends QueryPlanner{
 			StreamedGroupByArgs gbArgs = groupByOp.getArgs();
 			gbArgs.setGroupingSequence(groupByClause.getGroupingSequence());
 			gbArgs.setProjectionSequence(projectionClause.getProjectionSequence());
-			
 			for(AggregationDescriptor aggrField : projectionClause.getAggregations()) {
 				gbArgs.addAggregation(aggrField);
 			}
-			
 			for(AggregateFilterStatement statement : groupByClause.getAggregateFilterStatements()) {
 				gbArgs.addAggregateFilter(statement);
 			}
-			
-//			if( ! (orderByClause.getOrderingSequence().isEmpty())) {
-//				gbArgs.setOrderingSequence(orderByClause.getOrderingSequence());
-//			}
-				
 			rootExecutable.addSubElement(groupByOp);
 		}
 	

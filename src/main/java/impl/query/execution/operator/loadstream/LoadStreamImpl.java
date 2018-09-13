@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 import dataprovisioner.IDataProvisioner;
 import dataset.IDataSet;
 import datasource.DataSourceException;
-import impl.base.StreamPipeline;
+import impl.base.StreamedDataSet;
 import model.FieldDescriptor;
 import query.execution.operator.loadstream.LoadStreamArgs;
 import query.execution.operator.loadstream.LoadStreamFunction;
@@ -14,9 +14,9 @@ import query.execution.operator.loadstream.LoadStreamFunction;
 public class LoadStreamImpl extends LoadStreamFunction {
 
 	@Override
-	public StreamPipeline apply(IDataProvisioner provisioner, LoadStreamArgs args) throws DataSourceException {
+	public StreamedDataSet apply(IDataProvisioner provisioner, LoadStreamArgs args) throws DataSourceException {
 		Set<FieldDescriptor> columns = args.getColumns();
-		StreamPipeline pipeline = provisioner.loadStreamedDataSet(columns);
+		StreamedDataSet pipeline = provisioner.loadStreamedDataSet(columns);
 		return pipeline;
 	}
 	

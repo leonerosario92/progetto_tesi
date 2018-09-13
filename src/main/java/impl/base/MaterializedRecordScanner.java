@@ -14,14 +14,12 @@ public class MaterializedRecordScanner implements IRecordScanner{
 	private Iterator<Object[]> recordIterator;
 	private Object[] currentRecord;
 	private MaterializedDataSet sourceDataSet;
-//	private Map<String,Integer> nameIndexMapping;
 	private IRecordMapper recordMapper;
 	
 	
 	public MaterializedRecordScanner(MaterializedDataSet dataset) {
 		this.sourceDataSet = dataset;
 		this.recordIterator = dataset.getRecordIterator();
-//		this.nameIndexMapping = sourceDataSet.getRecordMapper().getMapper();
 		this.recordMapper = sourceDataSet.getRecordMapper();
 		this.currentRecord = null;
 	}
@@ -38,10 +36,10 @@ public class MaterializedRecordScanner implements IRecordScanner{
 	}
 
 	
-	@Override
-	public void resetToFirstRecord() {
-		recordIterator = sourceDataSet.getRecordIterator();
-	}
+//	@Override
+//	public void resetToFirstRecord() {
+//		recordIterator = sourceDataSet.getRecordIterator();
+//	}
 
 	
 	@Override

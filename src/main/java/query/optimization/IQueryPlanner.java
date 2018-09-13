@@ -1,4 +1,4 @@
-package query;
+package query.optimization;
 
 import query.builder.Query;
 import query.execution.ExecutionPlan;

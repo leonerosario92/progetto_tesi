@@ -1,9 +1,9 @@
 package query.execution.operator.streamedrecordfilter;
 
-import query.ImplementationProvider;
 import query.execution.operator.RelOperatorType;
 import query.execution.operator.StreamProcessingOperator;
 import query.execution.operator.filteronmultiplecolumn.FilterOnMultipleColumnArgs;
+import query.optimization.ImplementationProvider;
 
 public class FilterOnStreamOperator 
 extends StreamProcessingOperator<FilterOnStreamFunction, FilterOnStreamArgs>

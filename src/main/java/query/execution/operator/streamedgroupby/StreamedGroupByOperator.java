@@ -1,8 +1,8 @@
 package query.execution.operator.streamedgroupby;
 
-import query.ImplementationProvider;
 import query.execution.operator.RelOperatorType;
 import query.execution.operator.StreamProcessingOperator;
+import query.optimization.ImplementationProvider;
 
 public class StreamedGroupByOperator 
 extends StreamProcessingOperator<StreamedGroupByFunction, StreamedGroupByArgs>

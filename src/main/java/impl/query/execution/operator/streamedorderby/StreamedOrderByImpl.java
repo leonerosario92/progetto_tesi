@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import dataset.IRecordMapper;
-import impl.base.StreamPipeline;
+import impl.base.StreamedDataSet;
 import model.FieldDescriptor;
 import model.IDescriptor;
 import query.execution.operator.streamedorderby.StreamedOrderByArgs;
@@ -16,8 +16,8 @@ import utils.RecordComparator;
 public class StreamedOrderByImpl extends StreamedOrderByFunction{
 
 	@Override
-	public StreamPipeline apply(
-			StreamPipeline pipeline, 
+	public StreamedDataSet apply(
+			StreamedDataSet pipeline, 
 			StreamedOrderByArgs args) 
 	{
 		Stream<Object[]> recordStream = pipeline.getRecordStream();

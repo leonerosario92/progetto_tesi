@@ -1,5 +1,4 @@
-package query;
-
+package query.optimization;
 
 public abstract class QueryPlanner implements IQueryPlanner {
 

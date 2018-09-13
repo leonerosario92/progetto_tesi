@@ -135,14 +135,14 @@ public class JDBCRecordScanner implements IRecordScanner {
 	}
 	
 	
-	@Override
-	public void resetToFirstRecord() {
-		try {
-			resultSet.beforeFirst();
-		} catch (SQLException e) {
-			manageSqlException();
-		}
-	}
+//	@Override
+//	public void resetToFirstRecord() {
+//		try {
+//			resultSet.beforeFirst();
+//		} catch (SQLException e) {
+//			manageSqlException();
+//		}
+//	}
 	
 	
 	private void manageSqlException() {

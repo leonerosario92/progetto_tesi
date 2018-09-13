@@ -1,9 +1,9 @@
 package query.execution.operator;
 
 import dataset.IDataSet;
-import query.ImplementationProvider;
 import query.execution.IQueryExecutor;
 import query.execution.QueryExecutionException;
+import query.optimization.ImplementationProvider;
 
 public abstract class ProcessDataSetOperator<F extends DataSetProcessingFunction, A extends IOperatorArgs> extends SequentialOperator<F,A>{
 	

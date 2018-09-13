@@ -1,8 +1,8 @@
 package dispatcher;
 
 import datasource.IDataSource;
-import query.IQueryPlanner;
 import query.execution.IQueryExecutor;
+import query.optimization.IQueryPlanner;
 
 public abstract class QueryDispatcher   implements IQueryDispatcher{
 

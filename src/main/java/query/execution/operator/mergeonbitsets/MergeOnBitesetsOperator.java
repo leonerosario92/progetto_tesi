@@ -1,8 +1,8 @@
 package query.execution.operator.mergeonbitsets;
 
-import query.ImplementationProvider;
 import query.execution.operator.MaterializationOperator;
 import query.execution.operator.RelOperatorType;
+import query.optimization.ImplementationProvider;
 
 
 public class MergeOnBitesetsOperator extends MaterializationOperator<MergeOnBitSetsFunction, MergeOnBitSetsArgs>{

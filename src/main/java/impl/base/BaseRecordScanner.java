@@ -121,10 +121,10 @@ public class BaseRecordScanner implements IRecordScanner {
 	}
 
 
-	@Override
-	public void resetToFirstRecord() {
-		initializeIterators();
-	}
+//	@Override
+//	public void resetToFirstRecord() {
+//		initializeIterators();
+//	}
 
 
 	@Override

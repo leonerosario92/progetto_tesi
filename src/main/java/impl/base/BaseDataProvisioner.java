@@ -109,7 +109,7 @@ public class BaseDataProvisioner extends DataProvisioner  {
 	
 	
 	@Override
-	public StreamPipeline loadStreamedDataSet(Set<FieldDescriptor> columns) throws DataSourceException {
+	public StreamedDataSet loadStreamedDataSet(Set<FieldDescriptor> columns) throws DataSourceException {
 		Map <TableDescriptor, Set<FieldDescriptor>> groupedFields = fieldsByTable(columns);
 		IRecordScanner rs = null;
 		if(groupedFields.keySet().size() == 1) {
@@ -120,7 +120,7 @@ public class BaseDataProvisioner extends DataProvisioner  {
 			//TODO manage load from multiple Table if required
 		}
 		
-		StreamPipeline result = layoutManager.buildStreamedDataSet(rs);
+		StreamedDataSet result = layoutManager.buildStreamedDataSet(rs);
 		return result;
 	}
 	

@@ -23,9 +23,9 @@ import impl.query.execution.operator.streamedgroupby.StreamedGroupByImpl;
 import impl.query.execution.operator.streamedorderby.StreamedOrderByImpl;
 import impl.query.execution.operator.streamedrecordfilter.FilterOnStreamImpl;
 import impl.base.BaseLayoutManager;
-import query.QueryPlanner;
-import query.ImplementationProvider;
 import query.execution.QueryExecutor;
+import query.optimization.ImplementationProvider;
+import query.optimization.QueryPlanner;
 
 public class ContextFactory {
 	

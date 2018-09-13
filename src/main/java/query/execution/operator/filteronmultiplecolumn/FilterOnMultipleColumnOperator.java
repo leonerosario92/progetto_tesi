@@ -1,10 +1,10 @@
 package query.execution.operator.filteronmultiplecolumn;
 
-import query.ImplementationProvider;
 import query.execution.operator.ProcessDataSetOperator;
 import query.execution.operator.RelOperatorType;
 import query.execution.operator.filteroncolumn.FilterOnColumnArgs;
 import query.execution.operator.filteroncolumn.FilterOnColumnFunction;
+import query.optimization.ImplementationProvider;
 
 public class FilterOnMultipleColumnOperator 
 extends ProcessDataSetOperator<FilterOnMultipleColumnFunction, FilterOnMultipleColumnArgs>
